@@ -1,0 +1,26 @@
+{
+  "name": "prototune-client",
+  "version": "1.0.0",
+  "description": "1DV613 - Prototune Client",
+  "type": "module",
+  "browser": "src/js/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "lint": "npx eslint ./src || exit 0",
+    "lint:fix": "npx eslint ./src --fix || exit 0"
+  },
+  "contributors": [
+    "Adrian Shosholli <as227cw@student.lnu.se>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@lnu/eslint-config": "^1.1.4",
+    "vite": "^2.9.1"
+  },
+  "dependencies": {
+    "tone": "^14.7.77"
+  }
+}

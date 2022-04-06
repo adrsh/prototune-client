@@ -19,16 +19,13 @@ template.innerHTML = `
       justify-content: space-evenly;
       align-items: center;
     }
-    .playing {
-      background-color: #b0b0b0 !important;
-    }
     #keyboard {
       display: flex;
       flex-direction: row;
     }
     .octave {
       position: relative;
-      height: 8rem;
+      height: 12rem;
     }
     .white-notes {
       display: flex;
@@ -47,6 +44,18 @@ template.innerHTML = `
       background-color: #101010;
       outline: 1px solid white;
     }
+    .black-notes > pt-keyboard-note:hover {
+      background-color: #202020;
+    }
+    .black-notes > .playing {
+      background-color: #404040 !important;
+    }
+    .white-notes > pt-keyboard-note:hover {
+      background-color: #F0F0F0;
+    }
+    .white-notes > .playing {
+      background-color: #e0e0e0 !important;
+    }
     .invisible {
       visibility: hidden;
     }
@@ -55,7 +64,7 @@ template.innerHTML = `
       flex-direction: column;
     }
   </style>
-  <div id="options">
+  <!-- <div id="options">
     <label for="instrument-select">Instrument</label>
     <select name="instruments" id="instrument-select">
       <option value="piano">Piano</option>
@@ -63,8 +72,27 @@ template.innerHTML = `
       <option value="amsynth">AMSynth</option>
       <option value="fmsynth">FMSynth</option>
     </select>
-  </div>
+  </div> -->
   <div id="keyboard">
+  <div class="octave">
+      <div class="white-notes">
+        <pt-keyboard-note note="C2"></pt-keyboard-note>
+        <pt-keyboard-note note="D2"></pt-keyboard-note>
+        <pt-keyboard-note note="E2"></pt-keyboard-note>
+        <pt-keyboard-note note="F2"></pt-keyboard-note>
+        <pt-keyboard-note note="G2"></pt-keyboard-note>
+        <pt-keyboard-note note="A2"></pt-keyboard-note>
+        <pt-keyboard-note note="B2"></pt-keyboard-note>
+      </div>
+      <div class="black-notes">
+        <pt-keyboard-note note="C#2"></pt-keyboard-note>
+        <pt-keyboard-note note="D#2"></pt-keyboard-note>
+        <pt-keyboard-note class="invisible"></pt-keyboard-note>
+        <pt-keyboard-note note="F#2"></pt-keyboard-note>
+        <pt-keyboard-note note="G#2"></pt-keyboard-note>
+        <pt-keyboard-note note="A#2"></pt-keyboard-note>
+      </div>
+    </div>
     <div class="octave">
       <div class="white-notes">
         <pt-keyboard-note note="C3"></pt-keyboard-note>
@@ -156,8 +184,10 @@ customElements.define('pt-keyboard',
       this.keyboard.addEventListener('note-play', event => this.#playNote(event.detail.note))
       this.keyboard.addEventListener('note-stop', event => this.#stopNote(event.detail.note))
 
-      this.instrumentSelect = this.shadowRoot.querySelector('#instrument-select')
-      this.instrumentSelect.addEventListener('change', event => this.#setInstrument(event.target.value))
+      // this.instrumentSelect = this.shadowRoot.querySelector('#instrument-select')
+      // this.instrumentSelect.addEventListener('change', event => this.#setInstrument(event.target.value))
+
+      this.#setInstrument('piano')
 
       this.#start()
     }
@@ -175,7 +205,10 @@ customElements.define('pt-keyboard',
     async #start () {
       await Tone.start()
 
-      this.#setInstrument('piano')
+      // Lower latency for better interaction.
+      Tone.setContext(new Tone.Context({ latencyHint: 'interactive' }))
+
+      // this.#setInstrument('piano')
 
       this.midi = await navigator.requestMIDIAccess({ sysex: true })
       this.midi.inputs.forEach(entry => (entry.onmidimessage = this.#onMIDIMessage.bind(this)))

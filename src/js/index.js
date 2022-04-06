@@ -6,7 +6,3 @@
  */
 
 import './components/pt-keyboard'
-
-const keyboard = document.createElement('pt-keyboard')
-const body = document.querySelector('body')
-body.appendChild(keyboard)

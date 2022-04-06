@@ -9,8 +9,8 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
     :host {
-      width: 1.5rem;
-      background-color: #F0F0F0;
+      width: 2.5rem;
+      background-color: #FFFFFF;
       outline: 1px solid black;
     }
   </style>

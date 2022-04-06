@@ -5,8 +5,4 @@
  * @version 1.0.0
  */
 
-import './components/pwd-synth'
-
-const pwd = document.createElement('pwd-synth')
-const body = document.querySelector('body')
-body.appendChild(pwd)
+import './components/pt-keyboard'

@@ -1,11 +1,11 @@
 /**
- * The personal-web-desktop-synth web component module.
+ * The keyboard web component module.
  *
  * @author Adrian Shosholli <as227cw@student.lnu.se>
  * @version 1.0.0
  */
 
-import './components/pwd-synth-note'
+import './components/pt-keyboard-note'
 import * as Tone from 'tone'
 
 const template = document.createElement('template')
@@ -43,7 +43,7 @@ template.innerHTML = `
       width: 100%;
       justify-content: center;
     }
-    .black-notes > pwd-synth-note {
+    .black-notes > pt-keyboard-note {
       background-color: #101010;
       outline: 1px solid white;
     }
@@ -67,72 +67,72 @@ template.innerHTML = `
   <div id="keyboard">
     <div class="octave">
       <div class="white-notes">
-        <pwd-synth-note note="C3"></pwd-synth-note>
-        <pwd-synth-note note="D3"></pwd-synth-note>
-        <pwd-synth-note note="E3"></pwd-synth-note>
-        <pwd-synth-note note="F3"></pwd-synth-note>
-        <pwd-synth-note note="G3"></pwd-synth-note>
-        <pwd-synth-note note="A3"></pwd-synth-note>
-        <pwd-synth-note note="B3"></pwd-synth-note>
+        <pt-keyboard-note note="C3"></pt-keyboard-note>
+        <pt-keyboard-note note="D3"></pt-keyboard-note>
+        <pt-keyboard-note note="E3"></pt-keyboard-note>
+        <pt-keyboard-note note="F3"></pt-keyboard-note>
+        <pt-keyboard-note note="G3"></pt-keyboard-note>
+        <pt-keyboard-note note="A3"></pt-keyboard-note>
+        <pt-keyboard-note note="B3"></pt-keyboard-note>
       </div>
       <div class="black-notes">
-        <pwd-synth-note note="C#3"></pwd-synth-note>
-        <pwd-synth-note note="D#3"></pwd-synth-note>
-        <pwd-synth-note class="invisible"></pwd-synth-note>
-        <pwd-synth-note note="F#3"></pwd-synth-note>
-        <pwd-synth-note note="G#3"></pwd-synth-note>
-        <pwd-synth-note note="A#3"></pwd-synth-note>
+        <pt-keyboard-note note="C#3"></pt-keyboard-note>
+        <pt-keyboard-note note="D#3"></pt-keyboard-note>
+        <pt-keyboard-note class="invisible"></pt-keyboard-note>
+        <pt-keyboard-note note="F#3"></pt-keyboard-note>
+        <pt-keyboard-note note="G#3"></pt-keyboard-note>
+        <pt-keyboard-note note="A#3"></pt-keyboard-note>
       </div>
     </div>
     <div class="octave">
       <div class="white-notes">
-        <pwd-synth-note note="C4"></pwd-synth-note>
-        <pwd-synth-note note="D4"></pwd-synth-note>
-        <pwd-synth-note note="E4"></pwd-synth-note>
-        <pwd-synth-note note="F4"></pwd-synth-note>
-        <pwd-synth-note note="G4"></pwd-synth-note>
-        <pwd-synth-note note="A4"></pwd-synth-note>
-        <pwd-synth-note note="B4"></pwd-synth-note>
+        <pt-keyboard-note note="C4"></pt-keyboard-note>
+        <pt-keyboard-note note="D4"></pt-keyboard-note>
+        <pt-keyboard-note note="E4"></pt-keyboard-note>
+        <pt-keyboard-note note="F4"></pt-keyboard-note>
+        <pt-keyboard-note note="G4"></pt-keyboard-note>
+        <pt-keyboard-note note="A4"></pt-keyboard-note>
+        <pt-keyboard-note note="B4"></pt-keyboard-note>
       </div>
       <div class="black-notes">
-        <pwd-synth-note note="C#4"></pwd-synth-note>
-        <pwd-synth-note note="D#4"></pwd-synth-note>
-        <pwd-synth-note class="invisible"></pwd-synth-note>
-        <pwd-synth-note note="F#4"></pwd-synth-note>
-        <pwd-synth-note note="G#4"></pwd-synth-note>
-        <pwd-synth-note note="A#4"></pwd-synth-note>
+        <pt-keyboard-note note="C#4"></pt-keyboard-note>
+        <pt-keyboard-note note="D#4"></pt-keyboard-note>
+        <pt-keyboard-note class="invisible"></pt-keyboard-note>
+        <pt-keyboard-note note="F#4"></pt-keyboard-note>
+        <pt-keyboard-note note="G#4"></pt-keyboard-note>
+        <pt-keyboard-note note="A#4"></pt-keyboard-note>
       </div>
     </div>
     <div class="octave">
       <div class="white-notes">
-        <pwd-synth-note note="C5"></pwd-synth-note>
-        <pwd-synth-note note="D5"></pwd-synth-note>
-        <pwd-synth-note note="E5"></pwd-synth-note>
-        <pwd-synth-note note="F5"></pwd-synth-note>
-        <pwd-synth-note note="G5"></pwd-synth-note>
-        <pwd-synth-note note="A5"></pwd-synth-note>
-        <pwd-synth-note note="B5"></pwd-synth-note>
+        <pt-keyboard-note note="C5"></pt-keyboard-note>
+        <pt-keyboard-note note="D5"></pt-keyboard-note>
+        <pt-keyboard-note note="E5"></pt-keyboard-note>
+        <pt-keyboard-note note="F5"></pt-keyboard-note>
+        <pt-keyboard-note note="G5"></pt-keyboard-note>
+        <pt-keyboard-note note="A5"></pt-keyboard-note>
+        <pt-keyboard-note note="B5"></pt-keyboard-note>
       </div>
       <div class="black-notes">
-        <pwd-synth-note note="C#5"></pwd-synth-note>
-        <pwd-synth-note note="D#5"></pwd-synth-note>
-        <pwd-synth-note class="invisible"></pwd-synth-note>
-        <pwd-synth-note note="F#5"></pwd-synth-note>
-        <pwd-synth-note note="G#5"></pwd-synth-note>
-        <pwd-synth-note note="A#5"></pwd-synth-note>
+        <pt-keyboard-note note="C#5"></pt-keyboard-note>
+        <pt-keyboard-note note="D#5"></pt-keyboard-note>
+        <pt-keyboard-note class="invisible"></pt-keyboard-note>
+        <pt-keyboard-note note="F#5"></pt-keyboard-note>
+        <pt-keyboard-note note="G#5"></pt-keyboard-note>
+        <pt-keyboard-note note="A#5"></pt-keyboard-note>
       </div>
     </div>
   </div>
 `
 
-customElements.define('pwd-synth',
+customElements.define('pt-keyboard',
   /**
-   * Element representing a pwd-synth.
+   * Element representing a pt-keyboard.
    */
   class extends HTMLElement {
     #synth
     /**
-     * Constructor for pwd-synth.
+     * Constructor for pt-keyboard.
      */
     constructor () {
       super()
@@ -223,7 +223,7 @@ customElements.define('pwd-synth',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#playNote(note)
-        const target = this.shadowRoot.querySelector(`pwd-synth-note[note="${note}"]`)
+        const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
         target.classList.add('playing')
       }
     }
@@ -237,7 +237,7 @@ customElements.define('pwd-synth',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#stopNote(note)
-        const target = this.shadowRoot.querySelector(`pwd-synth-note[note="${note}"]`)
+        const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
         target.classList.remove('playing')
       }
     }

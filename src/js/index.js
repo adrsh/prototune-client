@@ -5,8 +5,8 @@
  * @version 1.0.0
  */
 
-import './components/pwd-synth'
+import './components/pt-keyboard'
 
-const pwd = document.createElement('pwd-synth')
+const keyboard = document.createElement('pt-keyboard')
 const body = document.querySelector('body')
-body.appendChild(pwd)
+body.appendChild(keyboard)

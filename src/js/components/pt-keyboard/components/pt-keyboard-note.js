@@ -1,5 +1,5 @@
 /**
- * The personal-web-desktop-synth-note web component module.
+ * The keyboard note component module.
  *
  * @author Adrian Shosholli <as227cw@student.lnu.se>
  * @version 1.0.0
@@ -16,13 +16,13 @@ template.innerHTML = `
   </style>
 `
 
-customElements.define('pwd-synth-note',
+customElements.define('pt-keyboard-note',
   /**
-   * Element representing a pwd-synth-note.
+   * Element representing a pt-keyboard-note.
    */
   class extends HTMLElement {
     /**
-     * Constructor for pwd-synth-note.
+     * Constructor for pt-keyboard-note.
      */
     constructor () {
       super()

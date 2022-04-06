@@ -227,6 +227,9 @@ customElements.define('pt-keyboard',
       this.keyboard.addEventListener('note-play', event => this.#playNote(event.detail.note))
       this.keyboard.addEventListener('note-stop', event => this.#stopNote(event.detail.note))
 
+      this.addEventListener('msg-play', event => this.#playNote(event.detail.note))
+      this.addEventListener('msg-stop', event => this.#stopNote(event.detail.note))
+
       // this.instrumentSelect = this.shadowRoot.querySelector('#instrument-select')
       // this.instrumentSelect.addEventListener('change', event => this.#setInstrument(event.target.value))
 
@@ -249,7 +252,7 @@ customElements.define('pt-keyboard',
       await Tone.start()
 
       // Lower latency for better interaction.
-      Tone.setContext(new Tone.Context({ latencyHint: 'interactive' }))
+      // Tone.setContext(new Tone.Context({ latencyHint: 'interactive' }))
 
       // this.#setInstrument('piano')
 

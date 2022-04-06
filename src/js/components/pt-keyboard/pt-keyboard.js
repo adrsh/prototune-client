@@ -76,6 +76,25 @@ template.innerHTML = `
   <div id="keyboard">
   <div class="octave">
       <div class="white-notes">
+        <pt-keyboard-note note="C1"></pt-keyboard-note>
+        <pt-keyboard-note note="D1"></pt-keyboard-note>
+        <pt-keyboard-note note="E1"></pt-keyboard-note>
+        <pt-keyboard-note note="F1"></pt-keyboard-note>
+        <pt-keyboard-note note="G1"></pt-keyboard-note>
+        <pt-keyboard-note note="A1"></pt-keyboard-note>
+        <pt-keyboard-note note="B1"></pt-keyboard-note>
+      </div>
+      <div class="black-notes">
+        <pt-keyboard-note note="C#1"></pt-keyboard-note>
+        <pt-keyboard-note note="D#1"></pt-keyboard-note>
+        <pt-keyboard-note class="invisible"></pt-keyboard-note>
+        <pt-keyboard-note note="F#1"></pt-keyboard-note>
+        <pt-keyboard-note note="G#1"></pt-keyboard-note>
+        <pt-keyboard-note note="A#1"></pt-keyboard-note>
+      </div>
+    </div>
+    <div class="octave">
+      <div class="white-notes">
         <pt-keyboard-note note="C2"></pt-keyboard-note>
         <pt-keyboard-note note="D2"></pt-keyboard-note>
         <pt-keyboard-note note="E2"></pt-keyboard-note>
@@ -148,6 +167,30 @@ template.innerHTML = `
         <pt-keyboard-note note="F#5"></pt-keyboard-note>
         <pt-keyboard-note note="G#5"></pt-keyboard-note>
         <pt-keyboard-note note="A#5"></pt-keyboard-note>
+      </div>
+    </div>
+    <div class="octave">
+      <div class="white-notes">
+        <pt-keyboard-note note="C6"></pt-keyboard-note>
+        <pt-keyboard-note note="D6"></pt-keyboard-note>
+        <pt-keyboard-note note="E6"></pt-keyboard-note>
+        <pt-keyboard-note note="F6"></pt-keyboard-note>
+        <pt-keyboard-note note="G6"></pt-keyboard-note>
+        <pt-keyboard-note note="A6"></pt-keyboard-note>
+        <pt-keyboard-note note="B6"></pt-keyboard-note>
+      </div>
+      <div class="black-notes">
+        <pt-keyboard-note note="C#6"></pt-keyboard-note>
+        <pt-keyboard-note note="D#6"></pt-keyboard-note>
+        <pt-keyboard-note class="invisible"></pt-keyboard-note>
+        <pt-keyboard-note note="F#6"></pt-keyboard-note>
+        <pt-keyboard-note note="G#6"></pt-keyboard-note>
+        <pt-keyboard-note note="A#6"></pt-keyboard-note>
+      </div>
+    </div>
+    <div class="octave">
+      <div class="white-notes">
+        <pt-keyboard-note note="C7"></pt-keyboard-note>
       </div>
     </div>
   </div>

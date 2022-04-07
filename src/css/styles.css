@@ -4,11 +4,3 @@ body, html {
 	width: 100%;
 	overflow: hidden;
 }
-body {
-	display: grid;
-	grid-template-rows: 32rem 16rem;
-	grid-template-areas: "." "keyboard";
-}
-pt-keyboard {
-	grid-area: keyboard;
-}

@@ -70,9 +70,6 @@ customElements.define('pt-keyboard-note',
 
       this.addEventListener('pointerdown', this.onPointerDown)
       this.addEventListener('pointerenter', this.onPointerEnter)
-
-      // this.addEventListener('pointerup', event => this.#stopNote())
-      // this.addEventListener('pointerleave', event => this.#stopNote())
     }
 
     /**

@@ -58,21 +58,28 @@ customElements.define('pt-app',
       // This makes it possible to get keypresses on entire app
       this.setAttribute('tabindex', 0)
 
+      this.keyboard = this.shadowRoot.querySelector('pt-keyboard')
+
       this.ws = new WebSocket('ws://localhost:8080')
 
       // Add listeners for message handling only if the connection is open.
       this.ws.addEventListener('open', () => {
         this.ws.addEventListener('message', event => this.#handleMessage(event.data))
 
-        this.keyboard = this.shadowRoot.querySelector('pt-keyboard')
         this.keyboard.addEventListener('note-play', event => {
-          this.#playNote(event.detail.note)
           this.#sendMessage({ note: event.detail.note, action: 'play' })
         })
         this.keyboard.addEventListener('note-stop', event => {
-          this.#stopNote(event.detail.note)
           this.#sendMessage({ note: event.detail.note, action: 'stop' })
         })
+      })
+
+      this.keyboard.addEventListener('note-play', event => {
+        this.#playNote(event.detail.note)
+      })
+
+      this.keyboard.addEventListener('note-stop', event => {
+        this.#stopNote(event.detail.note)
       })
 
       this.#setInstrument('piano')
@@ -124,7 +131,8 @@ customElements.define('pt-app',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#playNote(note)
-        const target = this.keyboard.querySelector(`pt-keyboard-note[note="${note}"]`)
+        // This works but feels wrong for some reason.
+        const target = this.keyboard.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
         target.classList.add('playing')
       }
     }
@@ -138,8 +146,8 @@ customElements.define('pt-app',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#stopNote(note)
-        // const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
-        // target.classList.remove('playing')
+        const target = this.keyboard.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
+        target.classList.remove('playing')
       }
     }
 

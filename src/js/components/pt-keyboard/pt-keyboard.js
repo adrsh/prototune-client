@@ -6,7 +6,6 @@
  */
 
 import './components/pt-keyboard-note'
-import * as Tone from 'tone'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -51,20 +50,7 @@ template.innerHTML = `
     .invisible {
       visibility: hidden;
     }
-    #options {
-      display: flex;
-      flex-direction: column;
-    }
   </style>
-  <!-- <div id="options">
-    <label for="instrument-select">Instrument</label>
-    <select name="instruments" id="instrument-select">
-      <option value="piano">Piano</option>
-      <option value="casio">Casio</option>
-      <option value="amsynth">AMSynth</option>
-      <option value="fmsynth">FMSynth</option>
-    </select>
-  </div> -->
   <div id="keyboard">
   <div class="octave">
       <div class="white-notes">
@@ -206,39 +192,18 @@ customElements.define('pt-keyboard',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      this.keyboard = this.shadowRoot.querySelector('#keyboard')
-      // this.keyboard.addEventListener('note-play', event => this.#playNote(event.detail.note))
-      // this.keyboard.addEventListener('note-stop', event => this.#stopNote(event.detail.note))
-
-      // this.addEventListener('msg-play', event => this.#playNote(event.detail.note))
-      // this.addEventListener('msg-stop', event => this.#stopNote(event.detail.note))
-
-      // this.instrumentSelect = this.shadowRoot.querySelector('#instrument-select')
-      // this.instrumentSelect.addEventListener('change', event => this.#setInstrument(event.target.value))
-
-      // this.#setInstrument('piano')
-
-      // this.#start()
     }
 
     /**
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
-      // this.#synth.dispose()
     }
 
     /**
      * Starts Tone and initializes instrument and tries to request MIDI access.
      */
     async #start () {
-      // await Tone.start()
-
-      // Lower latency for better interaction.
-      // Tone.setContext(new Tone.Context({ latencyHint: 'interactive' }))
-
-      // this.#setInstrument('piano')
-
       this.midi = await navigator.requestMIDIAccess({ sysex: true })
       this.midi.inputs.forEach(entry => (entry.onmidimessage = this.#onMIDIMessage.bind(this)))
     }
@@ -256,33 +221,5 @@ customElements.define('pt-keyboard',
         // this.#playNote(Tone.Midi(event.data[1]), (event.data[2] / 128).toFixed(3))
       }
     }
-
-    /**
-     * Plays a note using the keyboard.
-     *
-     * @param {KeyboardEvent} event Event fired by keydown
-     */
-    /* #keyDown (event) {
-      const note = this.#getNoteFromKey(event.code)
-      if (note) {
-        this.#playNote(note)
-        const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
-        target.classList.add('playing')
-      }
-    } */
-
-    /**
-     * Releases a note that was played using the keyboard.
-     *
-     * @param {KeyboardEvent} event Event fired by keyup
-     */
-    /* #keyUp (event) {
-      const note = this.#getNoteFromKey(event.code)
-      if (note) {
-        this.#stopNote(note)
-        const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
-        target.classList.remove('playing')
-      }
-    } */
   }
 )

@@ -55,7 +55,7 @@ customElements.define('pt-app',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      // This makes it possible to get keypresses on entire app
+      // This makes it possible to get keypresses on entire app.
       this.setAttribute('tabindex', 0)
 
       this.keyboard = this.shadowRoot.querySelector('pt-keyboard')
@@ -66,23 +66,17 @@ customElements.define('pt-app',
       this.ws.addEventListener('open', () => {
         this.ws.addEventListener('message', event => this.#handleMessage(event.data))
 
-        this.keyboard.addEventListener('note-play', event => {
-          this.#sendMessage({ note: event.detail.note, action: 'play' })
-        })
-        this.keyboard.addEventListener('note-stop', event => {
-          this.#sendMessage({ note: event.detail.note, action: 'stop' })
-        })
+        this.keyboard.addEventListener('note-play', event => this.#sendMessage({ note: event.detail.note, action: 'play' }))
+        this.keyboard.addEventListener('note-stop', event => this.#sendMessage({ note: event.detail.note, action: 'stop' }))
       })
 
-      this.keyboard.addEventListener('note-play', event => {
-        this.#playNote(event.detail.note)
-      })
-
-      this.keyboard.addEventListener('note-stop', event => {
-        this.#stopNote(event.detail.note)
-      })
+      this.keyboard.addEventListener('note-play', event => this.#playNote(event.detail.note))
+      this.keyboard.addEventListener('note-stop', event => this.#stopNote(event.detail.note))
 
       this.#setInstrument('piano')
+
+      // This bugs out once in a while, but decreases latency.
+      Tone.setContext(new Tone.Context({ latencyHint: 'interactive' }))
 
       // Handle key presses.
       this.addEventListener('keydown', event => {
@@ -100,7 +94,7 @@ customElements.define('pt-app',
     }
 
     /**
-     * Handles messages from Websocket server
+     * Handles messages from Websocket server.
      *
      * @param {Blob} data Data to be handled.
      */

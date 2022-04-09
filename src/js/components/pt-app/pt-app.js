@@ -33,7 +33,9 @@ template.innerHTML = `
       <option value="fmsynth">FMSynth</option>
     </select>
   </div> -->
+  <pt-piano-roll></pt-piano-roll>
   <pt-keyboard></pt-keyboard>
+  <button id="play">play</button>
 `
 
 customElements.define('pt-app',
@@ -49,6 +51,8 @@ customElements.define('pt-app',
       super()
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
+
+      this.button = this.shadowRoot.querySelector('#play')
     }
 
     /**
@@ -62,7 +66,7 @@ customElements.define('pt-app',
 
       this.ws = new WebSocket('ws://localhost:8080')
 
-      // Add listeners for message handling only if the connection is open.
+      // Add listeners for message handling only if the connection is open. The question is if it can get opened multiple times... Maybe check for close and remove listeners.
       this.ws.addEventListener('open', () => {
         this.ws.addEventListener('message', event => this.#handleMessage(event.data))
 
@@ -85,6 +89,11 @@ customElements.define('pt-app',
         }
       })
       this.addEventListener('keyup', event => this.#keyUp(event))
+
+      this.button.addEventListener('click', () => {
+        Tone.start()
+        Tone.Transport.start()
+      })
     }
 
     /**

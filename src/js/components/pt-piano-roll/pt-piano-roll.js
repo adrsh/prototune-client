@@ -56,27 +56,23 @@ customElements.define('pt-piano-roll',
      */
     connectedCallback () {
       const synth = new Tone.PolySynth(Tone.Synth).toDestination()
-      /* Tone.Transport.schedule((time) => synth.triggerAttack('C3', time), '0:0:0')
-      Tone.Transport.schedule((time) => synth.triggerRelease('C3', time), '0:1:0')
-      Tone.Transport.schedule((time) => synth.triggerAttack('C3', time), '0:1:0')
-      Tone.Transport.schedule((time) => synth.triggerRelease('C3', time), '0:2:0')
-      Tone.Transport.schedule((time) => synth.triggerAttack('C3', time), '0:2:0')
-      Tone.Transport.schedule((time) => synth.triggerRelease('C3', time), '0:2:1')
-      Tone.Transport.schedule((time) => synth.triggerAttack('C3', time), '0:3:0')
-      Tone.Transport.schedule((time) => synth.triggerRelease('C3', time), '0:3:1') */
       const grid = this.shadowRoot.querySelector('#grid')
       for (let i = 0; i < 64; i++) {
         const div = document.createElement('div')
         div.id = i
         div.addEventListener('click', event => {
+          event.target.toggleAttribute('selected')
           event.target.classList.toggle('selected')
           Tone.Transport.schedule((time) => synth.triggerAttack('C4', time), `0:0:${event.target.id}`)
-          Tone.Transport.schedule((time) => synth.triggerRelease('C4', time), `0:0:${parseInt(event.target.id) + 1}`)
+          // Eftersom det just nu loopas varje 64 så triggas releasen vid 0 om den skulle gjorts vid 64
+          Tone.Transport.schedule((time) => synth.triggerRelease('C4', time), `0:0:${(parseInt(event.target.id) + 1) % 64}`)
         })
         grid.appendChild(div)
       }
       this.button.addEventListener('click', () => {
         Tone.start()
+        Tone.Transport.setLoopPoints(0, '0:0:64')
+        Tone.Transport.loop = true
         Tone.Transport.start()
       })
     }

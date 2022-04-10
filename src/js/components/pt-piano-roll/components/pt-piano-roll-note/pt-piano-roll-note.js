@@ -39,19 +39,25 @@ customElements.define('pt-piano-roll-note',
     connectedCallback () {
       this.style.top = `${this.y}rem`
       this.style.left = `${this.x}rem`
-      Tone.Transport.schedule((time) => this.synth.triggerAttack(Tone.Midi(this.note), time), `0:0:${this.x}`)
+      this.attack = Tone.Transport.schedule((time) => this.synth.triggerAttack(Tone.Midi(this.note), time), `0:0:${this.x}`)
       // Eftersom det just nu loopas varje 64 så triggas releasen vid 0 om den skulle gjorts vid 64
-      Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${(parseInt(this.x) + 1) % 64}`)
-      this.addEventListener('click', event => {
+      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${(parseInt(this.x) + 1) % 64}`)
+      this.addEventListener('mousedown', event => {
         // Stops grid underneath from getting triggered by the click.
         event.stopPropagation()
+        if (event.button === 2) {
+          this.remove()
+        }
       })
+      this.addEventListener('contextmenu', event => event.preventDefault())
     }
 
     /**
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
+      Tone.Transport.clear(this.attack)
+      Tone.Transport.clear(this.release)
     }
 
     /**

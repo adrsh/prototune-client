@@ -62,15 +62,19 @@ customElements.define('pt-piano-roll',
     connectedCallback () {
       const synth = new Tone.PolySynth(Tone.Synth).toDestination()
       const grid = this.shadowRoot.querySelector('#grid')
-      grid.addEventListener('click', event => {
-        // console.log(Math.trunc(event.offsetX / 16), Math.trunc(event.offsetY / 16))
-        const note = document.createElement('pt-piano-roll-note')
-        note.synth = synth
-        note.setAttribute('note', 108 - Math.trunc(event.offsetY / 16))
-        note.setAttribute('x', Math.trunc(event.offsetX / 16))
-        note.setAttribute('y', Math.trunc(event.offsetY / 16))
-        grid.append(note)
+      grid.addEventListener('mousedown', event => {
+        if (event.button === 0) {
+          // console.log(Math.trunc(event.offsetX / 16), Math.trunc(event.offsetY / 16))
+          const note = document.createElement('pt-piano-roll-note')
+          // Borde vara okej att göra så här?
+          note.synth = synth
+          note.setAttribute('note', 108 - Math.trunc(event.offsetY / 16))
+          note.setAttribute('x', Math.trunc(event.offsetX / 16))
+          note.setAttribute('y', Math.trunc(event.offsetY / 16))
+          grid.append(note)
+        }
       })
+      grid.addEventListener('contextmenu', event => event.preventDefault())
       /* grid.addEventListener('click', event => {
         console.log(Math.trunc(event.offsetX / 16), Math.trunc(event.offsetY / 16))
         const div = document.createElement('div')

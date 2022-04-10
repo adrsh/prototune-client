@@ -22,6 +22,7 @@ template.innerHTML = `
       width: 64rem;
       height: 88rem;
       position: relative;
+      outline: 1px grey solid;
     }
     #grid > div {
       position: relative;
@@ -66,7 +67,7 @@ customElements.define('pt-piano-roll',
         if (event.button === 0) {
           // console.log(Math.trunc(event.offsetX / 16), Math.trunc(event.offsetY / 16))
           const note = document.createElement('pt-piano-roll-note')
-          // Borde vara okej att göra så här?
+          // Borde vara okej att göra så här? Frågan är om den är samma om man ändrar här...
           note.synth = synth
           note.setAttribute('note', 108 - Math.trunc(event.offsetY / 16))
           note.setAttribute('x', Math.trunc(event.offsetX / 16))
@@ -75,34 +76,6 @@ customElements.define('pt-piano-roll',
         }
       })
       grid.addEventListener('contextmenu', event => event.preventDefault())
-      /* grid.addEventListener('click', event => {
-        console.log(Math.trunc(event.offsetX / 16), Math.trunc(event.offsetY / 16))
-        const div = document.createElement('div')
-        div.style.top = `${Math.trunc(event.offsetY / 16)}rem`
-        div.style.left = `${Math.trunc(event.offsetX / 16)}rem`
-        Tone.Transport.schedule((time) => synth.triggerAttack(Tone.Midi(60 - Math.trunc(event.offsetY / 16)), time), `0:0:${Math.trunc(event.offsetX / 16)}`)
-        // Eftersom det just nu loopas varje 64 så triggas releasen vid 0 om den skulle gjorts vid 64
-        Tone.Transport.schedule((time) => synth.triggerRelease(Tone.Midi(60 - Math.trunc(event.offsetY / 16)), time), `0:0:${(Math.trunc(event.offsetX / 16) + 1) % 64}`)
-        grid.append(div)
-      }) */
-      /* for (let i = 0; i < 64; i++) {
-        const div = document.createElement('div')
-        div.id = i
-        div.addEventListener('click', event => {
-          event.target.toggleAttribute('selected')
-          event.target.classList.toggle('selected')
-          Tone.Transport.schedule((time) => synth.triggerAttack('C4', time), `0:0:${event.target.id}`)
-          // Eftersom det just nu loopas varje 64 så triggas releasen vid 0 om den skulle gjorts vid 64
-          Tone.Transport.schedule((time) => synth.triggerRelease('C4', time), `0:0:${(parseInt(event.target.id) + 1) % 64}`)
-        })
-        grid.appendChild(div)
-      } */
-      /* this.button.addEventListener('click', () => {
-        Tone.start()
-        Tone.Transport.setLoopPoints(0, '0:0:64')
-        Tone.Transport.loop = true
-        Tone.Transport.start()
-      }) */
     }
 
     /**

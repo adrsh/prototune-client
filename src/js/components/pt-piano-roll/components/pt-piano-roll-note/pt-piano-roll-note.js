@@ -15,8 +15,23 @@ template.innerHTML = `
       background-color: #404040;
       height: 1rem;
       width: 1rem;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      border-right: 0.2rem #808080 solid;
+      box-sizing: border-box;
+    }
+    #resizer {
+      position: absolute;
+      height: 1rem;
+      width: 0.2rem;
+      right: -0.2rem;
+    }
+    #resizer:hover {
+      cursor: e-resize;
     }
   </style>
+  <div id="resizer"></div>
 `
 
 customElements.define('pt-piano-roll-note',
@@ -31,6 +46,8 @@ customElements.define('pt-piano-roll-note',
       super()
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
+
+      this.resizer = this.shadowRoot.querySelector('#resizer')
     }
 
     /**
@@ -49,7 +66,54 @@ customElements.define('pt-piano-roll-note',
           this.remove()
         }
       })
+
       this.addEventListener('contextmenu', event => event.preventDefault())
+      this.resizer.addEventListener('pointerdown', event => this.#startResizing(event))
+      this.resizer.addEventListener('pointerup', event => this.#stopResizing(event))
+      this.resizer.addEventListener('pointerleave', event => this.#stopResizing(event))
+
+      /**
+       * Handles resizing and is here to be able to remove the event listener.
+       *
+       * @param {PointerEvent} event Pointer event.
+       * @returns {void}
+       */
+      this.onResize = event => this.#resize(event)
+    }
+
+    /**
+     * Starts listening to pointermove and increases resizer hitbox.
+     *
+     * @param {PointerEvent} event Pointer event.
+     */
+    #startResizing (event) {
+      if (event.button === 0) {
+        this.startWidth = this.offsetWidth
+        document.addEventListener('pointermove', this.onResize)
+        this.resizer.style.transform = 'scale(50, 10)'
+      }
+    }
+
+    /**
+     * Stops resizing the note block and removes the pointermove listener.
+     *
+     * @param {PointerEvent} event Pointer event.
+     */
+    #stopResizing (event) {
+      document.removeEventListener('pointermove', this.onResize)
+      this.resizer.style.transform = 'scale(1)'
+    }
+
+    /**
+     * Resizing the note block using pointer movement.
+     *
+     * @param {PointerEvent} event Pointer event.
+     */
+    #resize (event) {
+      this.startWidth += event.movementX
+      if (this.startWidth > 16) {
+        this.style.width = `${Math.round((this.startWidth) / 16)}rem`
+      }
     }
 
     /**

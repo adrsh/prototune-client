@@ -6,20 +6,26 @@
  */
 
 import * as Tone from 'tone'
+import './components/pt-piano-roll-note'
 
 const template = document.createElement('template')
 template.innerHTML = `
   <style>
+    :host {
+      overflow-y: scroll;
+    }
     #grid {
       background-size: 1rem 1rem;
       background-image:
         linear-gradient(to right, grey 1px, transparent 1px),
         linear-gradient(to bottom, grey 1px, transparent 1px);
-      display: grid;
-      grid-template-columns: repeat(64, 1rem);
       width: 64rem;
+      height: 88rem;
+      position: relative;
     }
     #grid > div {
+      position: relative;
+      background-color: #404040;
       height: 1rem;
       width: 1rem;
     }
@@ -32,7 +38,6 @@ template.innerHTML = `
   </style>
   <div id="grid">
   </div>
-  <button id="play">Play</button>
 `
 
 customElements.define('pt-piano-roll',
@@ -57,7 +62,26 @@ customElements.define('pt-piano-roll',
     connectedCallback () {
       const synth = new Tone.PolySynth(Tone.Synth).toDestination()
       const grid = this.shadowRoot.querySelector('#grid')
-      for (let i = 0; i < 64; i++) {
+      grid.addEventListener('click', event => {
+        // console.log(Math.trunc(event.offsetX / 16), Math.trunc(event.offsetY / 16))
+        const note = document.createElement('pt-piano-roll-note')
+        note.synth = synth
+        note.setAttribute('note', 108 - Math.trunc(event.offsetY / 16))
+        note.setAttribute('x', Math.trunc(event.offsetX / 16))
+        note.setAttribute('y', Math.trunc(event.offsetY / 16))
+        grid.append(note)
+      })
+      /* grid.addEventListener('click', event => {
+        console.log(Math.trunc(event.offsetX / 16), Math.trunc(event.offsetY / 16))
+        const div = document.createElement('div')
+        div.style.top = `${Math.trunc(event.offsetY / 16)}rem`
+        div.style.left = `${Math.trunc(event.offsetX / 16)}rem`
+        Tone.Transport.schedule((time) => synth.triggerAttack(Tone.Midi(60 - Math.trunc(event.offsetY / 16)), time), `0:0:${Math.trunc(event.offsetX / 16)}`)
+        // Eftersom det just nu loopas varje 64 så triggas releasen vid 0 om den skulle gjorts vid 64
+        Tone.Transport.schedule((time) => synth.triggerRelease(Tone.Midi(60 - Math.trunc(event.offsetY / 16)), time), `0:0:${(Math.trunc(event.offsetX / 16) + 1) % 64}`)
+        grid.append(div)
+      }) */
+      /* for (let i = 0; i < 64; i++) {
         const div = document.createElement('div')
         div.id = i
         div.addEventListener('click', event => {
@@ -68,13 +92,13 @@ customElements.define('pt-piano-roll',
           Tone.Transport.schedule((time) => synth.triggerRelease('C4', time), `0:0:${(parseInt(event.target.id) + 1) % 64}`)
         })
         grid.appendChild(div)
-      }
-      this.button.addEventListener('click', () => {
+      } */
+      /* this.button.addEventListener('click', () => {
         Tone.start()
         Tone.Transport.setLoopPoints(0, '0:0:64')
         Tone.Transport.loop = true
         Tone.Transport.start()
-      })
+      }) */
     }
 
     /**

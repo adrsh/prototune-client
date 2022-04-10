@@ -12,19 +12,25 @@ template.innerHTML = `
   <style>
     :host {
       display: grid;
-      grid-template-rows: 32rem 16rem;
-      grid-template-areas: "." "keyboard";
+      grid-template-rows: 40rem 2rem 16rem;
+      grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
+      grid-template-areas:  ". piano-roll"
+                            "options options"
+                            "keyboard keyboard";
     }
     pt-keyboard {
       grid-area: keyboard;
-      display: flex;
-      flex-direction: column;
-      overflow-x: auto;
-      justify-content: center;
-      align-items: center;
+      overflow-x: scroll;
+    }
+    pt-piano-roll {
+      grid-area: piano-roll;
+    }
+    #options {
+      grid-area: options;
     }
   </style>
-  <!-- <div id="options">
+  <pt-piano-roll></pt-piano-roll>
+  <div id="options">
     <label for="instrument-select">Instrument</label>
     <select name="instruments" id="instrument-select">
       <option value="piano">Piano</option>
@@ -32,10 +38,9 @@ template.innerHTML = `
       <option value="amsynth">AMSynth</option>
       <option value="fmsynth">FMSynth</option>
     </select>
-  </div> -->
-  <pt-piano-roll></pt-piano-roll>
+    <button id="play">play</button>
+  </div>
   <pt-keyboard></pt-keyboard>
-  <button id="play">play</button>
 `
 
 customElements.define('pt-app',
@@ -92,6 +97,8 @@ customElements.define('pt-app',
 
       this.button.addEventListener('click', () => {
         Tone.start()
+        Tone.Transport.setLoopPoints(0, '0:0:64')
+        Tone.Transport.loop = true
         Tone.Transport.start()
       })
     }

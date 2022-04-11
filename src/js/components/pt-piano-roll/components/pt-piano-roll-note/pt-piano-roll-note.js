@@ -69,8 +69,6 @@ customElements.define('pt-piano-roll-note',
 
       this.addEventListener('contextmenu', event => event.preventDefault())
       this.resizer.addEventListener('pointerdown', event => this.#startResizing(event))
-      this.resizer.addEventListener('pointerup', event => this.#stopResizing(event))
-      this.resizer.addEventListener('pointerleave', event => this.#stopResizing(event))
 
       /**
        * Handles resizing and is here to be able to remove the event listener.
@@ -79,6 +77,14 @@ customElements.define('pt-piano-roll-note',
        * @returns {void}
        */
       this.onResize = event => this.#resize(event)
+
+      /**
+       * Handles stopping resizing and is here to be able to remove the event listener.
+       *
+       * @param {PointerEvent} event Pointer event.
+       * @returns {void}
+       */
+      this.onStopResizing = event => this.#stopResizing()
     }
 
     /**
@@ -88,9 +94,10 @@ customElements.define('pt-piano-roll-note',
      */
     #startResizing (event) {
       if (event.button === 0) {
-        this.startWidth = this.offsetWidth
+        document.addEventListener('pointerup', this.onStopResizing)
+        document.addEventListener('pointerleave', this.onStopResizing)
         document.addEventListener('pointermove', this.onResize)
-        this.resizer.style.transform = 'scale(50, 10)'
+        this.startWidth = this.offsetWidth
       }
     }
 
@@ -100,8 +107,12 @@ customElements.define('pt-piano-roll-note',
      * @param {PointerEvent} event Pointer event.
      */
     #stopResizing (event) {
+      document.removeEventListener('pointerup', this.onStopResizing)
+      document.removeEventListener('pointerleave', this.onStopResizing)
       document.removeEventListener('pointermove', this.onResize)
-      this.resizer.style.transform = 'scale(1)'
+      this.length = Math.round((this.startWidth) / 16)
+      Tone.Transport.clear(this.release)
+      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${(parseInt(this.x) + this.length) % 64}`)
     }
 
     /**

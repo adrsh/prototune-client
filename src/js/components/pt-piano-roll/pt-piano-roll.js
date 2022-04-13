@@ -72,6 +72,7 @@ customElements.define('pt-piano-roll',
           note.setAttribute('note', 108 - Math.trunc(event.offsetY / 16))
           note.setAttribute('x', Math.trunc(event.offsetX / 16))
           note.setAttribute('y', Math.trunc(event.offsetY / 16))
+          note.setAttribute('length', 1)
           grid.append(note)
         }
       })

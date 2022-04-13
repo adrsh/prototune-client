@@ -56,9 +56,10 @@ customElements.define('pt-piano-roll-note',
     connectedCallback () {
       this.style.top = `${this.y}rem`
       this.style.left = `${this.x}rem`
+
       this.attack = Tone.Transport.schedule((time) => this.synth.triggerAttack(Tone.Midi(this.note), time), `0:0:${this.x}`)
-      // Eftersom det just nu loopas varje 64 så triggas releasen vid 0 om den skulle gjorts vid 64
-      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${(parseInt(this.x) + 1) % 64}`)
+      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${this.x + this.length}`)
+
       this.addEventListener('mousedown', event => {
         // Stops grid underneath from getting triggered by the click.
         event.stopPropagation()
@@ -68,11 +69,6 @@ customElements.define('pt-piano-roll-note',
       })
 
       this.addEventListener('pointerdown', event => this.#startMoving(event))
-      /* this.addEventListener('pointerup', event => {
-        if (event.button === 0) {
-          this.#stopMoving()
-        }
-      }) */
 
       this.addEventListener('contextmenu', event => event.preventDefault())
 
@@ -108,7 +104,7 @@ customElements.define('pt-piano-roll-note',
        * @param {PointerEvent} event Pointer event.
        * @returns {void}
        */
-      this.onStopResizing = event => this.#stopResizing()
+      this.onStopResizing = event => this.#stopResizing(event)
     }
 
     /**
@@ -132,16 +128,20 @@ customElements.define('pt-piano-roll-note',
      * @param {PointerEvent} event Pointer event.
      */
     #moving (event) {
+      // Accumulates the total movement.
       this.movementX += event.movementX
       this.movementY += event.movementY
 
-      // Maybe fix this for better readability
-      if (Math.round(this.movementX / 16) + parseInt(this.x) >= 0) {
-        this.style.left = Math.round(this.movementX / 16) + parseInt(this.x) + 'rem'
+      // Calculated the new position.
+      this.positionX = Math.round(this.movementX / 16) + this.x
+      this.positionY = Math.round(this.movementY / 16) + this.y
+
+      if (this.positionX >= 0) {
+        this.style.left = this.positionX + 'rem'
       }
 
-      if (Math.round(this.movementY / 16) + parseInt(this.y) >= 0) {
-        this.style.top = Math.round(this.movementY / 16) + parseInt(this.y) + 'rem'
+      if (this.positionY >= 0) {
+        this.style.top = this.positionY + 'rem'
       }
     }
 
@@ -155,8 +155,25 @@ customElements.define('pt-piano-roll-note',
       document.removeEventListener('pointerup', this.onStopMoving)
       document.removeEventListener('pointerleave', this.onStopMoving)
 
-      this.setAttribute('x', Math.round(this.movementX / 16) + parseInt(this.x))
-      this.setAttribute('y', Math.round(this.movementY / 16) + parseInt(this.y))
+      if (this.positionX >= 0) {
+        this.setAttribute('x', this.positionX)
+      } else {
+        this.setAttribute('x', 0)
+      }
+
+      if (this.positionY >= 0) {
+        this.setAttribute('y', this.positionY)
+      } else {
+        this.setAttribute('y', 0)
+      }
+
+      this.setAttribute('note', 108 - this.y)
+
+      Tone.Transport.clear(this.attack)
+      Tone.Transport.clear(this.release)
+
+      this.attack = Tone.Transport.schedule((time) => this.synth.triggerAttack(Tone.Midi(this.note), time), `0:0:${this.x}`)
+      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${this.x + this.length}`)
     }
 
     /**
@@ -165,6 +182,7 @@ customElements.define('pt-piano-roll-note',
      * @param {PointerEvent} event Pointer event.
      */
     #startResizing (event) {
+      event.stopPropagation()
       if (event.button === 0) {
         document.addEventListener('pointerup', this.onStopResizing)
         document.addEventListener('pointerleave', this.onStopResizing)
@@ -182,10 +200,11 @@ customElements.define('pt-piano-roll-note',
       document.removeEventListener('pointerup', this.onStopResizing)
       document.removeEventListener('pointerleave', this.onStopResizing)
       document.removeEventListener('pointermove', this.onResize)
-      this.length = Math.round((this.startWidth) / 16)
-      // TODO: Fix bug with note that spans all 64 and does not release after loop. But this problem does not exist if there is no loop.
+
+      this.setAttribute('length', Math.round((this.startWidth) / 16))
+
       Tone.Transport.clear(this.release)
-      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${(parseInt(this.x) + this.length)}`)
+      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${this.x + this.length}`)
     }
 
     /**
@@ -214,7 +233,7 @@ customElements.define('pt-piano-roll-note',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['note', 'x', 'y']
+      return ['note', 'x', 'y', 'length']
     }
 
     /**
@@ -226,14 +245,15 @@ customElements.define('pt-piano-roll-note',
      */
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'note') {
-        this.note = newValue
-        // this.setAttribute('y', )
+        this.note = parseInt(newValue)
       } else if (name === 'x') {
-        this.x = newValue
+        this.x = parseInt(newValue)
         this.style.left = `${this.x}rem`
       } else if (name === 'y') {
-        this.y = newValue
+        this.y = parseInt(newValue)
         this.style.top = `${this.y}rem`
+      } else if (name === 'length') {
+        this.length = parseInt(newValue)
       }
     }
   }

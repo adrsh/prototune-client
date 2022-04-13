@@ -67,8 +67,32 @@ customElements.define('pt-piano-roll-note',
         }
       })
 
+      this.addEventListener('pointerdown', event => this.#startMoving(event))
+      /* this.addEventListener('pointerup', event => {
+        if (event.button === 0) {
+          this.#stopMoving()
+        }
+      }) */
+
       this.addEventListener('contextmenu', event => event.preventDefault())
+
       this.resizer.addEventListener('pointerdown', event => this.#startResizing(event))
+
+      /**
+       * Handles moving and is here to be able to remove the event listener.
+       *
+       * @param {PointerEvent} event Pointer event.
+       * @returns {void}
+       */
+      this.onMoving = event => this.#moving(event)
+
+      /**
+       * Handles stopping moving and is here to be able to remove the event listener.
+       *
+       * @param {PointerEvent} event Pointer event.
+       * @returns {void}
+       */
+      this.onStopMoving = event => this.#stopMoving(event)
 
       /**
        * Handles resizing and is here to be able to remove the event listener.
@@ -85,6 +109,54 @@ customElements.define('pt-piano-roll-note',
        * @returns {void}
        */
       this.onStopResizing = event => this.#stopResizing()
+    }
+
+    /**
+     * Enables moving.
+     *
+     * @param {PointerEvent} event Pointer event.
+     */
+    #startMoving (event) {
+      if (event.button === 0) {
+        document.addEventListener('pointermove', this.onMoving)
+        document.addEventListener('pointerup', this.onStopMoving)
+        document.addEventListener('pointerleave', this.onStopMoving)
+        this.movementX = 0
+        this.movementY = 0
+      }
+    }
+
+    /**
+     * Moving note block using pointer data.
+     *
+     * @param {PointerEvent} event Pointer event.
+     */
+    #moving (event) {
+      this.movementX += event.movementX
+      this.movementY += event.movementY
+
+      // Maybe fix this for better readability
+      if (Math.round(this.movementX / 16) + parseInt(this.x) >= 0) {
+        this.style.left = Math.round(this.movementX / 16) + parseInt(this.x) + 'rem'
+      }
+
+      if (Math.round(this.movementY / 16) + parseInt(this.y) >= 0) {
+        this.style.top = Math.round(this.movementY / 16) + parseInt(this.y) + 'rem'
+      }
+    }
+
+    /**
+     * Handles when note block is not being moved anymore.
+     *
+     * @param {PointerEvent} event Pointer event.
+     */
+    #stopMoving (event) {
+      document.removeEventListener('pointermove', this.onMoving)
+      document.removeEventListener('pointerup', this.onStopMoving)
+      document.removeEventListener('pointerleave', this.onStopMoving)
+
+      this.setAttribute('x', Math.round(this.movementX / 16) + parseInt(this.x))
+      this.setAttribute('y', Math.round(this.movementY / 16) + parseInt(this.y))
     }
 
     /**
@@ -111,8 +183,9 @@ customElements.define('pt-piano-roll-note',
       document.removeEventListener('pointerleave', this.onStopResizing)
       document.removeEventListener('pointermove', this.onResize)
       this.length = Math.round((this.startWidth) / 16)
+      // TODO: Fix bug with note that spans all 64 and does not release after loop. But this problem does not exist if there is no loop.
       Tone.Transport.clear(this.release)
-      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${(parseInt(this.x) + this.length) % 64}`)
+      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${(parseInt(this.x) + this.length)}`)
     }
 
     /**

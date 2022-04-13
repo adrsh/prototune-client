@@ -97,7 +97,7 @@ customElements.define('pt-app',
 
       this.button.addEventListener('click', () => {
         Tone.start()
-        Tone.Transport.setLoopPoints(0, '0:0:64')
+        Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
         Tone.Transport.loop = true
         Tone.Transport.start()
       })

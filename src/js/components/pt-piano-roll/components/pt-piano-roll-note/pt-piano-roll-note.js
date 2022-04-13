@@ -136,13 +136,18 @@ customElements.define('pt-piano-roll-note',
       this.positionX = Math.round(this.movementX / 16) + this.x
       this.positionY = Math.round(this.movementY / 16) + this.y
 
-      if (this.positionX >= 0) {
-        this.style.left = this.positionX + 'rem'
+      if (this.positionX < 0) {
+        this.positionX = 0
       }
 
-      if (this.positionY >= 0) {
-        this.style.top = this.positionY + 'rem'
+      if (this.positionY < 0) {
+        this.positionY = 0
+      } else if (this.positionY > 87) {
+        this.positionY = 87
       }
+
+      this.style.left = this.positionX + 'rem'
+      this.style.top = this.positionY + 'rem'
     }
 
     /**
@@ -155,17 +160,8 @@ customElements.define('pt-piano-roll-note',
       document.removeEventListener('pointerup', this.onStopMoving)
       document.removeEventListener('pointerleave', this.onStopMoving)
 
-      if (this.positionX >= 0) {
-        this.setAttribute('x', this.positionX)
-      } else {
-        this.setAttribute('x', 0)
-      }
-
-      if (this.positionY >= 0) {
-        this.setAttribute('y', this.positionY)
-      } else {
-        this.setAttribute('y', 0)
-      }
+      this.setAttribute('x', this.positionX)
+      this.setAttribute('y', this.positionY)
 
       this.setAttribute('note', 108 - this.y)
 
@@ -244,6 +240,7 @@ customElements.define('pt-piano-roll-note',
      * @param {any} newValue the new attribute value.
      */
     attributeChangedCallback (name, oldValue, newValue) {
+      // TODO: Add limit checking for everything.
       if (name === 'note') {
         this.note = parseInt(newValue)
       } else if (name === 'x') {

@@ -62,17 +62,29 @@ customElements.define('pt-piano-roll-note',
 
       this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
 
-      this.addEventListener('mousedown', event => {
+      // Remove itself if right mouse button is clicked.
+      this.addEventListener('pointerdown', event => {
         // Stops grid underneath from getting triggered by the click.
-        event.stopPropagation()
+        event.stopImmediatePropagation()
         if (event.button === 2) {
+          this.remove()
+        } else if (event.button === 0) {
+          this.#startMoving(event)
+        }
+      })
+
+      // Remove if right click is held while hovered.
+      this.addEventListener('pointerenter', event => {
+        event.stopPropagation()
+        if (event.buttons === 2) {
           this.remove()
         }
       })
 
-      this.addEventListener('pointerdown', event => this.#startMoving(event))
+      // this.addEventListener('pointerdown', event => this.#startMoving(event))
 
       this.addEventListener('contextmenu', event => event.preventDefault())
+      this.addEventListener('dragstart', event => event.preventDefault())
 
       this.resizer.addEventListener('pointerdown', event => this.#startResizing(event))
 

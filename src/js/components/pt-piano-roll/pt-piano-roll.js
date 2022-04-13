@@ -63,7 +63,7 @@ customElements.define('pt-piano-roll',
     connectedCallback () {
       const synth = new Tone.PolySynth(Tone.Synth).toDestination()
       const grid = this.shadowRoot.querySelector('#grid')
-      grid.addEventListener('mousedown', event => {
+      grid.addEventListener('pointerdown', event => {
         if (event.button === 0) {
           // console.log(Math.trunc(event.offsetX / 16), Math.trunc(event.offsetY / 16))
           const note = document.createElement('pt-piano-roll-note')

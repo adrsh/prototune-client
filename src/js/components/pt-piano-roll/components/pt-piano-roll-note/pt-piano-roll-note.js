@@ -57,8 +57,10 @@ customElements.define('pt-piano-roll-note',
       this.style.top = `${this.y}rem`
       this.style.left = `${this.x}rem`
 
-      this.attack = Tone.Transport.schedule((time) => this.synth.triggerAttack(Tone.Midi(this.note), time), `0:0:${this.x}`)
-      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${this.x + this.length}`)
+      const now = Tone.now()
+      this.synth.triggerAttackRelease(Tone.Midi(this.note), '16n', now)
+
+      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
 
       this.addEventListener('mousedown', event => {
         // Stops grid underneath from getting triggered by the click.
@@ -132,7 +134,7 @@ customElements.define('pt-piano-roll-note',
       this.movementX += event.movementX
       this.movementY += event.movementY
 
-      // Calculated the new position.
+      // Calculate the new position.
       this.positionX = Math.round(this.movementX / 16) + this.x
       this.positionY = Math.round(this.movementY / 16) + this.y
 
@@ -165,11 +167,8 @@ customElements.define('pt-piano-roll-note',
 
       this.setAttribute('note', 108 - this.y)
 
-      Tone.Transport.clear(this.attack)
-      Tone.Transport.clear(this.release)
-
-      this.attack = Tone.Transport.schedule((time) => this.synth.triggerAttack(Tone.Midi(this.note), time), `0:0:${this.x}`)
-      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${this.x + this.length}`)
+      Tone.Transport.clear(this.transport)
+      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
     }
 
     /**
@@ -199,8 +198,8 @@ customElements.define('pt-piano-roll-note',
 
       this.setAttribute('length', Math.round((this.startWidth) / 16))
 
-      Tone.Transport.clear(this.release)
-      this.release = Tone.Transport.schedule((time) => this.synth.triggerRelease(Tone.Midi(this.note), time), `0:0:${this.x + this.length}`)
+      Tone.Transport.clear(this.transport)
+      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
     }
 
     /**
@@ -219,8 +218,7 @@ customElements.define('pt-piano-roll-note',
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
-      Tone.Transport.clear(this.attack)
-      Tone.Transport.clear(this.release)
+      Tone.Transport.clear(this.transport)
     }
 
     /**

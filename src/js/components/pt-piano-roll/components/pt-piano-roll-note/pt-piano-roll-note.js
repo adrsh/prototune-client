@@ -81,8 +81,6 @@ customElements.define('pt-piano-roll-note',
         }
       })
 
-      // this.addEventListener('pointerdown', event => this.#startMoving(event))
-
       this.addEventListener('contextmenu', event => event.preventDefault())
       this.addEventListener('dragstart', event => event.preventDefault())
 
@@ -250,17 +248,30 @@ customElements.define('pt-piano-roll-note',
      * @param {any} newValue the new attribute value.
      */
     attributeChangedCallback (name, oldValue, newValue) {
-      // TODO: Add limit checking for everything.
       if (name === 'note') {
         this.note = parseInt(newValue)
+        /* if (note && note <= 108 && note >= 22) {
+          this.note = note
+        } */
       } else if (name === 'x') {
         this.x = parseInt(newValue)
         this.style.left = `${this.x}rem`
+        /* if (x && x <= 64 && x >= 0) {
+          this.x = x
+          this.style.left = `${this.x}rem`
+        } */
       } else if (name === 'y') {
         this.y = parseInt(newValue)
         this.style.top = `${this.y}rem`
+        /* if (y && y < 88 && y >= 0) {
+          this.y = y
+          this.style.top = `${this.y}rem`
+        } */
       } else if (name === 'length') {
         this.length = parseInt(newValue)
+        /* if (length && length > 0) {
+          this.length = length
+        } */
       }
     }
   }

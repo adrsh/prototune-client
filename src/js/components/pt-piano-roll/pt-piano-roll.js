@@ -24,6 +24,25 @@ template.innerHTML = `
       position: relative;
       outline: 1px grey solid;
     }
+    #background {
+      position: relative;
+      width: 64rem;
+      height: 88rem;
+      background-image: repeating-linear-gradient(
+      transparent 0rem 1rem,
+      transparent 1rem 2rem,
+      #f0f0f0 2rem 3rem,
+      transparent 3rem 4rem,
+      #f0f0f0 4rem 5rem,
+      transparent 5rem 6rem,
+      #f0f0f0 6rem 7rem,
+      transparent 7rem 8rem,
+      transparent 8rem 9rem,
+      #f0f0f0 9rem 10rem,
+      transparent 10rem 11rem,
+      #f0f0f0 11rem 12rem
+      );
+    }
     #grid > div {
       position: relative;
       background-color: #404040;
@@ -37,7 +56,9 @@ template.innerHTML = `
       background-color: #404040;
     }
   </style>
-  <div id="grid">
+  <div id="background">
+    <div id="grid">
+    </div>
   </div>
 `
 

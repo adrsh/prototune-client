@@ -83,6 +83,7 @@ customElements.define('pt-piano-roll',
      */
     connectedCallback () {
       const synth = new Tone.PolySynth(Tone.Synth).toDestination()
+      synth.volume.value = -6
       const grid = this.shadowRoot.querySelector('#grid')
       grid.addEventListener('pointerdown', event => {
         if (event.button === 0) {
@@ -98,6 +99,7 @@ customElements.define('pt-piano-roll',
         }
       })
       grid.addEventListener('contextmenu', event => event.preventDefault())
+      this.scrollTo(0, 512)
     }
 
     /**

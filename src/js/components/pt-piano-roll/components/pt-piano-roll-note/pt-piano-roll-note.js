@@ -20,6 +20,7 @@ template.innerHTML = `
       align-items: center;
       border-right: 0.2rem #808080 solid;
       box-sizing: border-box;
+      cursor: grab;
     }
     #resizer {
       position: absolute;
@@ -131,6 +132,7 @@ customElements.define('pt-piano-roll-note',
         document.addEventListener('pointerleave', this.onStopMoving)
         this.movementX = 0
         this.movementY = 0
+        this.style.cursor = 'grabbing'
       }
     }
 
@@ -171,6 +173,8 @@ customElements.define('pt-piano-roll-note',
       document.removeEventListener('pointermove', this.onMoving)
       document.removeEventListener('pointerup', this.onStopMoving)
       document.removeEventListener('pointerleave', this.onStopMoving)
+
+      this.style.cursor = 'grab'
 
       this.setAttribute('x', this.positionX)
       this.setAttribute('y', this.positionY)

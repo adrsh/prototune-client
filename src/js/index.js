@@ -7,3 +7,4 @@
 
 import './components/pt-app'
 import './components/pt-keyboard'
+import './components/pt-piano-roll'

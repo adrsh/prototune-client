@@ -82,6 +82,8 @@ customElements.define('pt-app',
       this.keyboard.addEventListener('note-play', event => this.#playNote(event.detail.note))
       this.keyboard.addEventListener('note-stop', event => this.#stopNote(event.detail.note))
 
+      this.#initMidi().then(console.log('MIDI device connected.'))
+
       this.#setInstrument('piano')
 
       // This bugs out once in a while, but decreases latency.
@@ -162,13 +164,58 @@ customElements.define('pt-app',
     }
 
     /**
+     * Plays a note using the keyboard.
+     *
+     * @param {number} note Note to be played
+     * @param {number} velocity Velocity as a number between 0 and 1.
+     */
+    #playMidiNote (note, velocity) {
+      this.#playNote(note, velocity)
+      const target = this.keyboard.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
+      target.classList.add('playing')
+    }
+
+    /**
+     * Releases a note that was played using the keyboard.
+     *
+     * @param {number} note Note to be released.
+     */
+    #stopMidiNote (note) {
+      this.#stopNote(note)
+      const target = this.keyboard.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
+      target.classList.remove('playing')
+    }
+
+    /**
+     * Initializes MIDI functionality.
+     */
+    async #initMidi () {
+      this.midi = await navigator.requestMIDIAccess({ sysex: true })
+      this.midi.inputs.forEach(entry => (entry.onmidimessage = this.#onMIDIMessage.bind(this)))
+    }
+
+    /**
+     * Handles MIDIMessageEvent and plays the note that was pressed.
+     *
+     * @param {MIDIMessageEvent} event Event from a MIDI device.
+     */
+    #onMIDIMessage (event) {
+      // 0 means note up and anything else is the velocity
+      if (event.data[2] === 0) {
+        this.#stopMidiNote(event.data[1])
+      } else {
+        this.#playMidiNote(event.data[1], (event.data[2] / 128).toFixed(3))
+      }
+    }
+
+    /**
      * Plays a note using Tone.
      *
      * @param {string} note Note to be played, ex. 'C4'.
      * @param {number} velocity Velocity as a number between 0 and 1.
      */
     #playNote (note, velocity = 0.5) {
-      this.#synth.triggerAttack(note, Tone.now(), velocity)
+      this.#synth.triggerAttack(Tone.Midi(note), Tone.now(), velocity)
     }
 
     /**
@@ -177,7 +224,7 @@ customElements.define('pt-app',
      * @param {string} note Note to be released, ex. 'C4'.
      */
     #stopNote (note) {
-      this.#synth.triggerRelease(note, Tone.now())
+      this.#synth.triggerRelease(Tone.Midi(note), Tone.now())
     }
 
     /**
@@ -262,76 +309,76 @@ customElements.define('pt-app',
     #getNoteFromKey (key) {
       switch (key) {
         case 'KeyZ':
-          return 'C3'
+          return '48'
         case 'KeyX':
-          return 'D3'
+          return '50'
         case 'KeyC':
-          return 'E3'
+          return '52'
         case 'KeyV':
-          return 'F3'
+          return '53'
         case 'KeyB':
-          return 'G3'
+          return '55'
         case 'KeyN':
-          return 'A3'
+          return '57'
         case 'KeyM':
-          return 'B3'
+          return '59'
         case 'Comma':
-          return 'C4'
+          return '60'
         case 'Period':
-          return 'D4'
+          return '62'
         case 'Slash':
-          return 'E4'
+          return '64'
         case 'KeyL':
-          return 'C#4'
+          return '61'
         case 'Semicolon':
-          return 'D#4'
+          return '63'
 
         case 'KeyS':
-          return 'C#3'
+          return '49'
         case 'KeyD':
-          return 'D#3'
+          return '51'
         case 'KeyG':
-          return 'F#3'
+          return '54'
         case 'KeyH':
-          return 'G#3'
+          return '56'
         case 'KeyJ':
-          return 'A#3'
+          return '58'
 
         case 'KeyQ':
-          return 'C4'
+          return '60'
         case 'KeyW':
-          return 'D4'
+          return '62'
         case 'KeyE':
-          return 'E4'
+          return '64'
         case 'KeyR':
-          return 'F4'
+          return '65'
         case 'KeyT':
-          return 'G4'
+          return '67'
         case 'KeyY':
-          return 'A4'
+          return '69'
         case 'KeyU':
-          return 'B4'
+          return '71'
         case 'KeyI':
-          return 'C5'
+          return '72'
         case 'KeyO':
-          return 'D5'
+          return '74'
         case 'KeyP':
-          return 'E5'
+          return '76'
 
         case 'Digit2':
-          return 'C#4'
+          return '61'
         case 'Digit3':
-          return 'D#4'
+          return '63'
         case 'Digit5':
-          return 'F#4'
+          return '66'
         case 'Digit6':
-          return 'G#4'
+          return '68'
         case 'Digit7':
-          return 'A#4'
+          return '70'
         case 'Digit9':
-          return 'C#5'
+          return '73'
         case 'Digit0':
-          return 'D#5'
+          return '75'
 
         default:
           return ''

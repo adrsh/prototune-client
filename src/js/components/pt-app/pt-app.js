@@ -31,14 +31,14 @@ template.innerHTML = `
   </style>
   <pt-piano-roll></pt-piano-roll>
   <div id="options">
-    <label for="instrument-select">Instrument</label>
+    <!-- <label for="instrument-select">Instrument</label>
     <select name="instruments" id="instrument-select">
       <option value="piano">Piano</option>
       <option value="casio">Casio</option>
       <option value="amsynth">AMSynth</option>
       <option value="fmsynth">FMSynth</option>
-    </select>
-    <button id="play">play</button>
+    </select> -->
+    <button id="play">Play</button>
   </div>
   <pt-keyboard></pt-keyboard>
 `
@@ -87,7 +87,7 @@ customElements.define('pt-app',
       this.#setInstrument('piano')
 
       // This bugs out once in a while, but decreases latency.
-      Tone.setContext(new Tone.Context({ latencyHint: 'interactive' }))
+      Tone.setContext(new Tone.Context({ latencyHint: 'balanced' }))
 
       // Handle key presses.
       this.addEventListener('keydown', event => {

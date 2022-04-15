@@ -6,7 +6,6 @@
  */
 
 import './components/pt-keyboard-note'
-import * as Tone from 'tone'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -221,7 +220,6 @@ customElements.define('pt-keyboard',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      // this.#start().then(console.log('MIDI device connected.'))
     }
 
     /**

@@ -119,9 +119,9 @@ customElements.define('pt-app',
     async #handleMessage (data) {
       const message = JSON.parse(await data.text())
       if (message.action === 'play') {
-        this.keyboard.dispatchEvent(new CustomEvent('msg-play', { detail: { note: message.note } }))
+        this.#playMidiNote(message.note)
       } else if (message.action === 'stop') {
-        this.keyboard.dispatchEvent(new CustomEvent('msg-stop', { detail: { note: message.note } }))
+        this.#stopMidiNote(message.note)
       }
     }
 
@@ -169,7 +169,7 @@ customElements.define('pt-app',
      * @param {number} note Note to be played
      * @param {number} velocity Velocity as a number between 0 and 1.
      */
-    #playMidiNote (note, velocity) {
+    #playMidiNote (note, velocity = 0.5) {
       this.#playNote(note, velocity)
       const target = this.keyboard.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
       target.classList.add('playing')

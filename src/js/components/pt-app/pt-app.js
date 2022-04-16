@@ -14,7 +14,7 @@ template.innerHTML = `
       display: grid;
       grid-template-rows: 40rem 2rem 16rem;
       grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
-      grid-template-areas:  ". piano-roll"
+      grid-template-areas:  "instruments piano-roll"
                             "options options"
                             "keyboard keyboard";
     }
@@ -29,6 +29,7 @@ template.innerHTML = `
       grid-area: options;
     }
   </style>
+  <pt-instruments></pt-instruments>
   <pt-piano-roll></pt-piano-roll>
   <div id="options">
     <!-- <label for="instrument-select">Instrument</label>

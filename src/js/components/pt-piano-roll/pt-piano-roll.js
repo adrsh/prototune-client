@@ -96,7 +96,10 @@ customElements.define('pt-piano-roll',
       this.grid.addEventListener('contextmenu', event => event.preventDefault())
 
       this.addEventListener('note-move', event => {
-        console.log('note-move')
+        this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
+      })
+
+      this.addEventListener('note-resize', event => {
         this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
       })
 

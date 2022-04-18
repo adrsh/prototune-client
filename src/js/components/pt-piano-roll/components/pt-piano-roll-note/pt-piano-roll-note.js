@@ -65,6 +65,7 @@ customElements.define('pt-piano-roll-note',
         // Stops grid underneath from getting triggered by the click.
         event.stopImmediatePropagation()
         if (event.button === 2) {
+          this.dispatchEvent(new CustomEvent('note-remove', { detail: this, composed: true }))
           this.remove()
         } else if (event.button === 0) {
           this.#startMoving(event)
@@ -75,6 +76,7 @@ customElements.define('pt-piano-roll-note',
       this.addEventListener('pointerenter', event => {
         event.stopPropagation()
         if (event.buttons === 2) {
+          this.dispatchEvent(new CustomEvent('note-remove', { detail: this, composed: true }))
           this.remove()
         }
       })

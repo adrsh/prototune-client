@@ -99,6 +99,11 @@ customElements.define('pt-piano-roll',
         this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
       })
 
+      this.addEventListener('note-remove', event => {
+        event.detail.remove()
+        this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
+      })
+
       this.addEventListener('note-resize', event => {
         this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
       })

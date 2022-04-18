@@ -58,9 +58,6 @@ customElements.define('pt-piano-roll-note',
       this.style.top = `${this.y}rem`
       this.style.left = `${this.x}rem`
 
-      const now = Tone.now()
-      this.synth.triggerAttackRelease(Tone.Midi(this.note), '16n', now)
-
       this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
 
       // Remove itself if right mouse button is clicked.

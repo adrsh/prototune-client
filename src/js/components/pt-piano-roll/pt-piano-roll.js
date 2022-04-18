@@ -147,6 +147,10 @@ customElements.define('pt-piano-roll',
       note.setAttribute('y', y)
       note.setAttribute('length', 1)
       this.grid.append(note)
+
+      const now = Tone.now()
+      this.synth.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)
+
       this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
     }
 

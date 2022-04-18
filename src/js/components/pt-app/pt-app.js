@@ -139,7 +139,9 @@ customElements.define('pt-app',
      * @param {object} data Data to be sent.
      */
     #sendMessage (data) {
-      this.ws.send(JSON.stringify(data))
+      if (this.ws.readyState === this.ws.OPEN) {
+        this.ws.send(JSON.stringify(data))
+      }
     }
 
     /**

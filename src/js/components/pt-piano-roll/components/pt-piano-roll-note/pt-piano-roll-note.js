@@ -263,6 +263,7 @@ customElements.define('pt-piano-roll-note',
       } else if (name === 'x') {
         this.x = parseInt(newValue)
         this.style.left = `${this.x}rem`
+        this.positionX = this.x
         /* if (x && x <= 64 && x >= 0) {
           this.x = x
           this.style.left = `${this.x}rem`
@@ -270,6 +271,7 @@ customElements.define('pt-piano-roll-note',
       } else if (name === 'y') {
         this.y = parseInt(newValue)
         this.style.top = `${this.y}rem`
+        this.positionY = this.y
         /* if (y && y < 88 && y >= 0) {
           this.y = y
           this.style.top = `${this.y}rem`

@@ -183,6 +183,8 @@ customElements.define('pt-piano-roll-note',
 
       Tone.Transport.clear(this.transport)
       this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+
+      this.dispatchEvent(new CustomEvent('note-move', { bubbles: true, composed: true }))
     }
 
     /**
@@ -273,9 +275,7 @@ customElements.define('pt-piano-roll-note',
         } */
       } else if (name === 'length') {
         this.length = parseInt(newValue)
-        /* if (length && length > 0) {
-          this.length = length
-        } */
+        this.style.width = `${this.length}rem`
       }
     }
   }

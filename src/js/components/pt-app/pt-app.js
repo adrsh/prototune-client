@@ -58,6 +58,8 @@ customElements.define('pt-app',
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
       this.button = this.shadowRoot.querySelector('#play')
+
+      this.roll = this.shadowRoot.querySelector('pt-piano-roll')
     }
 
     /**
@@ -77,6 +79,10 @@ customElements.define('pt-app',
 
         this.keyboard.addEventListener('note-play', event => this.#sendMessage({ note: event.detail.note, action: 'play' }))
         this.keyboard.addEventListener('note-stop', event => this.#sendMessage({ note: event.detail.note, action: 'stop' }))
+      })
+
+      this.roll.addEventListener('update', event => {
+        this.#sendMessage(event.detail)
       })
 
       this.keyboard.addEventListener('note-play', event => this.#playNote(event.detail.note))
@@ -122,6 +128,8 @@ customElements.define('pt-app',
         this.#playMidiNote(message.note)
       } else if (message.action === 'stop') {
         this.#stopMidiNote(message.note)
+      } else {
+        this.roll.dispatchEvent(new CustomEvent('import', { detail: message }))
       }
     }
 

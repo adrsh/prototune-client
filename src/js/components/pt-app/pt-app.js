@@ -111,8 +111,8 @@ customElements.define('pt-app',
       })
       this.addEventListener('keyup', event => this.#keyUp(event))
 
-      this.button.addEventListener('click', () => {
-        Tone.start()
+      this.button.addEventListener('click', async () => {
+        await Tone.start()
         Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
         Tone.Transport.loop = true
         Tone.Transport.start()

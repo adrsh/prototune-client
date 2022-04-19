@@ -202,13 +202,6 @@ customElements.define('pt-piano-roll',
         }
       }
       this.observer.observe(this.grid, this.config)
-      /* const newNote = document.createElement('pt-piano-roll-note')
-      newNote.synth = this.synth
-      newNote.setAttribute('note', 108 - note.y)
-      newNote.setAttribute('x', note.x)
-      newNote.setAttribute('y', note.y)
-      newNote.setAttribute('length', note.length)
-      this.grid.append(newNote) */
     }
 
     /**
@@ -232,8 +225,6 @@ customElements.define('pt-piano-roll',
 
       const now = Tone.now()
       this.synth.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)
-
-      // this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
     }
 
     /**

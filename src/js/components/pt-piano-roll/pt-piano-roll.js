@@ -101,12 +101,53 @@ customElements.define('pt-piano-roll',
       })
 
       this.scrollTo(0, 512)
+
+      const config = {
+        attributes: true,
+        childList: true,
+        subtree: true,
+        attributeFilter: ['x', 'y', 'length'],
+        attributeOldValue: true
+      }
+
+      const observer = new MutationObserver(records => this.#handleMutations(records))
+      observer.observe(this.grid, config)
     }
 
     /**
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
+    }
+
+    /**
+     * Handles mutation records and creates appropriate events.
+     * @param {MutationRecord[]} mutationRecords Mutation records.
+     */
+    #handleMutations (mutationRecords) {
+      // Det kanske går att kombinera ändringar till ett meddelande...
+      /* for (const mutation of mutationRecords) {
+        console.log(mutation)
+        if (mutation.type === 'attributes') {
+          console.log('attribute changed')
+        } else if (mutation.type === 'childList') {
+          if (mutation.addedNodes.length > 0) {
+            console.log('added')
+          } else if (mutation.removedNodes.length > 0) {
+            console.log('removed')
+          }
+        }
+      } */
+      const list = []
+      for (const mutation of mutationRecords) {
+        if (mutation.type === 'attributes') {
+          list.push({
+            uuid: mutation.target.uuid,
+            [mutation.attributeName]: mutation.target.getAttribute(mutation.attributeName)
+          })
+        }
+      }
+      // this.dispatchEvent(new CustomEvent('update', { detail: { changes: list } }))
     }
 
     /**
@@ -143,6 +184,9 @@ customElements.define('pt-piano-roll',
       note.setAttribute('x', x)
       note.setAttribute('y', y)
       note.setAttribute('length', 1)
+
+      note.setAttribute('uuid', crypto.randomUUID())
+
       this.grid.append(note)
 
       const now = Tone.now()

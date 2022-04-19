@@ -175,10 +175,14 @@ customElements.define('pt-piano-roll-note',
 
       this.style.cursor = 'grab'
 
-      this.setAttribute('x', this.positionX)
-      this.setAttribute('y', this.positionY)
-
-      this.setAttribute('note', 108 - this.y)
+      // TODO: Don't need to make a new transport and all that if nothing has changed.
+      if (this.x !== this.positionX) {
+        this.setAttribute('x', this.positionX)
+      }
+      if (this.y !== this.positionY) {
+        this.setAttribute('y', this.positionY)
+        this.setAttribute('note', 108 - this.y)
+      }
 
       Tone.Transport.clear(this.transport)
       this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
@@ -244,7 +248,7 @@ customElements.define('pt-piano-roll-note',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['note', 'x', 'y', 'length']
+      return ['note', 'x', 'y', 'length', 'uuid']
     }
 
     /**
@@ -279,6 +283,8 @@ customElements.define('pt-piano-roll-note',
       } else if (name === 'length') {
         this.length = parseInt(newValue)
         this.style.width = `${this.length}rem`
+      } else if (name === 'uuid') {
+        this.uuid = newValue
       }
     }
   }

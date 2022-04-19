@@ -81,7 +81,15 @@ customElements.define('pt-app',
         this.keyboard.addEventListener('note-stop', event => this.#sendMessage({ note: event.detail.note, action: 'stop' }))
       })
 
-      this.roll.addEventListener('update', event => {
+      this.roll.addEventListener('note-create', event => {
+        this.#sendMessage(event.detail)
+      })
+
+      this.roll.addEventListener('note-remove', event => {
+        this.#sendMessage(event.detail)
+      })
+
+      this.roll.addEventListener('note-update', event => {
         this.#sendMessage(event.detail)
       })
 
@@ -128,8 +136,12 @@ customElements.define('pt-app',
         this.#playMidiNote(message.note)
       } else if (message.action === 'stop') {
         this.#stopMidiNote(message.note)
-      } else {
-        this.roll.dispatchEvent(new CustomEvent('import', { detail: message }))
+      } else if (message.action === 'note-update') {
+        this.roll.dispatchEvent(new CustomEvent('update', { detail: message }))
+      } else if (message.action === 'note-create') {
+        this.roll.dispatchEvent(new CustomEvent('add', { detail: message }))
+      } else if (message.action === 'note-remove') {
+        this.roll.dispatchEvent(new CustomEvent('remove', { detail: message }))
       }
     }
 

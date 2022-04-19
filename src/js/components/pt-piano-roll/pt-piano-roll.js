@@ -83,26 +83,15 @@ customElements.define('pt-piano-roll',
         }
       })
 
-      this.addEventListener('import', event => this.#import(event.detail.notes))
+      this.addEventListener('update', event => this.#updateNote(event.detail.changes))
+      this.addEventListener('add', event => this.#addNote(event.detail.note))
+      this.addEventListener('remove', event => this.#removeNote(event.detail.note))
 
       this.grid.addEventListener('contextmenu', event => event.preventDefault())
 
-      this.addEventListener('note-move', event => {
-        this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
-      })
-
-      this.addEventListener('note-remove', event => {
-        event.detail.remove()
-        this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
-      })
-
-      this.addEventListener('note-resize', event => {
-        this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
-      })
-
       this.scrollTo(0, 512)
 
-      const config = {
+      this.config = {
         attributes: true,
         childList: true,
         subtree: true,
@@ -110,8 +99,8 @@ customElements.define('pt-piano-roll',
         attributeOldValue: true
       }
 
-      const observer = new MutationObserver(records => this.#handleMutations(records))
-      observer.observe(this.grid, config)
+      this.observer = new MutationObserver(records => this.#handleMutations(records))
+      this.observer.observe(this.grid, this.config)
     }
 
     /**
@@ -122,52 +111,104 @@ customElements.define('pt-piano-roll',
 
     /**
      * Handles mutation records and creates appropriate events.
+     *
      * @param {MutationRecord[]} mutationRecords Mutation records.
      */
     #handleMutations (mutationRecords) {
-      // Det kanske går att kombinera ändringar till ett meddelande...
-      /* for (const mutation of mutationRecords) {
-        console.log(mutation)
-        if (mutation.type === 'attributes') {
-          console.log('attribute changed')
-        } else if (mutation.type === 'childList') {
-          if (mutation.addedNodes.length > 0) {
-            console.log('added')
-          } else if (mutation.removedNodes.length > 0) {
-            console.log('removed')
-          }
-        }
-      } */
-      const list = []
+      // Little bit of a clusterf*** here.
+      const target = {}
       for (const mutation of mutationRecords) {
         if (mutation.type === 'attributes') {
-          list.push({
+          Object.assign(target, {
             uuid: mutation.target.uuid,
             [mutation.attributeName]: mutation.target.getAttribute(mutation.attributeName)
           })
+        } else if (mutation.type === 'childList') {
+          if (mutation.addedNodes.length > 0) {
+            for (const node of mutation.addedNodes) {
+              this.dispatchEvent(new CustomEvent('note-create', {
+                detail: {
+                  action: 'note-create',
+                  note: {
+                    uuid: node.uuid,
+                    x: node.x,
+                    y: node.y,
+                    length: node.length
+                  }
+                }
+              }))
+            }
+          } else if (mutation.removedNodes.length > 0) {
+            for (const node of mutation.removedNodes) {
+              this.dispatchEvent(new CustomEvent('note-remove', {
+                detail: {
+                  action: 'note-remove',
+                  note: {
+                    uuid: node.uuid
+                  }
+                }
+              }))
+            }
+          }
         }
       }
-      // this.dispatchEvent(new CustomEvent('update', { detail: { changes: list } }))
+      if (Object.keys(target).length > 0) {
+        this.dispatchEvent(new CustomEvent('note-update', { detail: { action: 'note-update', changes: target } }))
+      }
     }
 
     /**
-     * Imports a list of notes to piano roll note elements.
+     * Creates a note from Websocket data.
      *
-     * @param {list} list List of notes.
+     * @param {object} note Note to be created.
      */
-    #import (list) {
-      while (this.grid.hasChildNodes()) {
-        this.grid.removeChild(this.grid.lastChild)
+    #addNote (note) {
+      this.observer.disconnect()
+      const newNote = document.createElement('pt-piano-roll-note')
+      newNote.synth = this.synth
+      newNote.setAttribute('uuid', note.uuid)
+      newNote.setAttribute('x', note.x)
+      newNote.setAttribute('y', note.y)
+      newNote.setAttribute('length', note.length)
+      this.grid.append(newNote)
+      this.observer.observe(this.grid, this.config)
+    }
+
+    /**
+     * Creates a note from Websocket data.
+     *
+     * @param {object} note Note to be created.
+     */
+    #removeNote (note) {
+      this.observer.disconnect()
+      const existingNote = this.shadowRoot.querySelector(`pt-piano-roll-note[uuid="${note.uuid}"]`)
+      if (existingNote) {
+        existingNote.remove()
       }
-      for (const note of list) {
-        const newNote = document.createElement('pt-piano-roll-note')
-        newNote.synth = this.synth
-        newNote.setAttribute('note', 108 - note.y)
-        newNote.setAttribute('x', note.x)
-        newNote.setAttribute('y', note.y)
-        newNote.setAttribute('length', note.length)
-        this.grid.append(newNote)
+      this.observer.observe(this.grid, this.config)
+    }
+
+    /**
+     * Updates an existing note.
+     *
+     * @param {object} note Note with changes.
+     */
+    #updateNote (note) {
+      this.observer.disconnect()
+      const existingNote = this.shadowRoot.querySelector(`pt-piano-roll-note[uuid="${note.uuid}"]`)
+      if (existingNote) {
+        for (const [key, value] of Object.entries(note)) {
+          existingNote.setAttribute(key, value)
+        }
       }
+      this.observer.observe(this.grid, this.config)
+      /* const newNote = document.createElement('pt-piano-roll-note')
+      newNote.synth = this.synth
+      newNote.setAttribute('note', 108 - note.y)
+      newNote.setAttribute('x', note.x)
+      newNote.setAttribute('y', note.y)
+      newNote.setAttribute('length', note.length)
+      this.grid.append(newNote) */
     }
 
     /**
@@ -192,7 +233,7 @@ customElements.define('pt-piano-roll',
       const now = Tone.now()
       this.synth.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)
 
-      this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
+      // this.dispatchEvent(new CustomEvent('update', { detail: { notes: this.#toObject() } }))
     }
 
     /**

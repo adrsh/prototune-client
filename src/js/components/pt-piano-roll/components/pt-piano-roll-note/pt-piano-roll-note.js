@@ -65,7 +65,6 @@ customElements.define('pt-piano-roll-note',
         // Stops grid underneath from getting triggered by the click.
         event.stopImmediatePropagation()
         if (event.button === 2) {
-          this.dispatchEvent(new CustomEvent('note-remove', { detail: this, composed: true }))
           this.remove()
         } else if (event.button === 0) {
           this.#startMoving(event)
@@ -76,7 +75,6 @@ customElements.define('pt-piano-roll-note',
       this.addEventListener('pointerenter', event => {
         event.stopPropagation()
         if (event.buttons === 2) {
-          this.dispatchEvent(new CustomEvent('note-remove', { detail: this, composed: true }))
           this.remove()
         }
       })
@@ -261,25 +259,15 @@ customElements.define('pt-piano-roll-note',
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'note') {
         this.note = parseInt(newValue)
-        /* if (note && note <= 108 && note >= 22) {
-          this.note = note
-        } */
       } else if (name === 'x') {
         this.x = parseInt(newValue)
         this.style.left = `${this.x}rem`
         this.positionX = this.x
-        /* if (x && x <= 64 && x >= 0) {
-          this.x = x
-          this.style.left = `${this.x}rem`
-        } */
       } else if (name === 'y') {
         this.y = parseInt(newValue)
         this.style.top = `${this.y}rem`
         this.positionY = this.y
-        /* if (y && y < 88 && y >= 0) {
-          this.y = y
-          this.style.top = `${this.y}rem`
-        } */
+        this.setAttribute('note', 108 - this.y)
       } else if (name === 'length') {
         this.length = parseInt(newValue)
         this.style.width = `${this.length}rem`

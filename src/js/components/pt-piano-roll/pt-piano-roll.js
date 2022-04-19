@@ -13,52 +13,44 @@ template.innerHTML = `
   <style>
     :host {
       overflow-y: scroll;
-    }
-    #grid {
-      background-size: 1rem 1rem;
-      background-image:
-        linear-gradient(to right, grey 1px, transparent 1px),
-        linear-gradient(to bottom, grey 1px, transparent 1px);
-      width: 64rem;
-      height: 88rem;
-      position: relative;
       outline: 1px grey solid;
     }
-    #background {
+    #grid {
       position: relative;
       width: 64rem;
       height: 88rem;
-      background-image: repeating-linear-gradient(
-      transparent 0rem 1rem,
-      transparent 1rem 2rem,
-      #f0f0f0 2rem 3rem,
-      transparent 3rem 4rem,
-      #f0f0f0 4rem 5rem,
-      transparent 5rem 6rem,
-      #f0f0f0 6rem 7rem,
-      transparent 7rem 8rem,
-      transparent 8rem 9rem,
-      #f0f0f0 9rem 10rem,
-      transparent 10rem 11rem,
-      #f0f0f0 11rem 12rem
-      );
-    }
-    #grid > div {
-      position: relative;
-      background-color: #404040;
-      height: 1rem;
-      width: 1rem;
-    }
-    #grid > div:hover {
-      background-color: #d0d0d0;
-    }
-    .selected {
-      background-color: #404040;
+      background-image:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0.03125rem 3.96875rem,
+          #b0b0b0 3.96875rem 4.03125rem
+        ),
+        repeating-linear-gradient(
+          transparent 0.03125rem 0.96875rem,
+          #e0e0e0 0.96875rem 1.03125rem
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0.03125rem 0.96875rem,
+          #e0e0e0 0.96875rem 1.03125rem
+        ),
+        repeating-linear-gradient(
+          transparent 0rem 1rem,
+          transparent 1rem 2rem,
+          #f0f0f0 2rem 3rem,
+          transparent 3rem 4rem,
+          #f0f0f0 4rem 5rem,
+          transparent 5rem 6rem,
+          #f0f0f0 6rem 7rem,
+          transparent 7rem 8rem,
+          transparent 8rem 9rem,
+          #f0f0f0 9rem 10rem,
+          transparent 10rem 11rem,
+          #f0f0f0 11rem 12rem
+        );
     }
   </style>
-  <div id="background">
-    <div id="grid">
-    </div>
+  <div id="grid">
   </div>
 `
 

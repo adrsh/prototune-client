@@ -182,8 +182,7 @@ customElements.define('pt-piano-roll-note',
         this.setAttribute('note', 108 - this.y)
       }
 
-      Tone.Transport.clear(this.transport)
-      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+      this.#updateTransport()
     }
 
     /**
@@ -213,8 +212,7 @@ customElements.define('pt-piano-roll-note',
 
       this.setAttribute('length', Math.round((this.startWidth) / 16))
 
-      Tone.Transport.clear(this.transport)
-      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+      this.#updateTransport()
     }
 
     /**
@@ -227,6 +225,14 @@ customElements.define('pt-piano-roll-note',
       if (this.startWidth > 16) {
         this.style.width = `${Math.round((this.startWidth) / 16)}rem`
       }
+    }
+
+    /**
+     * Updates the transport.
+     */
+    #updateTransport () {
+      Tone.Transport.clear(this.transport)
+      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
     }
 
     /**

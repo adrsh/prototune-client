@@ -131,7 +131,7 @@ customElements.define('pt-app',
      * @param {Blob} data Data to be handled.
      */
     async #handleMessage (data) {
-      const message = JSON.parse(await data.text())
+      const message = await JSON.parse(await data.text())
       if (message.action === 'play') {
         this.#playMidiNote(message.note)
       } else if (message.action === 'stop') {
@@ -142,6 +142,8 @@ customElements.define('pt-app',
         this.roll.dispatchEvent(new CustomEvent('add', { detail: message }))
       } else if (message.action === 'note-remove') {
         this.roll.dispatchEvent(new CustomEvent('remove', { detail: message }))
+      } else if (message.action === 'note-import') {
+        this.roll.dispatchEvent(new CustomEvent('import', { detail: message }))
       }
     }
 

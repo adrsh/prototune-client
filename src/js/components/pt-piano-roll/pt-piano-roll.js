@@ -86,6 +86,7 @@ customElements.define('pt-piano-roll',
       this.addEventListener('update', event => this.#updateNote(event.detail.changes))
       this.addEventListener('add', event => this.#addNote(event.detail.note))
       this.addEventListener('remove', event => this.#removeNote(event.detail.note))
+      this.addEventListener('import', event => this.#importNotes(event.detail.notes))
 
       this.grid.addEventListener('contextmenu', event => event.preventDefault())
 
@@ -121,7 +122,7 @@ customElements.define('pt-piano-roll',
         if (mutation.type === 'attributes') {
           Object.assign(target, {
             uuid: mutation.target.uuid,
-            [mutation.attributeName]: mutation.target.getAttribute(mutation.attributeName)
+            [mutation.attributeName]: mutation.target[mutation.attributeName]
           })
         } else if (mutation.type === 'childList') {
           if (mutation.addedNodes.length > 0) {
@@ -155,6 +156,26 @@ customElements.define('pt-piano-roll',
       if (Object.keys(target).length > 0) {
         this.dispatchEvent(new CustomEvent('note-update', { detail: { action: 'note-update', changes: target } }))
       }
+    }
+
+    /**
+     * Imports notes from websocket server.
+     *
+     * @param {object} notes Object with notes and attributes.
+     */
+    #importNotes (notes) {
+      this.observer.disconnect()
+      for (const [uuid, attributes] of Object.entries(notes)) {
+        const note = document.createElement('pt-piano-roll-note')
+        note.synth = this.synth
+        note.setAttribute('uuid', uuid)
+        note.setAttribute('note', 108 - attributes.y)
+        note.setAttribute('x', attributes.x)
+        note.setAttribute('y', attributes.y)
+        note.setAttribute('length', attributes.length)
+        this.grid.append(note)
+      }
+      this.observer.observe(this.grid, this.config)
     }
 
     /**

@@ -58,9 +58,6 @@ customElements.define('pt-piano-roll-note',
       this.style.top = `${this.y}rem`
       this.style.left = `${this.x}rem`
 
-      const now = Tone.now()
-      this.synth.triggerAttackRelease(Tone.Midi(this.note), '16n', now)
-
       this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
 
       // Remove itself if right mouse button is clicked.
@@ -176,13 +173,16 @@ customElements.define('pt-piano-roll-note',
 
       this.style.cursor = 'grab'
 
-      this.setAttribute('x', this.positionX)
-      this.setAttribute('y', this.positionY)
+      // TODO: Don't need to make a new transport and all that if nothing has changed.
+      if (this.x !== this.positionX) {
+        this.setAttribute('x', this.positionX)
+      }
+      if (this.y !== this.positionY) {
+        this.setAttribute('y', this.positionY)
+        this.setAttribute('note', 108 - this.y)
+      }
 
-      this.setAttribute('note', 108 - this.y)
-
-      Tone.Transport.clear(this.transport)
-      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+      this.#updateTransport()
     }
 
     /**
@@ -212,8 +212,7 @@ customElements.define('pt-piano-roll-note',
 
       this.setAttribute('length', Math.round((this.startWidth) / 16))
 
-      Tone.Transport.clear(this.transport)
-      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+      this.#updateTransport()
     }
 
     /**
@@ -229,6 +228,14 @@ customElements.define('pt-piano-roll-note',
     }
 
     /**
+     * Updates the transport.
+     */
+    #updateTransport () {
+      Tone.Transport.clear(this.transport)
+      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+    }
+
+    /**
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
@@ -241,7 +248,7 @@ customElements.define('pt-piano-roll-note',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['note', 'x', 'y', 'length']
+      return ['note', 'x', 'y', 'length', 'uuid']
     }
 
     /**
@@ -254,28 +261,20 @@ customElements.define('pt-piano-roll-note',
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'note') {
         this.note = parseInt(newValue)
-        /* if (note && note <= 108 && note >= 22) {
-          this.note = note
-        } */
       } else if (name === 'x') {
         this.x = parseInt(newValue)
         this.style.left = `${this.x}rem`
-        /* if (x && x <= 64 && x >= 0) {
-          this.x = x
-          this.style.left = `${this.x}rem`
-        } */
+        this.positionX = this.x
       } else if (name === 'y') {
         this.y = parseInt(newValue)
         this.style.top = `${this.y}rem`
-        /* if (y && y < 88 && y >= 0) {
-          this.y = y
-          this.style.top = `${this.y}rem`
-        } */
+        this.positionY = this.y
+        this.setAttribute('note', 108 - this.y)
       } else if (name === 'length') {
         this.length = parseInt(newValue)
-        /* if (length && length > 0) {
-          this.length = length
-        } */
+        this.style.width = `${this.length}rem`
+      } else if (name === 'uuid') {
+        this.uuid = newValue
       }
     }
   }

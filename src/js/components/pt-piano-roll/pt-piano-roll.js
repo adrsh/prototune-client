@@ -13,52 +13,44 @@ template.innerHTML = `
   <style>
     :host {
       overflow-y: scroll;
-    }
-    #grid {
-      background-size: 1rem 1rem;
-      background-image:
-        linear-gradient(to right, grey 1px, transparent 1px),
-        linear-gradient(to bottom, grey 1px, transparent 1px);
-      width: 64rem;
-      height: 88rem;
-      position: relative;
       outline: 1px grey solid;
     }
-    #background {
+    #grid {
       position: relative;
       width: 64rem;
       height: 88rem;
-      background-image: repeating-linear-gradient(
-      transparent 0rem 1rem,
-      transparent 1rem 2rem,
-      #f0f0f0 2rem 3rem,
-      transparent 3rem 4rem,
-      #f0f0f0 4rem 5rem,
-      transparent 5rem 6rem,
-      #f0f0f0 6rem 7rem,
-      transparent 7rem 8rem,
-      transparent 8rem 9rem,
-      #f0f0f0 9rem 10rem,
-      transparent 10rem 11rem,
-      #f0f0f0 11rem 12rem
-      );
-    }
-    #grid > div {
-      position: relative;
-      background-color: #404040;
-      height: 1rem;
-      width: 1rem;
-    }
-    #grid > div:hover {
-      background-color: #d0d0d0;
-    }
-    .selected {
-      background-color: #404040;
+      background-image:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0.03125rem 3.96875rem,
+          #b0b0b0 3.96875rem 4.03125rem
+        ),
+        repeating-linear-gradient(
+          transparent 0.03125rem 0.96875rem,
+          #e0e0e0 0.96875rem 1.03125rem
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0.03125rem 0.96875rem,
+          #e0e0e0 0.96875rem 1.03125rem
+        ),
+        repeating-linear-gradient(
+          transparent 0rem 1rem,
+          transparent 1rem 2rem,
+          #f0f0f0 2rem 3rem,
+          transparent 3rem 4rem,
+          #f0f0f0 4rem 5rem,
+          transparent 5rem 6rem,
+          #f0f0f0 6rem 7rem,
+          transparent 7rem 8rem,
+          transparent 8rem 9rem,
+          #f0f0f0 9rem 10rem,
+          transparent 10rem 11rem,
+          #f0f0f0 11rem 12rem
+        );
     }
   </style>
-  <div id="background">
-    <div id="grid">
-    </div>
+  <div id="grid">
   </div>
 `
 
@@ -75,37 +67,204 @@ customElements.define('pt-piano-roll',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-      this.button = this.shadowRoot.querySelector('#play')
+      this.grid = this.shadowRoot.querySelector('#grid')
     }
 
     /**
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      const synth = new Tone.PolySynth(Tone.Synth).toDestination()
-      synth.volume.value = -6
-      const grid = this.shadowRoot.querySelector('#grid')
-      grid.addEventListener('pointerdown', event => {
+      this.synth = new Tone.PolySynth(Tone.Synth).toDestination()
+      this.synth.volume.value = -6
+
+      this.grid.addEventListener('pointerdown', event => {
         if (event.button === 0) {
-          // console.log(Math.trunc(event.offsetX / 16), Math.trunc(event.offsetY / 16))
-          const note = document.createElement('pt-piano-roll-note')
-          // Borde vara okej att göra så här? Frågan är om den är samma om man ändrar här...
-          note.synth = synth
-          note.setAttribute('note', 108 - Math.trunc(event.offsetY / 16))
-          note.setAttribute('x', Math.trunc(event.offsetX / 16))
-          note.setAttribute('y', Math.trunc(event.offsetY / 16))
-          note.setAttribute('length', 1)
-          grid.append(note)
+          this.#createNote(event)
         }
       })
-      grid.addEventListener('contextmenu', event => event.preventDefault())
+
+      this.addEventListener('update', event => this.#updateNote(event.detail.changes))
+      this.addEventListener('add', event => this.#addNote(event.detail.note))
+      this.addEventListener('remove', event => this.#removeNote(event.detail.note))
+      this.addEventListener('import', event => this.#importNotes(event.detail.notes))
+
+      this.grid.addEventListener('contextmenu', event => event.preventDefault())
+
       this.scrollTo(0, 512)
+
+      this.config = {
+        attributes: true,
+        childList: true,
+        subtree: true,
+        attributeFilter: ['x', 'y', 'length'],
+        attributeOldValue: true
+      }
+
+      this.observer = new MutationObserver(records => this.#handleMutations(records))
+      this.observer.observe(this.grid, this.config)
     }
 
     /**
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
+    }
+
+    /**
+     * Handles mutation records and creates appropriate events.
+     *
+     * @param {MutationRecord[]} mutationRecords Mutation records.
+     */
+    #handleMutations (mutationRecords) {
+      // Little bit of a clusterf*** here.
+      const target = {}
+      for (const mutation of mutationRecords) {
+        if (mutation.type === 'attributes') {
+          Object.assign(target, {
+            uuid: mutation.target.uuid,
+            [mutation.attributeName]: mutation.target[mutation.attributeName]
+          })
+        } else if (mutation.type === 'childList') {
+          if (mutation.addedNodes.length > 0) {
+            for (const node of mutation.addedNodes) {
+              this.dispatchEvent(new CustomEvent('note-create', {
+                detail: {
+                  action: 'note-create',
+                  note: {
+                    uuid: node.uuid,
+                    x: node.x,
+                    y: node.y,
+                    length: node.length
+                  }
+                }
+              }))
+            }
+          } else if (mutation.removedNodes.length > 0) {
+            for (const node of mutation.removedNodes) {
+              this.dispatchEvent(new CustomEvent('note-remove', {
+                detail: {
+                  action: 'note-remove',
+                  note: {
+                    uuid: node.uuid
+                  }
+                }
+              }))
+            }
+          }
+        }
+      }
+      if (Object.keys(target).length > 0) {
+        this.dispatchEvent(new CustomEvent('note-update', { detail: { action: 'note-update', changes: target } }))
+      }
+    }
+
+    /**
+     * Imports notes from websocket server.
+     *
+     * @param {object} notes Object with notes and attributes.
+     */
+    #importNotes (notes) {
+      this.observer.disconnect()
+      for (const [uuid, attributes] of Object.entries(notes)) {
+        const note = document.createElement('pt-piano-roll-note')
+        note.synth = this.synth
+        note.setAttribute('uuid', uuid)
+        note.setAttribute('note', 108 - attributes.y)
+        note.setAttribute('x', attributes.x)
+        note.setAttribute('y', attributes.y)
+        note.setAttribute('length', attributes.length)
+        this.grid.append(note)
+      }
+      this.observer.observe(this.grid, this.config)
+    }
+
+    /**
+     * Creates a note from Websocket data.
+     *
+     * @param {object} note Note to be created.
+     */
+    #addNote (note) {
+      this.observer.disconnect()
+      const newNote = document.createElement('pt-piano-roll-note')
+      newNote.synth = this.synth
+      newNote.setAttribute('uuid', note.uuid)
+      newNote.setAttribute('x', note.x)
+      newNote.setAttribute('y', note.y)
+      newNote.setAttribute('length', note.length)
+      this.grid.append(newNote)
+      this.observer.observe(this.grid, this.config)
+    }
+
+    /**
+     * Creates a note from Websocket data.
+     *
+     * @param {object} note Note to be created.
+     */
+    #removeNote (note) {
+      this.observer.disconnect()
+      const existingNote = this.shadowRoot.querySelector(`pt-piano-roll-note[uuid="${note.uuid}"]`)
+      if (existingNote) {
+        existingNote.remove()
+      }
+      this.observer.observe(this.grid, this.config)
+    }
+
+    /**
+     * Updates an existing note.
+     *
+     * @param {object} note Note with changes.
+     */
+    #updateNote (note) {
+      this.observer.disconnect()
+      const existingNote = this.shadowRoot.querySelector(`pt-piano-roll-note[uuid="${note.uuid}"]`)
+      if (existingNote) {
+        for (const [key, value] of Object.entries(note)) {
+          existingNote.setAttribute(key, value)
+        }
+      }
+      this.observer.observe(this.grid, this.config)
+    }
+
+    /**
+     * Creates a new note on the user click and appends it to the grid.
+     *
+     * @param {PointerEvent} event Pointer event.
+     */
+    #createNote (event) {
+      const x = Math.trunc(event.offsetX / 16)
+      const y = Math.trunc(event.offsetY / 16)
+      const note = document.createElement('pt-piano-roll-note')
+      note.synth = this.synth
+      note.setAttribute('note', 108 - y)
+      note.setAttribute('x', x)
+      note.setAttribute('y', y)
+      note.setAttribute('length', 1)
+
+      note.setAttribute('uuid', crypto.randomUUID())
+
+      this.grid.append(note)
+
+      const now = Tone.now()
+      this.synth.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)
+    }
+
+    /**
+     * Converts piano roll to JSON format.
+     *
+     * @returns {list} List of note objects.
+     */
+    #toObject () {
+      const notes = this.grid.querySelectorAll('pt-piano-roll-note')
+      const list = []
+      for (const note of notes) {
+        const obj = {
+          x: note.x,
+          y: note.y,
+          length: note.length
+        }
+        list.push(obj)
+      }
+      return list
     }
   }
 )

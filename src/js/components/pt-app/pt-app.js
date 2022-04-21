@@ -59,6 +59,8 @@ customElements.define('pt-app',
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
       this.button = this.shadowRoot.querySelector('#play')
+
+      this.roll = this.shadowRoot.querySelector('pt-piano-roll')
     }
 
     /**
@@ -80,6 +82,18 @@ customElements.define('pt-app',
         this.keyboard.addEventListener('note-stop', event => this.#sendMessage({ note: event.detail.note, action: 'stop' }))
       })
 
+      this.roll.addEventListener('note-create', event => {
+        this.#sendMessage(event.detail)
+      })
+
+      this.roll.addEventListener('note-remove', event => {
+        this.#sendMessage(event.detail)
+      })
+
+      this.roll.addEventListener('note-update', event => {
+        this.#sendMessage(event.detail)
+      })
+
       this.keyboard.addEventListener('note-play', event => this.#playNote(event.detail.note))
       this.keyboard.addEventListener('note-stop', event => this.#stopNote(event.detail.note))
 
@@ -98,8 +112,8 @@ customElements.define('pt-app',
       })
       this.addEventListener('keyup', event => this.#keyUp(event))
 
-      this.button.addEventListener('click', () => {
-        Tone.start()
+      this.button.addEventListener('click', async () => {
+        await Tone.start()
         Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
         Tone.Transport.loop = true
         Tone.Transport.start()
@@ -118,11 +132,19 @@ customElements.define('pt-app',
      * @param {Blob} data Data to be handled.
      */
     async #handleMessage (data) {
-      const message = JSON.parse(await data.text())
+      const message = await JSON.parse(await data.text())
       if (message.action === 'play') {
-        this.keyboard.dispatchEvent(new CustomEvent('msg-play', { detail: { note: message.note } }))
+        this.#playMidiNote(message.note)
       } else if (message.action === 'stop') {
-        this.keyboard.dispatchEvent(new CustomEvent('msg-stop', { detail: { note: message.note } }))
+        this.#stopMidiNote(message.note)
+      } else if (message.action === 'note-update') {
+        this.roll.dispatchEvent(new CustomEvent('update', { detail: message }))
+      } else if (message.action === 'note-create') {
+        this.roll.dispatchEvent(new CustomEvent('add', { detail: message }))
+      } else if (message.action === 'note-remove') {
+        this.roll.dispatchEvent(new CustomEvent('remove', { detail: message }))
+      } else if (message.action === 'note-import') {
+        this.roll.dispatchEvent(new CustomEvent('import', { detail: message }))
       }
     }
 
@@ -132,7 +154,9 @@ customElements.define('pt-app',
      * @param {object} data Data to be sent.
      */
     #sendMessage (data) {
-      this.ws.send(JSON.stringify(data))
+      if (this.ws.readyState === this.ws.OPEN) {
+        this.ws.send(JSON.stringify(data))
+      }
     }
 
     /**
@@ -170,7 +194,7 @@ customElements.define('pt-app',
      * @param {number} note Note to be played
      * @param {number} velocity Velocity as a number between 0 and 1.
      */
-    #playMidiNote (note, velocity) {
+    #playMidiNote (note, velocity = 0.5) {
       this.#playNote(note, velocity)
       const target = this.keyboard.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
       target.classList.add('playing')

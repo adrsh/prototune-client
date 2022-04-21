@@ -16,6 +16,7 @@ template.innerHTML = `
     border-bottom: 1px solid gray;
   }
   </style>
+  <div id="name"></div>
 `
 
 customElements.define('pt-instrument',
@@ -30,6 +31,8 @@ customElements.define('pt-instrument',
       super()
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
+
+      this.name = this.shadowRoot.querySelector('#name')
     }
 
     /**
@@ -38,6 +41,7 @@ customElements.define('pt-instrument',
     connectedCallback () {
       this.instrument = new Tone.Oscillator()
       this.dispatchEvent(new CustomEvent('instrument-change', { detail: { instrument: this.instrument } }))
+      this.name.textContent = this.instrument.name
     }
 
     /**

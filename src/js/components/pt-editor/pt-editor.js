@@ -1,5 +1,5 @@
 /**
- * The instrument selection web component module.
+ * The pt-editor web component module.
  *
  * @author Adrian Shosholli <as227cw@student.lnu.se>
  * @version 1.0.0
@@ -28,13 +28,13 @@ template.innerHTML = `
   <button>+</button>
 `
 
-customElements.define('pt-instruments',
+customElements.define('pt-editor',
   /**
-   * Element representing pt-instruments.
+   * Element representing pt-editor.
    */
   class extends HTMLElement {
     /**
-     * Constructor for pt-instruments.
+     * Constructor for pt-editor.
      */
     constructor () {
       super()
@@ -64,7 +64,6 @@ customElements.define('pt-instruments',
      * Add a new instrument to the list.
      */
     #addInstrument () {
-      console.log('adding instrument')
       const instrument = document.createElement('pt-instrument')
       instrument.addEventListener('instrument-change', event => console.log(event.detail.instrument))
       this.shadowRoot.insertBefore(instrument, this.button)

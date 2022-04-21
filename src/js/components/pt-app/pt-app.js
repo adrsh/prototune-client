@@ -29,7 +29,7 @@ template.innerHTML = `
       grid-area: options;
     }
   </style>
-  <pt-instruments></pt-instruments>
+  <pt-editor></pt-editor>
   <pt-piano-roll></pt-piano-roll>
   <div id="options">
     <!-- <label for="instrument-select">Instrument</label>

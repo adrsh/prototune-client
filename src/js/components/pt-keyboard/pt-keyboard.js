@@ -280,6 +280,8 @@ customElements.define('pt-keyboard',
         }
       })
       document.addEventListener('keyup', event => this.#keyUp(event))
+
+      this.#initMidi().then(console.log('MIDI device connected.'))
     }
 
     /**
@@ -291,8 +293,6 @@ customElements.define('pt-keyboard',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#playNote(note)
-        const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
-        target.classList.add('playing')
       }
     }
 
@@ -305,8 +305,6 @@ customElements.define('pt-keyboard',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#stopNote(note)
-        const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
-        target.classList.remove('playing')
       }
     }
 
@@ -335,6 +333,8 @@ customElements.define('pt-keyboard',
      */
     #playNote (note, velocity = 0.5) {
       this.instrument.triggerAttack(Tone.Midi(note), Tone.now(), velocity)
+      const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
+      target.classList.add('playing')
     }
 
     /**
@@ -344,6 +344,30 @@ customElements.define('pt-keyboard',
      */
     #stopNote (note) {
       this.instrument.triggerRelease(Tone.Midi(note), Tone.now())
+      const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
+      target.classList.remove('playing')
+    }
+
+    /**
+     * Initializes MIDI functionality.
+     */
+    async #initMidi () {
+      this.midi = await navigator.requestMIDIAccess({ sysex: true })
+      this.midi.inputs.forEach(entry => (entry.onmidimessage = this.#onMIDIMessage.bind(this)))
+    }
+
+    /**
+     * Handles MIDIMessageEvent and plays the note that was pressed.
+     *
+     * @param {MIDIMessageEvent} event Event from a MIDI device.
+     */
+    #onMIDIMessage (event) {
+      // 0 means note up and anything else is the velocity
+      if (event.data[2] === 0) {
+        this.#stopNote(event.data[1])
+      } else {
+        this.#playNote(event.data[1], (event.data[2] / 128).toFixed(3))
+      }
     }
 
     /**

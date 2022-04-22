@@ -100,7 +100,7 @@ customElements.define('pt-keyboard-note',
     #playNote () {
       this.addEventListener('pointerup', this.onNoteStop)
       this.addEventListener('pointerleave', this.onNoteStop)
-      this.dispatchEvent(new CustomEvent('note-play', { detail: { note: this.note }, bubbles: true, composed: true }))
+      this.dispatchEvent(new CustomEvent('note-play', { detail: { note: this.note }, composed: true }))
       this.classList.add('playing')
     }
 
@@ -110,7 +110,7 @@ customElements.define('pt-keyboard-note',
     #stopNote () {
       this.removeEventListener('pointerup', this.onNoteStop)
       this.removeEventListener('pointerleave', this.onNoteStop)
-      this.dispatchEvent(new CustomEvent('note-stop', { detail: { note: this.note }, bubbles: true, composed: true }))
+      this.dispatchEvent(new CustomEvent('note-stop', { detail: { note: this.note }, composed: true }))
       this.classList.remove('playing')
     }
   }

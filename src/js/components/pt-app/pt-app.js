@@ -75,7 +75,7 @@ customElements.define('pt-app',
       this.ws = new WebSocket('ws://localhost:8080')
 
       /**
-       * Make the message get parsed as JSON.
+       * Make the message get parsed as JSON. Kind of like a middleware.
        *
        * @param {Event} event Event to be handled.
        */
@@ -85,21 +85,10 @@ customElements.define('pt-app',
 
       this.editor.ws = this.ws
       this.keyboard.ws = this.ws
+      this.roll.ws = this.ws
 
       // Make the keyboard instrument be the same as the editors current instrument.
       this.keyboard.instrument = this.editor.instrument
-
-      this.roll.addEventListener('note-create', event => {
-        this.#sendMessage(event.detail)
-      })
-
-      this.roll.addEventListener('note-remove', event => {
-        this.#sendMessage(event.detail)
-      })
-
-      this.roll.addEventListener('note-update', event => {
-        this.#sendMessage(event.detail)
-      })
 
       // This bugs out once in a while, but decreases latency.
       // Tone.setContext(new Tone.Context({ latencyHint: 'balanced' }))
@@ -117,35 +106,5 @@ customElements.define('pt-app',
      */
     disconnectedCallback () {
     }
-
-    /**
-     * Handles messages from Websocket server.
-     *
-     * @param {Blob} data Data to be handled.
-     */
-    async #handleMessage (data) {
-      const message = await JSON.parse(await data.text())
-      if (message.action === 'note-update') {
-        this.roll.dispatchEvent(new CustomEvent('update', { detail: message }))
-      } else if (message.action === 'note-create') {
-        this.roll.dispatchEvent(new CustomEvent('add', { detail: message }))
-      } else if (message.action === 'note-remove') {
-        this.roll.dispatchEvent(new CustomEvent('remove', { detail: message }))
-      } else if (message.action === 'note-import') {
-        this.roll.dispatchEvent(new CustomEvent('import', { detail: message }))
-      }
-    }
-
-    /**
-     * Sends data to Websocket server.
-     *
-     * @param {object} data Data to be sent.
-     */
-    #sendMessage (data) {
-      if (this.ws.readyState === this.ws.OPEN) {
-        this.ws.send(JSON.stringify(data))
-      }
-    }
-
   }
 )

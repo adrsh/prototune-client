@@ -83,10 +83,12 @@ customElements.define('pt-piano-roll',
         }
       })
 
-      this.addEventListener('update', event => this.#updateNote(event.detail.changes))
-      this.addEventListener('add', event => this.#addNote(event.detail.note))
-      this.addEventListener('remove', event => this.#removeNote(event.detail.note))
-      this.addEventListener('import', event => this.#importNotes(event.detail.notes))
+      this.ws.addEventListener('open', () => {
+        this.ws.addEventListener('message', async event => {
+          const message = await event.message
+          this.#handleMessage(message)
+        })
+      })
 
       this.grid.addEventListener('contextmenu', event => event.preventDefault())
 
@@ -111,6 +113,35 @@ customElements.define('pt-piano-roll',
     }
 
     /**
+     * Handles messages from Websocket server.
+     *
+     * @param {object} message Message to be handled.
+     */
+    async #handleMessage (message) {
+      console.log(message.action)
+      if (message.action === 'note-update') {
+        this.#updateNote(message.changes)
+      } else if (message.action === 'note-create') {
+        this.#addNote(message.note)
+      } else if (message.action === 'note-remove') {
+        this.#removeNote(message.note)
+      } else if (message.action === 'note-import') {
+        this.#importNotes(message.notes)
+      }
+    }
+
+    /**
+     * Sends data to Websocket server.
+     *
+     * @param {object} data Data to be sent.
+     */
+    #sendMessage (data) {
+      if (this.ws.readyState === this.ws.OPEN) {
+        this.ws.send(JSON.stringify(data))
+      }
+    }
+
+    /**
      * Handles mutation records and creates appropriate events.
      *
      * @param {MutationRecord[]} mutationRecords Mutation records.
@@ -127,34 +158,25 @@ customElements.define('pt-piano-roll',
         } else if (mutation.type === 'childList') {
           if (mutation.addedNodes.length > 0) {
             for (const node of mutation.addedNodes) {
-              this.dispatchEvent(new CustomEvent('note-create', {
-                detail: {
-                  action: 'note-create',
-                  note: {
-                    uuid: node.uuid,
-                    x: node.x,
-                    y: node.y,
-                    length: node.length
-                  }
+              this.#sendMessage({
+                action: 'note-create',
+                note: {
+                  uuid: node.uuid,
+                  x: node.x,
+                  y: node.y,
+                  length: node.length
                 }
-              }))
+              })
             }
           } else if (mutation.removedNodes.length > 0) {
             for (const node of mutation.removedNodes) {
-              this.dispatchEvent(new CustomEvent('note-remove', {
-                detail: {
-                  action: 'note-remove',
-                  note: {
-                    uuid: node.uuid
-                  }
-                }
-              }))
+              this.#sendMessage({ action: 'note-remove', note: { uuid: node.uuid } })
             }
           }
         }
       }
       if (Object.keys(target).length > 0) {
-        this.dispatchEvent(new CustomEvent('note-update', { detail: { action: 'note-update', changes: target } }))
+        this.#sendMessage({ action: 'note-update', changes: target })
       }
     }
 
@@ -246,25 +268,6 @@ customElements.define('pt-piano-roll',
 
       const now = Tone.now()
       this.synth.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)
-    }
-
-    /**
-     * Converts piano roll to JSON format.
-     *
-     * @returns {list} List of note objects.
-     */
-    #toObject () {
-      const notes = this.grid.querySelectorAll('pt-piano-roll-note')
-      const list = []
-      for (const note of notes) {
-        const obj = {
-          x: note.x,
-          y: note.y,
-          length: note.length
-        }
-        list.push(obj)
-      }
-      return list
     }
   }
 )

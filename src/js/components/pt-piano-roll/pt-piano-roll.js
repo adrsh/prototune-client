@@ -74,8 +74,10 @@ customElements.define('pt-piano-roll',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      this.synth = new Tone.PolySynth(Tone.Synth).toDestination()
-      this.synth.volume.value = -6
+      if (!this.instrument) {
+        this.instrument = new Tone.PolySynth(Tone.Synth).toDestination()
+        this.instrument.volume.value = -6
+      }
 
       this.grid.addEventListener('pointerdown', event => {
         if (event.button === 0) {
@@ -189,7 +191,7 @@ customElements.define('pt-piano-roll',
       this.observer.disconnect()
       for (const [uuid, attributes] of Object.entries(notes)) {
         const note = document.createElement('pt-piano-roll-note')
-        note.synth = this.synth
+        note.instrument = this.instrument
         note.setAttribute('uuid', uuid)
         note.setAttribute('note', 108 - attributes.y)
         note.setAttribute('x', attributes.x)
@@ -208,7 +210,7 @@ customElements.define('pt-piano-roll',
     #addNote (note) {
       this.observer.disconnect()
       const newNote = document.createElement('pt-piano-roll-note')
-      newNote.synth = this.synth
+      newNote.instrument = this.instrument
       newNote.setAttribute('uuid', note.uuid)
       newNote.setAttribute('x', note.x)
       newNote.setAttribute('y', note.y)
@@ -256,7 +258,7 @@ customElements.define('pt-piano-roll',
       const x = Math.trunc(event.offsetX / 16)
       const y = Math.trunc(event.offsetY / 16)
       const note = document.createElement('pt-piano-roll-note')
-      note.synth = this.synth
+      note.instrument = this.instrument
       note.setAttribute('note', 108 - y)
       note.setAttribute('x', x)
       note.setAttribute('y', y)
@@ -267,7 +269,7 @@ customElements.define('pt-piano-roll',
       this.grid.append(note)
 
       const now = Tone.now()
-      this.synth.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)
+      this.instrument.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)
     }
   }
 )

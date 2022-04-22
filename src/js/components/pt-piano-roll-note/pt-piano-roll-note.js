@@ -58,13 +58,16 @@ customElements.define('pt-piano-roll-note',
       this.style.top = `${this.y}rem`
       this.style.left = `${this.x}rem`
 
-      this.transport = Tone.Transport.schedule((time) => this.instrument.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+      if (!this.transport) {
+        this.transport = Tone.Transport.schedule((time) => this.instrument.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+      }
 
       // Remove itself if right mouse button is clicked.
       this.addEventListener('pointerdown', event => {
         // Stops grid underneath from getting triggered by the click.
         event.stopImmediatePropagation()
         if (event.button === 2) {
+          Tone.Transport.clear(this.transport)
           this.remove()
         } else if (event.button === 0) {
           this.#startMoving(event)
@@ -75,6 +78,7 @@ customElements.define('pt-piano-roll-note',
       this.addEventListener('pointerenter', event => {
         event.stopPropagation()
         if (event.buttons === 2) {
+          Tone.Transport.clear(this.transport)
           this.remove()
         }
       })
@@ -239,7 +243,7 @@ customElements.define('pt-piano-roll-note',
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
-      Tone.Transport.clear(this.transport)
+      // Tone.Transport.clear(this.transport)
     }
 
     /**

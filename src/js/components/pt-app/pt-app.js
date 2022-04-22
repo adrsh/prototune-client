@@ -81,7 +81,6 @@ customElements.define('pt-app',
 
       this.editor.ws = this.ws
       this.keyboard.ws = this.ws
-      this.roll.ws = this.ws
 
       // Make the keyboard instrument be the same as the editors current instrument.
       this.keyboard.instrument = this.editor.instrument

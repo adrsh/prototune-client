@@ -16,7 +16,8 @@ template.innerHTML = `
     grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
     grid-template-areas:  "instruments piano-roll";
   }
-  pt-piano-roll {
+  #roll {
+    overflow-y: scroll;
     grid-area: piano-roll;
   }
   button {
@@ -38,7 +39,8 @@ template.innerHTML = `
   <div id="list">
     <button>+</button>
   </div>
-  <pt-piano-roll></pt-piano-roll>
+  <div id="roll">
+  </div>
 `
 
 customElements.define('pt-editor',
@@ -54,6 +56,8 @@ customElements.define('pt-editor',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
+      this.list = this.shadowRoot.querySelector('#list')
+      this.rollHolder = this.shadowRoot.querySelector('#roll')
       this.button = this.shadowRoot.querySelector('button')
     }
 
@@ -63,7 +67,7 @@ customElements.define('pt-editor',
     connectedCallback () {
       this.button.addEventListener('click', event => {
         event.preventDefault()
-        this.#addInstrument()
+        this.#newInstrument()
       })
     }
 
@@ -76,13 +80,26 @@ customElements.define('pt-editor',
     /**
      * Add a new instrument to the list.
      */
-    #addInstrument () {
+    #newInstrument () {
       const instrument = document.createElement('pt-instrument')
-      instrument.addEventListener('instrument-change', event => {
-        this.instrument = event.detail.instrument
+      const roll = document.createElement('pt-piano-roll')
+
+      // Add Websocket to piano roll
+      roll.ws = this.ws
+      instrument.ws = this.ws
+
+      instrument.roll = roll
+      roll.instrument = instrument.instrument
+
+      instrument.addEventListener('instrument-select', event => {
+        this.instrument = event.target.instrument
+        this.roll = event.target.roll
+        this.rollHolder.replaceChildren(event.target.roll)
         console.log(this.instrument)
       })
-      this.shadowRoot.insertBefore(instrument, this.button)
+      this.list.insertBefore(instrument, this.button)
+
+      this.rollHolder.replaceChildren(roll)
     }
   }
 )

@@ -65,7 +65,7 @@ customElements.define('pt-editor',
      */
     #addInstrument () {
       const instrument = document.createElement('pt-instrument')
-      instrument.addEventListener('instrument-change', event => console.log(event.detail.instrument))
+      instrument.addEventListener('instrument-change', event => { this.instrument = event.detail.instrument })
       this.shadowRoot.insertBefore(instrument, this.button)
     }
   }

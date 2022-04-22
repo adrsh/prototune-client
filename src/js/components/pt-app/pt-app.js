@@ -60,6 +60,8 @@ customElements.define('pt-app',
 
       this.button = this.shadowRoot.querySelector('#play')
 
+      this.editor = this.shadowRoot.querySelector('pt-editor')
+      this.keyboard = this.shadowRoot.querySelector('pt-keyboard')
       this.roll = this.shadowRoot.querySelector('pt-piano-roll')
     }
 
@@ -70,17 +72,22 @@ customElements.define('pt-app',
       // This makes it possible to get keypresses on entire app.
       this.setAttribute('tabindex', 0)
 
-      this.keyboard = this.shadowRoot.querySelector('pt-keyboard')
-
       this.ws = new WebSocket('ws://localhost:8080')
 
-      // Add listeners for message handling only if the connection is open. The question is if it can get opened multiple times... Maybe check for close and remove listeners.
-      this.ws.addEventListener('open', () => {
-        this.ws.addEventListener('message', event => this.#handleMessage(event.data))
+      /**
+       * Make the message get parsed as JSON.
+       *
+       * @param {Event} event Event to be handled.
+       */
+      this.ws.onmessage = async function (event) {
+        event.message = event.data.text().then(JSON.parse)
+      }
 
-        this.keyboard.addEventListener('note-play', event => this.#sendMessage({ note: event.detail.note, action: 'play' }))
-        this.keyboard.addEventListener('note-stop', event => this.#sendMessage({ note: event.detail.note, action: 'stop' }))
-      })
+      this.editor.ws = this.ws
+      this.keyboard.ws = this.ws
+
+      // Make the keyboard instrument be the same as the editors current instrument.
+      this.keyboard.instrument = this.editor.instrument
 
       this.roll.addEventListener('note-create', event => {
         this.#sendMessage(event.detail)
@@ -94,23 +101,10 @@ customElements.define('pt-app',
         this.#sendMessage(event.detail)
       })
 
-      this.keyboard.addEventListener('note-play', event => this.#playNote(event.detail.note))
-      this.keyboard.addEventListener('note-stop', event => this.#stopNote(event.detail.note))
-
       this.#initMidi().then(console.log('MIDI device connected.'))
-
-      this.#setInstrument('piano')
 
       // This bugs out once in a while, but decreases latency.
       Tone.setContext(new Tone.Context({ latencyHint: 'balanced' }))
-
-      // Handle key presses.
-      this.addEventListener('keydown', event => {
-        if (!event.repeat) {
-          this.#keyDown(event)
-        }
-      })
-      this.addEventListener('keyup', event => this.#keyUp(event))
 
       this.button.addEventListener('click', async () => {
         await Tone.start()
@@ -156,35 +150,6 @@ customElements.define('pt-app',
     #sendMessage (data) {
       if (this.ws.readyState === this.ws.OPEN) {
         this.ws.send(JSON.stringify(data))
-      }
-    }
-
-    /**
-     * Plays a note using the keyboard.
-     *
-     * @param {KeyboardEvent} event Event fired by keydown
-     */
-    #keyDown (event) {
-      const note = this.#getNoteFromKey(event.code)
-      if (note) {
-        this.#playNote(note)
-        // This works but feels wrong for some reason.
-        const target = this.keyboard.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
-        target.classList.add('playing')
-      }
-    }
-
-    /**
-     * Releases a note that was played using the keyboard.
-     *
-     * @param {KeyboardEvent} event Event fired by keyup
-     */
-    #keyUp (event) {
-      const note = this.#getNoteFromKey(event.code)
-      if (note) {
-        this.#stopNote(note)
-        const target = this.keyboard.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
-        target.classList.remove('playing')
       }
     }
 
@@ -240,7 +205,7 @@ customElements.define('pt-app',
      * @param {number} velocity Velocity as a number between 0 and 1.
      */
     #playNote (note, velocity = 0.5) {
-      this.#synth.triggerAttack(Tone.Midi(note), Tone.now(), velocity)
+      this.instrument.triggerAttack(Tone.Midi(note), Tone.now(), velocity)
     }
 
     /**
@@ -249,165 +214,8 @@ customElements.define('pt-app',
      * @param {string} note Note to be released, ex. 'C4'.
      */
     #stopNote (note) {
-      this.#synth.triggerRelease(Tone.Midi(note), Tone.now())
+      this.instrument.triggerRelease(Tone.Midi(note), Tone.now())
     }
 
-    /**
-     * Changes instrument.
-     *
-     * @param {string} instrument Instrument to be played.
-     */
-    #setInstrument (instrument) {
-      if (this.#synth) {
-        this.#synth.dispose()
-      }
-      if (instrument === 'casio') {
-        this.#synth = new Tone.Sampler({
-          urls: {
-            A3: 'A1.mp3',
-            'A#3': 'As1.mp3',
-            B3: 'B1.mp3',
-            'G#3': 'Gs1.mp3',
-            A4: 'A2.mp3',
-            C4: 'C2.mp3',
-            'C#4': 'Cs2.mp3',
-            D4: 'D2.mp3',
-            'D#4': 'Ds2.mp3',
-            E4: 'E2.mp3',
-            F4: 'F2.mp3',
-            'F#4': 'Fs2.mp3',
-            G4: 'G2.mp3'
-          },
-          release: 1,
-          baseUrl: 'https://tonejs.github.io/audio/casio/'
-        }).toDestination()
-      } else if (instrument === 'piano') {
-        this.#synth = new Tone.Sampler({
-          urls: {
-            A0: 'A0.mp3',
-            C1: 'C1.mp3',
-            'D#1': 'Ds1.mp3',
-            'F#1': 'Fs1.mp3',
-            A1: 'A1.mp3',
-            C2: 'C2.mp3',
-            'D#2': 'Ds2.mp3',
-            'F#2': 'Fs2.mp3',
-            A2: 'A2.mp3',
-            C3: 'C3.mp3',
-            'D#3': 'Ds3.mp3',
-            'F#3': 'Fs3.mp3',
-            A3: 'A3.mp3',
-            C4: 'C4.mp3',
-            'D#4': 'Ds4.mp3',
-            'F#4': 'Fs4.mp3',
-            A4: 'A4.mp3',
-            C5: 'C5.mp3',
-            'D#5': 'Ds5.mp3',
-            'F#5': 'Fs5.mp3',
-            A5: 'A5.mp3',
-            C6: 'C6.mp3',
-            'D#6': 'Ds6.mp3',
-            'F#6': 'Fs6.mp3',
-            A6: 'A6.mp3',
-            C7: 'C7.mp3',
-            'D#7': 'Ds7.mp3',
-            'F#7': 'Fs7.mp3',
-            A7: 'A7.mp3',
-            C8: 'C8.mp3'
-          },
-          release: 1,
-          baseUrl: 'https://tonejs.github.io/audio/salamander/'
-        }).toDestination()
-      } else if (instrument === 'amsynth') {
-        this.#synth = new Tone.PolySynth(Tone.AMSynth).toDestination()
-      } else if (instrument === 'fmsynth') {
-        this.#synth = new Tone.PolySynth(Tone.FMSynth).toDestination()
-      }
-    }
-
-    /**
-     * Returns which note that is mapped to which key on the keyboard.
-     *
-     * @param {string} key Key that was pressed on the keyboard.
-     * @returns {string} Note that should be played.
-     */
-    #getNoteFromKey (key) {
-      switch (key) {
-        case 'KeyZ':
-          return '48'
-        case 'KeyX':
-          return '50'
-        case 'KeyC':
-          return '52'
-        case 'KeyV':
-          return '53'
-        case 'KeyB':
-          return '55'
-        case 'KeyN':
-          return '57'
-        case 'KeyM':
-          return '59'
-        case 'Comma':
-          return '60'
-        case 'Period':
-          return '62'
-        case 'Slash':
-          return '64'
-        case 'KeyL':
-          return '61'
-        case 'Semicolon':
-          return '63'
-
-        case 'KeyS':
-          return '49'
-        case 'KeyD':
-          return '51'
-        case 'KeyG':
-          return '54'
-        case 'KeyH':
-          return '56'
-        case 'KeyJ':
-          return '58'
-
-        case 'KeyQ':
-          return '60'
-        case 'KeyW':
-          return '62'
-        case 'KeyE':
-          return '64'
-        case 'KeyR':
-          return '65'
-        case 'KeyT':
-          return '67'
-        case 'KeyY':
-          return '69'
-        case 'KeyU':
-          return '71'
-        case 'KeyI':
-          return '72'
-        case 'KeyO':
-          return '74'
-        case 'KeyP':
-          return '76'
-
-        case 'Digit2':
-          return '61'
-        case 'Digit3':
-          return '63'
-        case 'Digit5':
-          return '66'
-        case 'Digit6':
-          return '68'
-        case 'Digit7':
-          return '70'
-        case 'Digit9':
-          return '73'
-        case 'Digit0':
-          return '75'
-
-        default:
-          return ''
-      }
-    }
   }
 )

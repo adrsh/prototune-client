@@ -5,7 +5,7 @@
  * @version 1.0.0
  */
 
-import './components/pt-keyboard-note'
+import '../pt-keyboard-note/'
 import * as Tone from 'tone'
 
 const template = document.createElement('template')

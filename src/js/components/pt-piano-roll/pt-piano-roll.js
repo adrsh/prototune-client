@@ -6,7 +6,7 @@
  */
 
 import * as Tone from 'tone'
-import './components/pt-piano-roll-note'
+import '../pt-piano-roll-note'
 
 const template = document.createElement('template')
 template.innerHTML = `

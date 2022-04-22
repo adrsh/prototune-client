@@ -11,8 +11,13 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
   :host {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 40rem;
+    grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
+    grid-template-areas:  "instruments piano-roll";
+  }
+  pt-piano-roll {
+    grid-area: piano-roll;
   }
   button {
     height: 4rem;
@@ -24,8 +29,16 @@ template.innerHTML = `
     color: gray;
     cursor: pointer;
   }
+  #list {
+    display: flex;
+    flex-direction: column;
+    grid-area: instruments;
+  }
   </style>
-  <button>+</button>
+  <div id="list">
+    <button>+</button>
+  </div>
+  <pt-piano-roll></pt-piano-roll>
 `
 
 customElements.define('pt-editor',
@@ -65,7 +78,10 @@ customElements.define('pt-editor',
      */
     #addInstrument () {
       const instrument = document.createElement('pt-instrument')
-      instrument.addEventListener('instrument-change', event => { this.instrument = event.detail.instrument })
+      instrument.addEventListener('instrument-change', event => {
+        this.instrument = event.detail.instrument
+        console.log(this.instrument)
+      })
       this.shadowRoot.insertBefore(instrument, this.button)
     }
   }

@@ -13,24 +13,23 @@ template.innerHTML = `
     :host {
       display: grid;
       grid-template-rows: 40rem 2rem 16rem;
-      grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
-      grid-template-areas:  "instruments piano-roll"
-                            "options options"
-                            "keyboard keyboard";
+      grid-template-columns: auto;
+      grid-template-areas:  "editor"
+                            "options"
+                            "keyboard";
     }
     pt-keyboard {
       grid-area: keyboard;
       overflow-x: scroll;
     }
-    pt-piano-roll {
-      grid-area: piano-roll;
+    pt-editor {
+      grid-area: editor;
     }
     #options {
       grid-area: options;
     }
   </style>
   <pt-editor></pt-editor>
-  <pt-piano-roll></pt-piano-roll>
   <div id="options">
     <!-- <label for="instrument-select">Instrument</label>
     <select name="instruments" id="instrument-select">

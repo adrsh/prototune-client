@@ -43,7 +43,7 @@ customElements.define('pt-instrument',
       this.dispatchEvent(new CustomEvent('instrument-change', { detail: { instrument: this.instrument } }))
       this.name.textContent = this.instrument.name
 
-      this.addEventListener('click', event => this.dispatchEvent(new CustomEvent('instrument-change', { detail: { instrument: this.instrument } })))
+      this.addEventListener('click', () => this.dispatchEvent(new CustomEvent('instrument-change', { detail: { instrument: this.instrument } })))
     }
 
     /**

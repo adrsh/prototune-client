@@ -100,8 +100,7 @@ customElements.define('pt-piano-roll',
         attributes: true,
         childList: true,
         subtree: true,
-        attributeFilter: ['x', 'y', 'length'],
-        attributeOldValue: true
+        attributeFilter: ['x', 'y', 'length']
       }
 
       this.observer = new MutationObserver(records => this.#handleMutations(records))
@@ -119,7 +118,7 @@ customElements.define('pt-piano-roll',
      *
      * @param {object} message Message to be handled.
      */
-    async #handleMessage (message) {
+    #handleMessage (message) {
       console.log(message.action)
       if (message.action === 'note-update') {
         this.#updateNote(message.changes)
@@ -144,14 +143,14 @@ customElements.define('pt-piano-roll',
     }
 
     /**
-     * Handles mutation records and creates appropriate events.
+     * Handles mutation records and sends appropriate messages.
      *
      * @param {MutationRecord[]} mutationRecords Mutation records.
      */
     #handleMutations (mutationRecords) {
-      // Little bit of a clusterf*** here.
       const target = {}
       for (const mutation of mutationRecords) {
+        // Checking if multiple attributes were changed at the same time, and combining them.
         if (mutation.type === 'attributes') {
           Object.assign(target, {
             uuid: mutation.target.uuid,
@@ -159,6 +158,7 @@ customElements.define('pt-piano-roll',
           })
         } else if (mutation.type === 'childList') {
           if (mutation.addedNodes.length > 0) {
+            // I think only one note can be created/added at one point, but just in case.
             for (const node of mutation.addedNodes) {
               this.#sendMessage({
                 action: 'note-create',

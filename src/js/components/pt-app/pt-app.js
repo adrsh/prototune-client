@@ -69,15 +69,12 @@ customElements.define('pt-app',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      // This makes it possible to get keypresses on entire app.
-      this.setAttribute('tabindex', 0)
-
       this.ws = new WebSocket('ws://localhost:8080')
 
       /**
-       * Make the message get parsed as JSON. Kind of like a middleware.
+       * Make the message blob get parsed as JSON. Kind of like a middleware.
        *
-       * @param {Event} event Event to be handled.
+       * @param {MessageEvent} event Event to be handled.
        */
       this.ws.onmessage = async function (event) {
         event.message = event.data.text().then(JSON.parse)
@@ -92,6 +89,8 @@ customElements.define('pt-app',
 
       // This bugs out once in a while, but decreases latency.
       // Tone.setContext(new Tone.Context({ latencyHint: 'balanced' }))
+
+      document.addEventListener('pointerdown', async () => await Tone.start(), { once: true })
 
       this.button.addEventListener('click', async () => {
         await Tone.start()

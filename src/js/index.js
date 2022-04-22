@@ -8,3 +8,5 @@
 import './components/pt-app'
 import './components/pt-keyboard'
 import './components/pt-piano-roll'
+import './components/pt-editor'
+import './components/pt-instrument'

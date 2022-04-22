@@ -6,7 +6,7 @@
  */
 
 import * as Tone from 'tone'
-import './components/pt-piano-roll-note'
+import '../pt-piano-roll-note'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -74,8 +74,10 @@ customElements.define('pt-piano-roll',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      this.synth = new Tone.PolySynth(Tone.Synth).toDestination()
-      this.synth.volume.value = -6
+      if (!this.instrument) {
+        this.instrument = new Tone.PolySynth(Tone.Synth).toDestination()
+        this.instrument.volume.value = -6
+      }
 
       this.grid.addEventListener('pointerdown', event => {
         if (event.button === 0) {
@@ -83,10 +85,12 @@ customElements.define('pt-piano-roll',
         }
       })
 
-      this.addEventListener('update', event => this.#updateNote(event.detail.changes))
-      this.addEventListener('add', event => this.#addNote(event.detail.note))
-      this.addEventListener('remove', event => this.#removeNote(event.detail.note))
-      this.addEventListener('import', event => this.#importNotes(event.detail.notes))
+      this.ws.addEventListener('open', () => {
+        this.ws.addEventListener('message', async event => {
+          const message = await event.message
+          this.#handleMessage(message)
+        })
+      })
 
       this.grid.addEventListener('contextmenu', event => event.preventDefault())
 
@@ -96,8 +100,7 @@ customElements.define('pt-piano-roll',
         attributes: true,
         childList: true,
         subtree: true,
-        attributeFilter: ['x', 'y', 'length'],
-        attributeOldValue: true
+        attributeFilter: ['x', 'y', 'length']
       }
 
       this.observer = new MutationObserver(records => this.#handleMutations(records))
@@ -111,14 +114,43 @@ customElements.define('pt-piano-roll',
     }
 
     /**
-     * Handles mutation records and creates appropriate events.
+     * Handles messages from Websocket server.
+     *
+     * @param {object} message Message to be handled.
+     */
+    #handleMessage (message) {
+      console.log(message.action)
+      if (message.action === 'note-update') {
+        this.#updateNote(message.changes)
+      } else if (message.action === 'note-create') {
+        this.#addNote(message.note)
+      } else if (message.action === 'note-remove') {
+        this.#removeNote(message.note)
+      } else if (message.action === 'note-import') {
+        this.#importNotes(message.notes)
+      }
+    }
+
+    /**
+     * Sends data to Websocket server.
+     *
+     * @param {object} data Data to be sent.
+     */
+    #sendMessage (data) {
+      if (this.ws.readyState === this.ws.OPEN) {
+        this.ws.send(JSON.stringify(data))
+      }
+    }
+
+    /**
+     * Handles mutation records and sends appropriate messages.
      *
      * @param {MutationRecord[]} mutationRecords Mutation records.
      */
     #handleMutations (mutationRecords) {
-      // Little bit of a clusterf*** here.
       const target = {}
       for (const mutation of mutationRecords) {
+        // Checking if multiple attributes were changed at the same time, and combining them.
         if (mutation.type === 'attributes') {
           Object.assign(target, {
             uuid: mutation.target.uuid,
@@ -126,35 +158,27 @@ customElements.define('pt-piano-roll',
           })
         } else if (mutation.type === 'childList') {
           if (mutation.addedNodes.length > 0) {
+            // I think only one note can be created/added at one point, but just in case.
             for (const node of mutation.addedNodes) {
-              this.dispatchEvent(new CustomEvent('note-create', {
-                detail: {
-                  action: 'note-create',
-                  note: {
-                    uuid: node.uuid,
-                    x: node.x,
-                    y: node.y,
-                    length: node.length
-                  }
+              this.#sendMessage({
+                action: 'note-create',
+                note: {
+                  uuid: node.uuid,
+                  x: node.x,
+                  y: node.y,
+                  length: node.length
                 }
-              }))
+              })
             }
           } else if (mutation.removedNodes.length > 0) {
             for (const node of mutation.removedNodes) {
-              this.dispatchEvent(new CustomEvent('note-remove', {
-                detail: {
-                  action: 'note-remove',
-                  note: {
-                    uuid: node.uuid
-                  }
-                }
-              }))
+              this.#sendMessage({ action: 'note-remove', note: { uuid: node.uuid } })
             }
           }
         }
       }
       if (Object.keys(target).length > 0) {
-        this.dispatchEvent(new CustomEvent('note-update', { detail: { action: 'note-update', changes: target } }))
+        this.#sendMessage({ action: 'note-update', changes: target })
       }
     }
 
@@ -167,7 +191,7 @@ customElements.define('pt-piano-roll',
       this.observer.disconnect()
       for (const [uuid, attributes] of Object.entries(notes)) {
         const note = document.createElement('pt-piano-roll-note')
-        note.synth = this.synth
+        note.instrument = this.instrument
         note.setAttribute('uuid', uuid)
         note.setAttribute('note', 108 - attributes.y)
         note.setAttribute('x', attributes.x)
@@ -186,7 +210,7 @@ customElements.define('pt-piano-roll',
     #addNote (note) {
       this.observer.disconnect()
       const newNote = document.createElement('pt-piano-roll-note')
-      newNote.synth = this.synth
+      newNote.instrument = this.instrument
       newNote.setAttribute('uuid', note.uuid)
       newNote.setAttribute('x', note.x)
       newNote.setAttribute('y', note.y)
@@ -234,7 +258,7 @@ customElements.define('pt-piano-roll',
       const x = Math.trunc(event.offsetX / 16)
       const y = Math.trunc(event.offsetY / 16)
       const note = document.createElement('pt-piano-roll-note')
-      note.synth = this.synth
+      note.instrument = this.instrument
       note.setAttribute('note', 108 - y)
       note.setAttribute('x', x)
       note.setAttribute('y', y)
@@ -245,26 +269,7 @@ customElements.define('pt-piano-roll',
       this.grid.append(note)
 
       const now = Tone.now()
-      this.synth.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)
-    }
-
-    /**
-     * Converts piano roll to JSON format.
-     *
-     * @returns {list} List of note objects.
-     */
-    #toObject () {
-      const notes = this.grid.querySelectorAll('pt-piano-roll-note')
-      const list = []
-      for (const note of notes) {
-        const obj = {
-          x: note.x,
-          y: note.y,
-          length: note.length
-        }
-        list.push(obj)
-      }
-      return list
+      this.instrument.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)
     }
   }
 )

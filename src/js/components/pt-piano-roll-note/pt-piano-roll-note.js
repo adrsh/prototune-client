@@ -58,7 +58,7 @@ customElements.define('pt-piano-roll-note',
       this.style.top = `${this.y}rem`
       this.style.left = `${this.x}rem`
 
-      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+      this.transport = Tone.Transport.schedule((time) => this.instrument.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
 
       // Remove itself if right mouse button is clicked.
       this.addEventListener('pointerdown', event => {
@@ -232,7 +232,7 @@ customElements.define('pt-piano-roll-note',
      */
     #updateTransport () {
       Tone.Transport.clear(this.transport)
-      this.transport = Tone.Transport.schedule((time) => this.synth.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+      this.transport = Tone.Transport.schedule((time) => this.instrument.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
     }
 
     /**

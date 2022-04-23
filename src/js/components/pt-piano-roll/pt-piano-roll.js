@@ -165,6 +165,7 @@ customElements.define('pt-piano-roll',
             for (const node of mutation.addedNodes) {
               this.#sendMessage({
                 action: 'note-create',
+                roll: this.uuid,
                 note: {
                   uuid: node.uuid,
                   x: node.x,
@@ -175,13 +176,13 @@ customElements.define('pt-piano-roll',
             }
           } else if (mutation.removedNodes.length > 0) {
             for (const node of mutation.removedNodes) {
-              this.#sendMessage({ action: 'note-remove', note: { uuid: node.uuid } })
+              this.#sendMessage({ action: 'note-remove', roll: this.uuid, note: { uuid: node.uuid } })
             }
           }
         }
       }
       if (Object.keys(target).length > 0) {
-        this.#sendMessage({ action: 'note-update', changes: target })
+        this.#sendMessage({ action: 'note-update', roll: this.uuid, changes: target })
       }
     }
 

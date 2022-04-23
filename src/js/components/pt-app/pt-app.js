@@ -42,7 +42,6 @@ customElements.define('pt-app',
    * Element representing a pt-app.
    */
   class extends HTMLElement {
-    #synth
     /**
      * Constructor for pt-app.
      */

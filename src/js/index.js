@@ -14,7 +14,7 @@ import './components/pt-instrument'
 window.ws = new WebSocket('ws://localhost:8080')
 
 /**
- * Make the message blob get parsed as JSON. Kind of like a middleware.
+ * Make the message blob text get parsed from JSON. Kind of like a middleware.
  *
  * @param {MessageEvent} event Event to be handled.
  */

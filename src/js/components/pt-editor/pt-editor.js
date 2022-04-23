@@ -5,8 +5,6 @@
  * @version 1.0.0
  */
 
-import * as Tone from 'tone'
-
 const template = document.createElement('template')
 template.innerHTML = `
   <style>

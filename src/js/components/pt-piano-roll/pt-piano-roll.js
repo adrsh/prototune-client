@@ -80,6 +80,7 @@ customElements.define('pt-piano-roll',
       }
 
       this.grid.addEventListener('pointerdown', event => {
+        event.stopImmediatePropagation()
         if (event.button === 0) {
           this.#createNote(event)
         }

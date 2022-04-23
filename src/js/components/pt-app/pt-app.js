@@ -31,14 +31,8 @@ template.innerHTML = `
   </style>
   <pt-editor></pt-editor>
   <div id="options">
-    <!-- <label for="instrument-select">Instrument</label>
-    <select name="instruments" id="instrument-select">
-      <option value="piano">Piano</option>
-      <option value="casio">Casio</option>
-      <option value="amsynth">AMSynth</option>
-      <option value="fmsynth">FMSynth</option>
-    </select> -->
     <button id="play">Play</button>
+    <button id="stop">Stop</button>
   </div>
   <pt-keyboard></pt-keyboard>
 `
@@ -57,7 +51,8 @@ customElements.define('pt-app',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-      this.button = this.shadowRoot.querySelector('#play')
+      this.playButton = this.shadowRoot.querySelector('#play')
+      this.stopButton = this.shadowRoot.querySelector('#stop')
 
       this.editor = this.shadowRoot.querySelector('pt-editor')
       this.keyboard = this.shadowRoot.querySelector('pt-keyboard')
@@ -90,11 +85,15 @@ customElements.define('pt-app',
 
       document.addEventListener('pointerdown', async () => await Tone.start(), { once: true })
 
-      this.button.addEventListener('click', async () => {
+      this.playButton.addEventListener('click', async () => {
         await Tone.start()
         Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
         Tone.Transport.loop = true
         Tone.Transport.start()
+      })
+
+      this.stopButton.addEventListener('click', async () => {
+        Tone.Transport.stop()
       })
     }
 

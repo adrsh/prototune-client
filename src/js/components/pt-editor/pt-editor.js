@@ -15,10 +15,12 @@ template.innerHTML = `
     grid-template-rows: 40rem;
     grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
     grid-template-areas:  "instruments piano-roll";
+    border-bottom: 1px solid gray;
   }
   #roll {
     overflow-y: scroll;
     grid-area: piano-roll;
+    border-bottom: 1px solid gray;
   }
   button {
     height: 4rem;
@@ -34,6 +36,7 @@ template.innerHTML = `
     display: flex;
     flex-direction: column;
     grid-area: instruments;
+    border-right: 1px solid gray;
   }
   </style>
   <div id="list">

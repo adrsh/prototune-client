@@ -68,29 +68,26 @@ customElements.define('pt-piano-roll',
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
       this.grid = this.shadowRoot.querySelector('#grid')
-    }
 
-    /**
-     * Called after the element is inserted to the DOM.
-     */
-    connectedCallback () {
       if (!this.instrument) {
         this.instrument = new Tone.PolySynth(Tone.Synth).toDestination()
         this.instrument.volume.value = -6
       }
 
-      this.grid.addEventListener('pointerdown', event => {
-        event.stopImmediatePropagation()
-        if (event.button === 0) {
-          this.#createNote(event)
-        }
-      })
+      this.ws = window.ws
 
       this.ws.addEventListener('open', () => {
         this.ws.addEventListener('message', async event => {
           const message = await event.message
           this.#handleMessage(message)
         })
+      })
+
+      this.grid.addEventListener('pointerdown', event => {
+        event.stopImmediatePropagation()
+        if (event.button === 0) {
+          this.#createNote(event)
+        }
       })
 
       this.grid.addEventListener('contextmenu', event => event.preventDefault())
@@ -109,6 +106,12 @@ customElements.define('pt-piano-roll',
     }
 
     /**
+     * Called after the element is inserted to the DOM.
+     */
+    connectedCallback () {
+    }
+
+    /**
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
@@ -120,7 +123,6 @@ customElements.define('pt-piano-roll',
      * @param {object} message Message to be handled.
      */
     #handleMessage (message) {
-      console.log(message.action)
       if (message.action === 'note-update') {
         this.#updateNote(message.changes)
       } else if (message.action === 'note-create') {

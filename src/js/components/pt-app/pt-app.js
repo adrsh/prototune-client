@@ -63,20 +63,6 @@ customElements.define('pt-app',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      this.ws = new WebSocket('ws://localhost:8080')
-
-      /**
-       * Make the message blob get parsed as JSON. Kind of like a middleware.
-       *
-       * @param {MessageEvent} event Event to be handled.
-       */
-      this.ws.onmessage = async function (event) {
-        event.message = event.data.text().then(JSON.parse)
-      }
-
-      this.editor.ws = this.ws
-      this.keyboard.ws = this.ws
-
       // Make the keyboard instrument be the same as the editors current instrument.
       this.keyboard.instrument = this.editor.instrument
 

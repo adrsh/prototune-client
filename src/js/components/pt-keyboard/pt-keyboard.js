@@ -216,6 +216,21 @@ customElements.define('pt-keyboard',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
+      this.ws = window.ws
+
+      this.ws.addEventListener('open', () => {
+        this.ws.addEventListener('message', async event => {
+          const message = await event.message
+          if (message.action === 'play') {
+            this.#playNote(message.note)
+          } else if (message.action === 'stop') {
+            this.#stopNote(message.note)
+          }
+        })
+        this.addEventListener('note-play', event => this.#sendMessage({ note: event.detail.note, action: 'play' }))
+        this.addEventListener('note-stop', event => this.#sendMessage({ note: event.detail.note, action: 'stop' }))
+      })
+
       this.instrument = new Tone.Sampler({
         urls: {
           A0: 'A0.mp3',
@@ -258,19 +273,6 @@ customElements.define('pt-keyboard',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      this.ws.addEventListener('open', () => {
-        this.ws.addEventListener('message', async event => {
-          const message = await event.message
-          if (message.action === 'play') {
-            this.#playNote(message.note)
-          } else if (message.action === 'stop') {
-            this.#stopNote(message.note)
-          }
-        })
-        this.addEventListener('note-play', event => this.#sendMessage({ note: event.detail.note, action: 'play' }))
-        this.addEventListener('note-stop', event => this.#sendMessage({ note: event.detail.note, action: 'stop' }))
-      })
-
       this.addEventListener('note-play', event => this.#playNote(event.detail.note))
       this.addEventListener('note-stop', event => this.#stopNote(event.detail.note))
 

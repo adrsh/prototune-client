@@ -87,9 +87,7 @@ customElements.define('pt-editor',
       const instrument = document.createElement('pt-instrument')
       const roll = document.createElement('pt-piano-roll')
 
-      // Add Websocket to piano roll
-      roll.ws = this.ws
-      instrument.ws = this.ws
+      roll.uuid = crypto.randomUUID()
 
       instrument.roll = roll
       roll.instrument = instrument.instrument
@@ -98,7 +96,6 @@ customElements.define('pt-editor',
         this.instrument = event.target.instrument
         this.roll = event.target.roll
         this.rollHolder.replaceChildren(event.target.roll)
-        console.log(this.instrument)
       })
       this.list.insertBefore(instrument, this.button)
 

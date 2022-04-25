@@ -33,15 +33,14 @@ customElements.define('pt-instrument',
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
       this.name = this.shadowRoot.querySelector('#name')
+
+      this.addEventListener('click', () => this.dispatchEvent(new CustomEvent('instrument-select')))
     }
 
     /**
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      this.dispatchEvent(new CustomEvent('instrument-select'))
-
-      this.addEventListener('click', () => this.dispatchEvent(new CustomEvent('instrument-select')))
     }
 
     /**

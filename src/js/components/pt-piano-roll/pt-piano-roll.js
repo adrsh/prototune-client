@@ -51,6 +51,7 @@ template.innerHTML = `
     }
   </style>
   <div id="grid">
+    <slot name="grid"></slot>
   </div>
 `
 
@@ -102,19 +103,20 @@ customElements.define('pt-piano-roll',
       }
 
       this.observer = new MutationObserver(records => this.#handleMutations(records))
-      this.observer.observe(this.grid, this.config)
     }
 
     /**
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
+      this.observer.observe(this, this.config)
     }
 
     /**
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
+      this.observer.disconnect()
     }
 
     /**
@@ -123,6 +125,7 @@ customElements.define('pt-piano-roll',
      * @param {object} message Message to be handled.
      */
     #handleMessage (message) {
+      console.log(message)
       if (message.action === 'note-update') {
         this.#updateNote(message.changes)
       } else if (message.action === 'note-create') {
@@ -151,6 +154,7 @@ customElements.define('pt-piano-roll',
      * @param {MutationRecord[]} mutationRecords Mutation records.
      */
     #handleMutations (mutationRecords) {
+      console.log(mutationRecords)
       const target = {}
       for (const mutation of mutationRecords) {
         // Checking if multiple attributes were changed at the same time, and combining them.
@@ -201,9 +205,10 @@ customElements.define('pt-piano-roll',
         note.setAttribute('x', attributes.x)
         note.setAttribute('y', attributes.y)
         note.setAttribute('length', attributes.length)
-        this.grid.append(note)
+        note.setAttribute('slot', 'grid')
+        this.append(note)
       }
-      this.observer.observe(this.grid, this.config)
+      this.observer.observe(this, this.config)
     }
 
     /**
@@ -219,8 +224,9 @@ customElements.define('pt-piano-roll',
       newNote.setAttribute('x', note.x)
       newNote.setAttribute('y', note.y)
       newNote.setAttribute('length', note.length)
-      this.grid.append(newNote)
-      this.observer.observe(this.grid, this.config)
+      note.setAttribute('slot', 'grid')
+      this.append(newNote)
+      this.observer.observe(this, this.config)
     }
 
     /**
@@ -234,7 +240,7 @@ customElements.define('pt-piano-roll',
       if (existingNote) {
         existingNote.remove()
       }
-      this.observer.observe(this.grid, this.config)
+      this.observer.observe(this, this.config)
     }
 
     /**
@@ -250,7 +256,7 @@ customElements.define('pt-piano-roll',
           existingNote.setAttribute(key, value)
         }
       }
-      this.observer.observe(this.grid, this.config)
+      this.observer.observe(this, this.config)
     }
 
     /**
@@ -267,10 +273,11 @@ customElements.define('pt-piano-roll',
       note.setAttribute('x', x)
       note.setAttribute('y', y)
       note.setAttribute('length', 1)
+      note.setAttribute('slot', 'grid')
 
       note.setAttribute('uuid', crypto.randomUUID())
 
-      this.grid.append(note)
+      this.append(note)
 
       const now = Tone.now()
       this.instrument.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)

@@ -5,7 +5,7 @@
  * @version 1.0.0
  */
 
- import * as Tone from 'tone'
+// import * as Tone from 'tone'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -88,7 +88,7 @@ customElements.define('pt-editor',
      *
      * @param {MutationRecord[]} mutationRecords Mutation records.
      */
-     #handleMutations (mutationRecords) {
+    #handleMutations (mutationRecords) {
       const target = {}
       for (const mutation of mutationRecords) {
         // Checking if multiple attributes were changed at the same time, and combining them.
@@ -127,10 +127,42 @@ customElements.define('pt-editor',
      * @param {object} message Message to be handled.
      */
     #handleMessage (message) {
-       if (message.action === 'instrument-add') {
-         console.log('add instrument')
-       }
-     }
+      if (message.action === 'editor-import') {
+        this.observer.disconnect()
+        console.log(message)
+        for (const [uuid, props] of Object.entries(message.instruments)) {
+          const instrument = document.createElement('pt-instrument')
+          const roll = document.createElement('pt-piano-roll')
+          instrument.uuid = uuid
+          instrument.roll = roll
+          instrument.setAttribute('instrument', props.instrument)
+
+          roll.uuid = props.roll
+
+          instrument.addEventListener('instrument-select', event => {
+            this.instrument = event.target.instrument
+            this.rollHolder.replaceChildren(event.target.roll)
+          })
+
+          for (const [uuid, attributes] of Object.entries(message.rolls[props.roll])) {
+            const note = document.createElement('pt-piano-roll-note')
+            note.instrument = instrument.instrument
+            note.setAttribute('uuid', uuid)
+            note.setAttribute('note', 108 - attributes.y)
+            note.setAttribute('x', attributes.x)
+            note.setAttribute('y', attributes.y)
+            note.setAttribute('length', attributes.length)
+            note.setAttribute('slot', 'grid')
+            roll.append(note)
+          }
+
+          this.list.insertBefore(instrument, this.button)
+        }
+        // this.#importRolls(message.rolls)
+        // this.#importInstruments(message.instruments)
+        this.observer.observe(this.list, this.config)
+      }
+    }
 
     /**
      * Sends data to Websocket server.
@@ -175,7 +207,6 @@ customElements.define('pt-editor',
 
       instrument.addEventListener('instrument-select', event => {
         this.instrument = event.target.instrument
-        this.roll = event.target.roll
         this.rollHolder.replaceChildren(event.target.roll)
       })
 

@@ -295,6 +295,7 @@ customElements.define('pt-keyboard',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#playNote(note)
+        this.#sendMessage({ note: note, action: 'play' })
       }
     }
 
@@ -307,6 +308,7 @@ customElements.define('pt-keyboard',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#stopNote(note)
+        this.#sendMessage({ note: note, action: 'stop' })
       }
     }
 
@@ -367,8 +369,10 @@ customElements.define('pt-keyboard',
       // 0 means note up and anything else is the velocity
       if (event.data[2] === 0) {
         this.#stopNote(event.data[1])
+        this.#sendMessage({ note: event.data[1], action: 'stop' })
       } else {
         this.#playNote(event.data[1], (event.data[2] / 128).toFixed(3))
+        this.#sendMessage({ note: event.data[1], action: 'play' })
       }
     }
 

@@ -11,8 +11,8 @@ import './components/pt-piano-roll'
 import './components/pt-editor'
 import './components/pt-instrument'
 
-window.ws = new WebSocket('wss://cscloud7-168.lnu.se/websocket/')
-// window.ws = new WebSocket('ws://localhost:8080')
+// window.ws = new WebSocket('wss://cscloud7-168.lnu.se/websocket/')
+window.ws = new WebSocket('ws://localhost:8080')
 
 /**
  * Make the message blob text get parsed from JSON. Kind of like a middleware.

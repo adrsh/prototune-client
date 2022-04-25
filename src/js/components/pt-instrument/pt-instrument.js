@@ -86,6 +86,8 @@ customElements.define('pt-instrument',
       if (name === 'instrument') {
         this.#setInstrument(newValue)
         this.roll.instrument = this.instrument
+        // Enkel lösning på problemet, men känns lite fel...
+        this.roll.querySelectorAll('pt-piano-roll-note').forEach(element => (element.instrument = this.instrument))
         this.selector.querySelectorAll('option[selected]').forEach(element => element.toggleAttribute('selected'))
         this.selector.querySelector(`option[value="${newValue}"]`).toggleAttribute('selected')
       } else if (name === 'uuid') {
@@ -100,7 +102,7 @@ customElements.define('pt-instrument',
      */
     #setInstrument (instrument) {
       if (this.instrument) {
-        this.instrument.dispose()
+        // this.instrument.dispose()
       }
       if (instrument === 'casio') {
         this.instrument = new Tone.Sampler({

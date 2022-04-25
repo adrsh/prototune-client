@@ -181,7 +181,6 @@ customElements.define('pt-piano-roll',
      * @param {MutationRecord[]} mutationRecords Mutation records.
      */
     #handleMutations (mutationRecords) {
-      console.log(mutationRecords)
       const target = {}
       for (const mutation of mutationRecords) {
         // Checking if multiple attributes were changed at the same time, and combining them.

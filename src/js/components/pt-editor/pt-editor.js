@@ -220,7 +220,7 @@ customElements.define('pt-editor',
 
         for (const [uuid, attributes] of Object.entries(message.rolls[props.roll])) {
           const note = document.createElement('pt-piano-roll-note')
-          note.instrument = instrument.instrument
+          note.instrument = roll.instrument
           note.setAttribute('uuid', uuid)
           note.setAttribute('note', 108 - attributes.y)
           note.setAttribute('x', attributes.x)

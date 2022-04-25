@@ -77,11 +77,18 @@ customElements.define('pt-piano-roll',
 
       this.ws = window.ws
 
-      this.ws.addEventListener('open', () => {
+      /* this.ws.addEventListener('open', () => {
         this.ws.addEventListener('message', async event => {
           const message = await event.message
           this.#handleMessage(message)
         })
+      }) */
+
+      this.ws.addEventListener('message', async event => {
+        const message = await event.message
+        if (message.roll === this.uuid) {
+          this.#handleMessage(message)
+        }
       })
 
       this.grid.addEventListener('pointerdown', event => {
@@ -224,7 +231,7 @@ customElements.define('pt-piano-roll',
       newNote.setAttribute('x', note.x)
       newNote.setAttribute('y', note.y)
       newNote.setAttribute('length', note.length)
-      note.setAttribute('slot', 'grid')
+      newNote.setAttribute('slot', 'grid')
       this.append(newNote)
       this.observer.observe(this, this.config)
     }
@@ -236,7 +243,7 @@ customElements.define('pt-piano-roll',
      */
     #removeNote (note) {
       this.observer.disconnect()
-      const existingNote = this.shadowRoot.querySelector(`pt-piano-roll-note[uuid="${note.uuid}"]`)
+      const existingNote = this.querySelector(`pt-piano-roll-note[uuid="${note.uuid}"]`)
       if (existingNote) {
         existingNote.remove()
       }
@@ -250,7 +257,7 @@ customElements.define('pt-piano-roll',
      */
     #updateNote (note) {
       this.observer.disconnect()
-      const existingNote = this.shadowRoot.querySelector(`pt-piano-roll-note[uuid="${note.uuid}"]`)
+      const existingNote = this.querySelector(`pt-piano-roll-note[uuid="${note.uuid}"]`)
       if (existingNote) {
         for (const [key, value] of Object.entries(note)) {
           existingNote.setAttribute(key, value)

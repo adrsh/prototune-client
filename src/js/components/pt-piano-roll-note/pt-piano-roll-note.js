@@ -59,7 +59,7 @@ customElements.define('pt-piano-roll-note',
       this.style.left = `${this.x}rem`
 
       if (!this.transport) {
-        this.transport = Tone.Transport.schedule((time) => this.instrument.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time), `0:0:${this.x}`)
+        this.#updateTransport()
       }
 
       // Remove itself if right mouse button is clicked.
@@ -243,7 +243,7 @@ customElements.define('pt-piano-roll-note',
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
-      // Tone.Transport.clear(this.transport)
+      Tone.Transport.clear(this.transport)
     }
 
     /**

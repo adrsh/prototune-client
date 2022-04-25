@@ -166,6 +166,7 @@ customElements.define('pt-instrument',
       } else if (instrument === 'fmsynth') {
         this.instrument = new Tone.PolySynth(Tone.FMSynth).toDestination()
       }
+      this.instrument.volume.value = -6
     }
   }
 )

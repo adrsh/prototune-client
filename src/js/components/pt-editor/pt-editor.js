@@ -157,10 +157,12 @@ customElements.define('pt-editor',
 
       instrument.addEventListener('instrument-select', event => {
         this.instrument = event.target.instrument
-        this.rollHolder.replaceChildren(event.target.roll)
+        this.rollHolder.querySelectorAll('pt-piano-roll').forEach(element => element.toggleAttribute('hidden', true))
+        event.target.roll.toggleAttribute('hidden')
       })
 
       this.list.insertBefore(instrument, this.button)
+      this.rollHolder.appendChild(roll)
 
       this.observer.observe(this.list, this.config)
     }
@@ -212,10 +214,12 @@ customElements.define('pt-editor',
         instrument.setAttribute('instrument', props.instrument)
 
         roll.setAttribute('uuid', props.roll)
+        roll.toggleAttribute('hidden')
 
         instrument.addEventListener('instrument-select', event => {
           this.instrument = event.target.instrument
-          this.rollHolder.replaceChildren(event.target.roll)
+          this.rollHolder.querySelectorAll('pt-piano-roll').forEach(element => element.toggleAttribute('hidden', true))
+          event.target.roll.toggleAttribute('hidden')
         })
 
         for (const [uuid, attributes] of Object.entries(message.rolls[props.roll])) {
@@ -231,6 +235,8 @@ customElements.define('pt-editor',
         }
 
         this.list.insertBefore(instrument, this.button)
+
+        this.rollHolder.appendChild(roll)
       }
       this.observer.observe(this.list, this.config)
     }
@@ -280,12 +286,14 @@ customElements.define('pt-editor',
 
       instrument.addEventListener('instrument-select', event => {
         this.instrument = event.target.instrument
-        this.rollHolder.replaceChildren(event.target.roll)
+        this.rollHolder.querySelectorAll('pt-piano-roll').forEach(element => element.toggleAttribute('hidden', true))
+        event.target.roll.toggleAttribute('hidden')
       })
 
       this.list.insertBefore(instrument, this.button)
 
-      this.rollHolder.replaceChildren(roll)
+      this.rollHolder.appendChild(roll)
+      // this.rollHolder.replaceChildren(roll)
     }
   }
 )

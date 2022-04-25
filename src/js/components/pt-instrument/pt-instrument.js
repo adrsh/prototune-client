@@ -11,12 +11,26 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
   :host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     height: 5rem;
     border-bottom: 1px solid gray;
   }
+  #instrument-select {
+    width: 80%;
+    height: 2rem;
+    font-size: 1.2rem;
+    border: 1px solid #f0f0f0;
+  }
   </style>
-  <div id="name"></div>
+  <select name="instruments" id="instrument-select">
+    <option value="piano">Piano</option>
+    <option value="casio">Casio</option>
+    <option value="amsynth">AMSynth</option>
+    <option value="fmsynth">FMSynth</option>
+  </select>
 `
 
 customElements.define('pt-instrument',
@@ -32,7 +46,9 @@ customElements.define('pt-instrument',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-      this.name = this.shadowRoot.querySelector('#name')
+      this.selector = this.shadowRoot.querySelector('#instrument-select')
+
+      this.selector.addEventListener('change', event => this.setAttribute('instrument', event.target.value))
 
       this.addEventListener('click', () => this.dispatchEvent(new CustomEvent('instrument-select')))
     }
@@ -70,7 +86,8 @@ customElements.define('pt-instrument',
       if (name === 'instrument') {
         this.#setInstrument(newValue)
         this.roll.instrument = this.instrument
-        this.name.textContent = newValue
+        this.selector.querySelectorAll('option[selected]').forEach(element => element.toggleAttribute('selected'))
+        this.selector.querySelector(`option[value="${newValue}"]`).toggleAttribute('selected')
       } else if (name === 'uuid') {
         this.uuid = newValue
       }

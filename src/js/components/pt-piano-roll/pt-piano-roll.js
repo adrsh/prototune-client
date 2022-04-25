@@ -127,6 +127,28 @@ customElements.define('pt-piano-roll',
     }
 
     /**
+     * Returns element attributes to observe.
+     *
+     * @returns {string[]} An array of attributes to observe.
+     */
+    static get observedAttributes () {
+      return ['uuid']
+    }
+
+    /**
+     * Called by the browser engine when an attribute changes.
+     *
+     * @param {string} name of the attribute.
+     * @param {any} oldValue the old attribute value.
+     * @param {any} newValue the new attribute value.
+     */
+    attributeChangedCallback (name, oldValue, newValue) {
+      if (name === 'uuid') {
+        this.uuid = newValue
+      }
+    }
+
+    /**
      * Handles messages from Websocket server.
      *
      * @param {object} message Message to be handled.
@@ -139,8 +161,6 @@ customElements.define('pt-piano-roll',
         this.#addNote(message.note)
       } else if (message.action === 'note-remove') {
         this.#removeNote(message.note)
-      } else if (message.action === 'note-import') {
-        this.#importNotes(message.notes)
       }
     }
 
@@ -195,27 +215,6 @@ customElements.define('pt-piano-roll',
       if (Object.keys(target).length > 0) {
         this.#sendMessage({ action: 'note-update', roll: this.uuid, changes: target })
       }
-    }
-
-    /**
-     * Imports notes from websocket server.
-     *
-     * @param {object} notes Object with notes and attributes.
-     */
-    #importNotes (notes) {
-      this.observer.disconnect()
-      for (const [uuid, attributes] of Object.entries(notes)) {
-        const note = document.createElement('pt-piano-roll-note')
-        note.instrument = this.instrument
-        note.setAttribute('uuid', uuid)
-        note.setAttribute('note', 108 - attributes.y)
-        note.setAttribute('x', attributes.x)
-        note.setAttribute('y', attributes.y)
-        note.setAttribute('length', attributes.length)
-        note.setAttribute('slot', 'grid')
-        this.append(note)
-      }
-      this.observer.observe(this, this.config)
     }
 
     /**

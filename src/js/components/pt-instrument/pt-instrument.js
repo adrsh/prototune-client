@@ -56,7 +56,7 @@ customElements.define('pt-instrument',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['instrument']
+      return ['instrument', 'uuid']
     }
 
     /**
@@ -71,6 +71,8 @@ customElements.define('pt-instrument',
         this.#setInstrument(newValue)
         this.roll.instrument = this.instrument
         this.name.textContent = newValue
+      } else if (name === 'uuid') {
+        this.uuid = newValue
       }
     }
 

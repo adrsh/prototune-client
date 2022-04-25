@@ -65,11 +65,9 @@ customElements.define('pt-editor',
 
       this.ws = window.ws
 
-      this.ws.addEventListener('open', () => {
-        this.ws.addEventListener('message', async event => {
-          const message = await event.message
-          this.#handleMessage(message)
-        })
+      this.ws.addEventListener('message', async event => {
+        const message = await event.message
+        this.#handleMessage(message)
       })
 
       this.config = {
@@ -128,40 +126,113 @@ customElements.define('pt-editor',
      */
     #handleMessage (message) {
       if (message.action === 'editor-import') {
-        this.observer.disconnect()
-        console.log(message)
-        for (const [uuid, props] of Object.entries(message.instruments)) {
-          const instrument = document.createElement('pt-instrument')
-          const roll = document.createElement('pt-piano-roll')
-          instrument.uuid = uuid
-          instrument.roll = roll
-          instrument.setAttribute('instrument', props.instrument)
-
-          roll.uuid = props.roll
-
-          instrument.addEventListener('instrument-select', event => {
-            this.instrument = event.target.instrument
-            this.rollHolder.replaceChildren(event.target.roll)
-          })
-
-          for (const [uuid, attributes] of Object.entries(message.rolls[props.roll])) {
-            const note = document.createElement('pt-piano-roll-note')
-            note.instrument = instrument.instrument
-            note.setAttribute('uuid', uuid)
-            note.setAttribute('note', 108 - attributes.y)
-            note.setAttribute('x', attributes.x)
-            note.setAttribute('y', attributes.y)
-            note.setAttribute('length', attributes.length)
-            note.setAttribute('slot', 'grid')
-            roll.append(note)
-          }
-
-          this.list.insertBefore(instrument, this.button)
-        }
-        // this.#importRolls(message.rolls)
-        // this.#importInstruments(message.instruments)
-        this.observer.observe(this.list, this.config)
+        this.#importSession(message)
+      } else if (message.action === 'instrument-create') {
+        this.#addInstrument(message)
+      } else if (message.action === 'instrument-update') {
+        this.#updateInstrument(message)
+      } else if (message.action === 'instrument-remove') {
+        this.#removeInstrument(message)
       }
+    }
+
+    /**
+     * Adds an instrument created by someone else in Websocket session.
+     *
+     * @param {Object} message Message with instrument data.
+     */
+    #addInstrument (message) {
+      this.observer.disconnect()
+      const instrument = document.createElement('pt-instrument')
+      const roll = document.createElement('pt-piano-roll')
+
+      instrument.roll = roll
+
+      instrument.setAttribute('uuid', message.uuid)
+      // instrument.uuid = message.uuid
+      instrument.setAttribute('instrument', message.props.instrument)
+
+      roll.setAttribute('uuid', message.props.roll)
+      // roll.uuid = message.props.roll
+
+      instrument.addEventListener('instrument-select', event => {
+        this.instrument = event.target.instrument
+        this.rollHolder.replaceChildren(event.target.roll)
+      })
+
+      this.list.insertBefore(instrument, this.button)
+
+      this.observer.observe(this.list, this.config)
+    }
+
+    /**
+     * Update an instrument updated by someone else in Websocket session.
+     *
+     * @param {Object} message Message with instrument data.
+     */
+    #updateInstrument (message) {
+      this.observer.disconnect()
+      console.log(message)
+      const existingInstrument = this.list.querySelector(`pt-instrument[uuid="${message.uuid}"]`)
+      if (existingInstrument) {
+        for (const [key, value] of Object.entries(message.props)) {
+          existingInstrument.setAttribute(key, value)
+        }
+      }
+      this.observer.observe(this.list, this.config)
+    }
+
+    /**
+     * Remove an instrument removed by someone else in Websocket session.
+     *
+     * @param {Object} message Message with instrument data.
+     */
+    #removeInstrument (message) {
+      this.observer.disconnect()
+      const existingInstrument = this.list.querySelector(`pt-instrument[uuid="${message.uuid}"]`)
+      if (existingInstrument) {
+        existingInstrument.roll.remove()
+        existingInstrument.remove()
+      }
+      this.observer.observe(this.list, this.config)
+    }
+
+    /**
+     * Imports session data.
+     *
+     * @param {Object} message Message with data to import.
+     */
+    #importSession (message) {
+      this.observer.disconnect()
+      for (const [uuid, props] of Object.entries(message.instruments)) {
+        const instrument = document.createElement('pt-instrument')
+        const roll = document.createElement('pt-piano-roll')
+        instrument.setAttribute('uuid', uuid)
+        instrument.roll = roll
+        instrument.setAttribute('instrument', props.instrument)
+
+        roll.setAttribute('uuid', props.roll)
+
+        instrument.addEventListener('instrument-select', event => {
+          this.instrument = event.target.instrument
+          this.rollHolder.replaceChildren(event.target.roll)
+        })
+
+        for (const [uuid, attributes] of Object.entries(message.rolls[props.roll])) {
+          const note = document.createElement('pt-piano-roll-note')
+          note.instrument = instrument.instrument
+          note.setAttribute('uuid', uuid)
+          note.setAttribute('note', 108 - attributes.y)
+          note.setAttribute('x', attributes.x)
+          note.setAttribute('y', attributes.y)
+          note.setAttribute('length', attributes.length)
+          note.setAttribute('slot', 'grid')
+          roll.append(note)
+        }
+
+        this.list.insertBefore(instrument, this.button)
+      }
+      this.observer.observe(this.list, this.config)
     }
 
     /**
@@ -200,10 +271,12 @@ customElements.define('pt-editor',
 
       instrument.roll = roll
 
-      instrument.setAttribute('instrument', 'casio')
+      instrument.setAttribute('instrument', 'piano')
 
-      instrument.uuid = crypto.randomUUID()
-      roll.uuid = crypto.randomUUID()
+      instrument.setAttribute('uuid', crypto.randomUUID())
+      // instrument.uuid = crypto.randomUUID()
+      roll.setAttribute('uuid', crypto.randomUUID())
+      // roll.uuid = crypto.randomUUID()
 
       instrument.addEventListener('instrument-select', event => {
         this.instrument = event.target.instrument

@@ -114,6 +114,38 @@ customElements.define('pt-editor',
     }
 
     /**
+     * Called after the element is inserted to the DOM.
+     */
+    connectedCallback () {
+      this.button.addEventListener('click', event => {
+        event.preventDefault()
+        this.#newInstrument()
+      })
+      this.line = this.shadowRoot.querySelector('#time-line')
+      this.tick = 0
+      Tone.Transport.scheduleRepeat((time) => {
+        Tone.Draw.schedule(() => {
+          this.line.style.left = `${this.tick++}rem`
+        }, time)
+      }, '0:0:1')
+      // Tone.Transport.on('start', event => console.log('start'))
+      Tone.Transport.on('stop', event => {
+        this.line.style.left = 0
+        this.tick = 0
+      })
+      Tone.Transport.on('loop', event => {
+        this.line.style.left = 0
+        this.tick = 0
+      })
+    }
+
+    /**
+     * Called after the element is removed from the DOM.
+     */
+    disconnectedCallback () {
+    }
+
+    /**
      * Handles mutation records and sends appropriate messages.
      *
      * @param {MutationRecord[]} mutationRecords Mutation records.
@@ -181,16 +213,20 @@ customElements.define('pt-editor',
       instrument.roll = roll
 
       instrument.setAttribute('uuid', message.uuid)
-      // instrument.uuid = message.uuid
       instrument.setAttribute('instrument', message.props.instrument)
 
       roll.setAttribute('uuid', message.props.roll)
-      // roll.uuid = message.props.roll
 
       instrument.addEventListener('instrument-select', event => {
         this.instrument = event.target.instrument
+        this.dispatchEvent(new CustomEvent('instrument-change'))
         this.rollHolder.querySelectorAll('pt-piano-roll').forEach(element => element.toggleAttribute('hidden', true))
         event.target.roll.toggleAttribute('hidden')
+      })
+
+      instrument.addEventListener('instrument-change', event => {
+        this.instrument = event.target.instrument
+        this.dispatchEvent(new CustomEvent('instrument-change'))
       })
 
       this.list.insertBefore(instrument, this.button)
@@ -250,8 +286,14 @@ customElements.define('pt-editor',
 
         instrument.addEventListener('instrument-select', event => {
           this.instrument = event.target.instrument
+          this.dispatchEvent(new CustomEvent('instrument-change'))
           this.rollHolder.querySelectorAll('pt-piano-roll').forEach(element => element.toggleAttribute('hidden', true))
           event.target.roll.toggleAttribute('hidden')
+        })
+
+        instrument.addEventListener('instrument-change', event => {
+          this.instrument = event.target.instrument
+          this.dispatchEvent(new CustomEvent('instrument-change'))
         })
 
         for (const [uuid, attributes] of Object.entries(message.rolls[props.roll])) {
@@ -285,38 +327,6 @@ customElements.define('pt-editor',
     }
 
     /**
-     * Called after the element is inserted to the DOM.
-     */
-    connectedCallback () {
-      this.button.addEventListener('click', event => {
-        event.preventDefault()
-        this.#newInstrument()
-      })
-      this.line = this.shadowRoot.querySelector('#time-line')
-      this.tick = 0
-      Tone.Transport.scheduleRepeat((time) => {
-        Tone.Draw.schedule(() => {
-          this.line.style.left = `${this.tick++}rem`
-        }, time)
-      }, '0:0:1')
-      Tone.Transport.on('start', event => console.log('start'))
-      Tone.Transport.on('stop', event => {
-        this.line.style.left = 0
-        this.tick = 0
-      })
-      Tone.Transport.on('loop', event => {
-        this.line.style.left = 0
-        this.tick = 0
-      })
-    }
-
-    /**
-     * Called after the element is removed from the DOM.
-     */
-    disconnectedCallback () {
-    }
-
-    /**
      * Add a new instrument to the list.
      */
     #newInstrument () {
@@ -328,20 +338,23 @@ customElements.define('pt-editor',
       instrument.setAttribute('instrument', 'piano')
 
       instrument.setAttribute('uuid', crypto.randomUUID())
-      // instrument.uuid = crypto.randomUUID()
       roll.setAttribute('uuid', crypto.randomUUID())
-      // roll.uuid = crypto.randomUUID()
 
       instrument.addEventListener('instrument-select', event => {
         this.instrument = event.target.instrument
+        this.dispatchEvent(new CustomEvent('instrument-change'))
         this.rollHolder.querySelectorAll('pt-piano-roll').forEach(element => element.toggleAttribute('hidden', true))
         event.target.roll.toggleAttribute('hidden')
+      })
+
+      instrument.addEventListener('instrument-change', event => {
+        this.instrument = event.target.instrument
+        this.dispatchEvent(new CustomEvent('instrument-change'))
       })
 
       this.list.insertBefore(instrument, this.button)
 
       this.rollHolder.appendChild(roll)
-      // this.rollHolder.replaceChildren(roll)
     }
   }
 )

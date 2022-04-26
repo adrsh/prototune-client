@@ -48,7 +48,10 @@ customElements.define('pt-instrument',
 
       this.selector = this.shadowRoot.querySelector('#instrument-select')
 
-      this.selector.addEventListener('change', event => this.setAttribute('instrument', event.target.value))
+      this.selector.addEventListener('change', event => {
+        this.setAttribute('instrument', event.target.value)
+        this.dispatchEvent(new CustomEvent('instrument-change'))
+      })
 
       this.addEventListener('click', () => this.dispatchEvent(new CustomEvent('instrument-select')))
     }

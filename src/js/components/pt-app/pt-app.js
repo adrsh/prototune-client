@@ -86,6 +86,10 @@ customElements.define('pt-app',
       this.stopButton.addEventListener('click', async () => {
         Tone.Transport.stop()
       })
+
+      this.editor.addEventListener('instrument-change', event => {
+        this.keyboard.instrument = this.editor.instrument
+      })
     }
 
     /**

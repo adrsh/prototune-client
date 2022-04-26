@@ -16,7 +16,7 @@ template.innerHTML = `
     display: grid;
     grid-template-rows: 1.5rem 38.5rem;
     grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
-    grid-template-areas:  "instruments time-bar"
+    grid-template-areas:  "instruments time-line"
                           "instruments piano-roll";
     border-bottom: 1px solid gray;
   }
@@ -41,39 +41,14 @@ template.innerHTML = `
     grid-area: instruments;
     border-right: 1px solid gray;
   }
-  #time-bar {
-    grid-area: time-bar;
-    position:relative;
-    height: 1.5rem;
-    width: 64rem;
-    background-color: #e8e8e8;
-    border-bottom: 1px solid gray;
-    box-sizing: border-box;
-    background-image:
-        repeating-linear-gradient(
-          90deg,
-          transparent 0.03125rem 3.96875rem,
-          #a0a0a0 3.96875rem 4.03125rem
-        ),
-        repeating-linear-gradient(
-          90deg,
-          transparent 0.03125rem 0.96875rem,
-          #d8d8d8 0.96875rem 1.03125rem
-        );
-  }
-  #time-line {
-    position: relative;
-    height: 1.5rem;
-    width: 1px;
-    border-left: 1px solid black;
+  pt-time-line {
+    grid-area: time-line;
   }
   </style>
   <div id="list">
     <button>+</button>
   </div>
-  <div id="time-bar">
-    <div id="time-line"></div>
-  </div>
+  <pt-time-line></pt-time-line>
   <div id="roll">
   </div>
 `
@@ -120,22 +95,6 @@ customElements.define('pt-editor',
       this.button.addEventListener('click', event => {
         event.preventDefault()
         this.#newInstrument()
-      })
-      this.line = this.shadowRoot.querySelector('#time-line')
-      this.tick = 0
-      Tone.Transport.scheduleRepeat((time) => {
-        Tone.Draw.schedule(() => {
-          this.line.style.left = `${this.tick++}rem`
-        }, time)
-      }, '0:0:1')
-      // Tone.Transport.on('start', event => console.log('start'))
-      Tone.Transport.on('stop', event => {
-        this.line.style.left = 0
-        this.tick = 0
-      })
-      Tone.Transport.on('loop', event => {
-        this.line.style.left = 0
-        this.tick = 0
       })
     }
 

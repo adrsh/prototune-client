@@ -12,31 +12,42 @@ template.innerHTML = `
   <style>
   :host {
     position: relative;
-    height: 1.5rem;
+    height: 1.25rem;
     width: 64rem;
-    background-color: #e8e8e8;
+    background-color: #ededed;
     border-bottom: 1px solid gray;
     box-sizing: border-box;
     background-image:
         repeating-linear-gradient(
           90deg,
-          transparent 0.03125rem 3.96875rem,
-          #a0a0a0 3.96875rem 4.03125rem
+          transparent 0px 63px,
+          #a0a0a0 63px 64px
         ),
         repeating-linear-gradient(
           90deg,
-          transparent 0.03125rem 0.96875rem,
-          #d8d8d8 0.96875rem 1.03125rem
+          transparent 0px 15px,
+          #d8d8d8 15px 16px
         );
   }
   #time-line {
     position: relative;
-    height: 1.5rem;
+    height: 1.25rem;
     width: 1px;
-    border-left: 1px solid black;
+  }
+  #arrow {
+    height: 0;
+    width: 0;
+    border-left: 0.3rem solid transparent;
+    border-right: 0.3rem solid transparent;
+    border-top: 0.6rem solid #404040;
+    position: absolute;
+    bottom: 0px;
+    left: -0.3rem;
   }
   </style>
-  <div id="time-line"></div>
+  <div id="time-line">
+    <div id="arrow"></div>
+  </div>
 `
 
 customElements.define('pt-time-line',

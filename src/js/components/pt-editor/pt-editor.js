@@ -5,16 +5,12 @@
  * @version 1.0.0
  */
 
-import * as Tone from 'tone'
-
-// import * as Tone from 'tone'
-
 const template = document.createElement('template')
 template.innerHTML = `
   <style>
   :host {
     display: grid;
-    grid-template-rows: 1.5rem 38.5rem;
+    grid-template-rows: 1.25rem 38.75rem;
     grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
     grid-template-areas:  "instruments time-line"
                           "instruments piano-roll";

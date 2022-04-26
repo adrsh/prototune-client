@@ -66,12 +66,20 @@ customElements.define('pt-time-line',
       }, '0:0:1')
       // Tone.Transport.on('start', event => console.log('start'))
       Tone.Transport.on('stop', event => {
-        this.line.style.left = 0
-        this.tick = 0
+        if (Tone.Transport.state !== 'started') {
+          this.line.style.left = 0
+          this.tick = 0
+        }
       })
       Tone.Transport.on('loop', event => {
         this.line.style.left = 0
         this.tick = 0
+      })
+
+      this.addEventListener('click', event => {
+        this.tick = Math.floor(parseInt(event.offsetX) / 16)
+        this.line.style.left = `${this.tick}rem`
+        Tone.Transport.position = `0:0:${this.tick}`
       })
     }
 

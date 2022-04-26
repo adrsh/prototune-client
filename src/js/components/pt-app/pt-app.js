@@ -32,6 +32,7 @@ template.innerHTML = `
   <pt-editor></pt-editor>
   <div id="options">
     <button id="play">Play</button>
+    <button id="pause">Pause</button>
     <button id="stop">Stop</button>
   </div>
   <pt-keyboard></pt-keyboard>
@@ -51,6 +52,7 @@ customElements.define('pt-app',
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
       this.playButton = this.shadowRoot.querySelector('#play')
+      this.pauseButton = this.shadowRoot.querySelector('#pause')
       this.stopButton = this.shadowRoot.querySelector('#stop')
 
       this.editor = this.shadowRoot.querySelector('pt-editor')
@@ -75,6 +77,10 @@ customElements.define('pt-app',
         Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
         Tone.Transport.loop = true
         Tone.Transport.start()
+      })
+
+      this.pauseButton.addEventListener('click', async () => {
+        Tone.Transport.pause()
       })
 
       this.stopButton.addEventListener('click', async () => {

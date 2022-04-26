@@ -295,7 +295,7 @@ customElements.define('pt-keyboard',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#playNote(note)
-        this.#sendMessage({ note: note, action: 'play' })
+        this.#sendMessage({ note, action: 'play' })
       }
     }
 
@@ -308,7 +308,7 @@ customElements.define('pt-keyboard',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#stopNote(note)
-        this.#sendMessage({ note: note, action: 'stop' })
+        this.#sendMessage({ note, action: 'stop' })
       }
     }
 
@@ -381,7 +381,7 @@ customElements.define('pt-keyboard',
      *
      * @param {string} key Key that was pressed on the keyboard.
      * @returns {string} Note that should be played.
-    */
+     */
     #getNoteFromKey (key) {
       switch (key) {
         case 'KeyZ':

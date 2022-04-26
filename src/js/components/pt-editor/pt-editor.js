@@ -171,7 +171,7 @@ customElements.define('pt-editor',
     /**
      * Adds an instrument created by someone else in Websocket session.
      *
-     * @param {Object} message Message with instrument data.
+     * @param {object} message Message with instrument data.
      */
     #addInstrument (message) {
       this.observer.disconnect()
@@ -202,7 +202,7 @@ customElements.define('pt-editor',
     /**
      * Update an instrument updated by someone else in Websocket session.
      *
-     * @param {Object} message Message with instrument data.
+     * @param {object} message Message with instrument data.
      */
     #updateInstrument (message) {
       this.observer.disconnect()
@@ -219,7 +219,7 @@ customElements.define('pt-editor',
     /**
      * Remove an instrument removed by someone else in Websocket session.
      *
-     * @param {Object} message Message with instrument data.
+     * @param {object} message Message with instrument data.
      */
     #removeInstrument (message) {
       this.observer.disconnect()
@@ -234,7 +234,7 @@ customElements.define('pt-editor',
     /**
      * Imports session data.
      *
-     * @param {Object} message Message with data to import.
+     * @param {object} message Message with data to import.
      */
     #importSession (message) {
       this.observer.disconnect()

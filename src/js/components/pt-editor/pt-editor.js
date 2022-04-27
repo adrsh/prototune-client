@@ -37,8 +37,14 @@ template.innerHTML = `
     grid-area: instruments;
     border-right: 1px solid gray;
   }
+  .selected {
+    background-color: white;
+  }
   pt-time-line {
     grid-area: time-line;
+  }
+  pt-instrument {
+    background-color: #f0f0f0;
   }
   </style>
   <div id="list">
@@ -184,7 +190,15 @@ customElements.define('pt-editor',
         this.dispatchEvent(new CustomEvent('instrument-change'))
       })
 
+      instrument.addEventListener('instrument-select', event => {
+        this.list.querySelectorAll('pt-instrument').forEach(element => element.classList.remove('selected'))
+        event.target.classList.add('selected')
+      })
+
       this.list.insertBefore(instrument, this.button)
+
+      roll.toggleAttribute('hidden', true)
+
       this.rollHolder.appendChild(roll)
 
       this.observer.observe(this.list, this.config)
@@ -237,7 +251,7 @@ customElements.define('pt-editor',
         instrument.setAttribute('instrument', props.instrument)
 
         roll.setAttribute('uuid', props.roll)
-        roll.toggleAttribute('hidden')
+        roll.toggleAttribute('hidden', true)
 
         instrument.addEventListener('instrument-select', event => {
           this.instrument = event.target.instrument
@@ -249,6 +263,11 @@ customElements.define('pt-editor',
         instrument.addEventListener('instrument-change', event => {
           this.instrument = event.target.instrument
           this.dispatchEvent(new CustomEvent('instrument-change'))
+        })
+
+        instrument.addEventListener('instrument-select', event => {
+          this.list.querySelectorAll('pt-instrument').forEach(element => element.classList.remove('selected'))
+          event.target.classList.add('selected')
         })
 
         for (const [uuid, attributes] of Object.entries(message.rolls[props.roll])) {
@@ -302,12 +321,19 @@ customElements.define('pt-editor',
         event.target.roll.toggleAttribute('hidden')
       })
 
+      instrument.addEventListener('instrument-select', event => {
+        this.list.querySelectorAll('pt-instrument').forEach(element => element.classList.remove('selected'))
+        event.target.classList.add('selected')
+      })
+
       instrument.addEventListener('instrument-change', event => {
         this.instrument = event.target.instrument
         this.dispatchEvent(new CustomEvent('instrument-change'))
       })
 
       this.list.insertBefore(instrument, this.button)
+
+      roll.toggleAttribute('hidden', true)
 
       this.rollHolder.appendChild(roll)
     }

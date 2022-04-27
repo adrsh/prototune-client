@@ -12,7 +12,7 @@ template.innerHTML = `
   <style>
   :host {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     width: 100%;
     height: 5rem;
@@ -24,7 +24,52 @@ template.innerHTML = `
     font-size: 1.2rem;
     border: 1px solid #f0f0f0;
   }
+  #options {
+    width: 100%;
+    height: 1.5rem;
+  }
+  #options > button {
+    position: relative;
+    font-size: 1.5rem;
+    border: 0px;
+    background-color: unset;
+    float: right;
+  }
+  #options > button:hover {
+    color: #808080;
+    cursor: pointer;
+  }
+  #option-menu {
+    display: flex;
+    list-style: none;
+    padding: 0.25rem;
+    position: relative;
+    float: right;
+    font-family: sans-serif;
+    background-color: #ffffff;
+    border: 1px solid black;
+  }
+  #option-menu > li > button {
+    position: relative;
+    font-size: 1rem;
+    border: 0px;
+    background-color: unset;
+    float: right;
+    cursor: pointer;
+  }
+  #option-delete {
+    color: #D02020;
+  }
+  [hidden] {
+    display: none !important;
+  }
   </style>
+  <div id="options">
+    <button id="option-button">⋮</button>
+    <menu id="option-menu" hidden>
+      <li><button id="option-delete">Delete</button></li>
+    </menu>
+  </div>
   <select name="instruments" id="instrument-select">
     <option value="piano">Piano</option>
     <option value="casio">Casio</option>
@@ -54,6 +99,19 @@ customElements.define('pt-instrument',
       })
 
       this.addEventListener('click', () => this.dispatchEvent(new CustomEvent('instrument-select')))
+
+      this.optionButton = this.shadowRoot.querySelector('#option-button')
+      this.optionMenu = this.shadowRoot.querySelector('#option-menu')
+      this.optionButton.addEventListener('click', event => {
+        event.stopPropagation()
+        this.optionMenu.toggleAttribute('hidden')
+      })
+
+      this.deleteButton = this.shadowRoot.querySelector('#option-delete')
+      this.deleteButton.addEventListener('click', event => {
+        event.stopPropagation()
+        this.remove()
+      })
     }
 
     /**

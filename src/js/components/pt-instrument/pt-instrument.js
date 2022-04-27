@@ -60,6 +60,18 @@ template.innerHTML = `
   #option-delete {
     color: #D02020;
   }
+  #mute-button {
+    border: 0px;
+    background-color: unset;
+    cursor: pointer;
+    float: right;
+  }
+  .inactive {
+    opacity: 25%;
+  }
+  #settings {
+    width: 100%;
+  }
   [hidden] {
     display: none !important;
   }
@@ -76,6 +88,9 @@ template.innerHTML = `
     <option value="amsynth">AMSynth</option>
     <option value="fmsynth">FMSynth</option>
   </select>
+  <div id="settings">
+    <button id="mute-button" class="inactive">🔇</button>
+  </div>
 `
 
 customElements.define('pt-instrument',
@@ -111,6 +126,21 @@ customElements.define('pt-instrument',
       this.deleteButton.addEventListener('click', event => {
         event.stopPropagation()
         this.remove()
+      })
+
+      this.vol = new Tone.Volume(-6).toDestination()
+      this.muteButton = this.shadowRoot.querySelector('#mute-button')
+      this.muteButton.addEventListener('click', event => {
+        event.stopPropagation()
+        if (this.instrument) {
+          if (this.vol.mute) {
+            this.muteButton.classList.add('inactive')
+            this.vol.mute = false
+          } else {
+            this.muteButton.classList.remove('inactive')
+            this.vol.mute = true
+          }
+        }
       })
     }
 
@@ -184,7 +214,7 @@ customElements.define('pt-instrument',
           },
           release: 1,
           baseUrl: 'https://tonejs.github.io/audio/casio/'
-        }).toDestination()
+        })
       } else if (instrument === 'piano') {
         this.instrument = new Tone.Sampler({
           urls: {
@@ -221,13 +251,13 @@ customElements.define('pt-instrument',
           },
           release: 1,
           baseUrl: 'https://tonejs.github.io/audio/salamander/'
-        }).toDestination()
+        })
       } else if (instrument === 'amsynth') {
-        this.instrument = new Tone.PolySynth(Tone.AMSynth).toDestination()
+        this.instrument = new Tone.PolySynth(Tone.AMSynth)
       } else if (instrument === 'fmsynth') {
-        this.instrument = new Tone.PolySynth(Tone.FMSynth).toDestination()
+        this.instrument = new Tone.PolySynth(Tone.FMSynth)
       }
-      this.instrument.volume.value = -6
+      this.instrument.connect(this.vol)
     }
   }
 )

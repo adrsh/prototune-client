@@ -139,36 +139,38 @@ customElements.define('pt-instrument',
         this.remove()
       })
 
-      this.vol = new Tone.Volume(-6).toDestination()
+      this.channel = new Tone.Channel({ channelCount: 2, volume: 0 }).toDestination()
+
       this.muteButton = this.shadowRoot.querySelector('#mute-button')
       this.muteButton.addEventListener('click', event => {
         event.stopPropagation()
         if (this.instrument) {
-          if (this.vol.mute) {
+          if (this.channel.mute) {
             this.muteButton.classList.add('inactive')
-            this.vol.mute = false
+            this.channel.mute = false
           } else {
             this.muteButton.classList.remove('inactive')
-            this.vol.mute = true
+            this.channel.mute = true
           }
         }
       })
 
-      this.solo = new Tone.Solo(false).toDestination()
       this.soloButton = this.shadowRoot.querySelector('#solo-button')
       this.soloButton.addEventListener('click', event => {
         event.stopPropagation()
         if (this.instrument) {
-          if (this.solo.solo) {
+          if (this.channel.solo) {
             this.soloButton.classList.add('inactive')
-            this.solo.solo = false
+            this.channel.solo = false
           } else {
             this.soloButton.classList.remove('inactive')
-            this.solo.solo = true
+            this.channel.solo = true
           }
-          console.log(this.solo.solo)
+          console.log(this.channel.solo)
         }
       })
+
+      this.reverb = new Tone.Reverb(1)
     }
 
     /**
@@ -280,11 +282,11 @@ customElements.define('pt-instrument',
           baseUrl: 'https://tonejs.github.io/audio/salamander/'
         })
       } else if (instrument === 'amsynth') {
-        this.instrument = new Tone.PolySynth(Tone.AMSynth)
+        this.instrument = new Tone.AMSynth()
       } else if (instrument === 'fmsynth') {
-        this.instrument = new Tone.PolySynth(Tone.FMSynth)
+        this.instrument = new Tone.FMSynth()
       }
-      this.instrument.chain(this.solo, this.vol, Tone.Destination)
+      this.instrument.chain(this.reverb, this.channel, Tone.Destination)
     }
   }
 )

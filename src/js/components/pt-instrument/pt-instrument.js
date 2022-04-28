@@ -64,12 +64,22 @@ template.innerHTML = `
     border: 0px;
     background-color: unset;
     cursor: pointer;
-    float: right;
+    padding: 0 2px;
+  }
+  #solo-button {
+    border: 0px;
+    font-weight: bold;
+    background-color: unset;
+    cursor: pointer;
+    padding: 0 2px;
   }
   .inactive {
     opacity: 25%;
   }
   #settings {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
     width: 100%;
   }
   [hidden] {
@@ -89,6 +99,7 @@ template.innerHTML = `
     <option value="fmsynth">FMSynth</option>
   </select>
   <div id="settings">
+    <button id="solo-button" class="inactive">S</button>
     <button id="mute-button" class="inactive">🔇</button>
   </div>
 `
@@ -140,6 +151,22 @@ customElements.define('pt-instrument',
             this.muteButton.classList.remove('inactive')
             this.vol.mute = true
           }
+        }
+      })
+
+      this.solo = new Tone.Solo(false).toDestination()
+      this.soloButton = this.shadowRoot.querySelector('#solo-button')
+      this.soloButton.addEventListener('click', event => {
+        event.stopPropagation()
+        if (this.instrument) {
+          if (this.solo.solo) {
+            this.soloButton.classList.add('inactive')
+            this.solo.solo = false
+          } else {
+            this.soloButton.classList.remove('inactive')
+            this.solo.solo = true
+          }
+          console.log(this.solo.solo)
         }
       })
     }
@@ -257,7 +284,7 @@ customElements.define('pt-instrument',
       } else if (instrument === 'fmsynth') {
         this.instrument = new Tone.PolySynth(Tone.FMSynth)
       }
-      this.instrument.connect(this.vol)
+      this.instrument.chain(this.solo, this.vol, Tone.Destination)
     }
   }
 )

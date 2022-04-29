@@ -12,10 +12,14 @@ template.innerHTML = `
   <style>
     :host {
       display: flex;
-      justify-content: center;
+      justify-content: space-evenly;
       align-items: center;
     }
-    #options > button {
+    #buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+    #buttons > button {
       height: 2.5rem;
       width: 2.5rem;
       background-color: unset;
@@ -23,24 +27,35 @@ template.innerHTML = `
       padding: 0;
       opacity: 75%;
     }
-    #options > button:hover {
+    #buttons > button:hover {
       opacity: 100%;
     }
-    #options > button:active {
+    #buttons > button:active {
       transform: scale(0.95);
     }
-    #options > button > img {
+    #buttons > button > img {
       height: 2.5rem;
       width: 2.5rem;
     }
+    #tempo > label {
+      font-family: sans-serif;
+      font-size: 0.8rem;
+    }
+    #tempo > input[type="number"] {
+      width: 3rem;
+    }
   </style>
-  <div id="options">
+  <div id="tempo">
+    <label for="tempo-changer">BPM</label>
+    <input id="tempo-changer" type="number" min="30" max="300" value="120">
+  </div>
+  <div id="buttons">
     <button id="play"><img src="../img/play-circle.svg" alt="Play"></button>
     <button id="pause"><img src="../img/pause-circle.svg" alt="Pause"></button>
     <button id="stop"><img src="../img/stop-circle.svg" alt="Stop"></button>
   </div>
   <div id="volume">
-    <input id="volume-slider" type="range" max="0" min="-40" value="-5"></input>
+    <input id="volume-slider" type="range" max="0" min="-40" value="-5">
   </div>
 `
 
@@ -62,6 +77,7 @@ customElements.define('pt-playback',
       this.stopButton = this.shadowRoot.querySelector('#stop')
 
       this.volumeSlider = this.shadowRoot.querySelector('#volume-slider')
+      this.tempoChanger = this.shadowRoot.querySelector('#tempo-changer')
     }
 
     /**
@@ -88,6 +104,12 @@ customElements.define('pt-playback',
           Tone.getDestination().volume.rampTo(-Infinity, 0)
         } else {
           Tone.getDestination().volume.rampTo(parseInt(this.volumeSlider.value), 0)
+        }
+      })
+
+      this.tempoChanger.addEventListener('input', async () => {
+        if (parseInt(this.tempoChanger.value) >= 30 && parseInt(this.tempoChanger.value) <= 300) {
+          Tone.Transport.bpm.rampTo(parseInt(this.tempoChanger.value), 0.1)
         }
       })
     }

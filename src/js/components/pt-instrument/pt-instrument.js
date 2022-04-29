@@ -12,96 +12,107 @@ template.innerHTML = `
   <style>
   :host {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     width: 100%;
-    height: 5rem;
+    height: 2.5rem;
     border-bottom: 1px solid gray;
   }
   #instrument-select {
-    width: 80%;
-    height: 2rem;
-    font-size: 1.2rem;
-    border: 1px solid #f0f0f0;
+    width: 60%;
+    height: 1.5rem;
+    font-size: 0.75rem;
+    border: 0px solid #f0f0f0;
+    background-color: unset;
+  }
+  #instrument-select:hover {
+    outline: 1px solid #202020;
+    border-radius: 0.1rem;
   }
   #options {
     width: 100%;
-    height: 1.5rem;
+    height: 1rem;
+    padding: 0.5rem;
   }
-  #options > button {
-    position: relative;
-    font-size: 1.5rem;
+  #option-button {
+    font-size: 1rem;
     border: 0px;
     background-color: unset;
     float: right;
+    padding: 0;
+    opacity: 60%;
   }
-  #options > button:hover {
-    color: #808080;
+  #option-button:hover {
     cursor: pointer;
+    opacity: 100%;
   }
   #option-menu {
     display: flex;
+    flex-direction: column;
     list-style: none;
-    padding: 0.25rem;
+    padding: 0rem;
     position: relative;
     float: right;
     font-family: sans-serif;
     background-color: #ffffff;
     border: 1px solid black;
+    width: 6rem;
   }
-  #option-menu > li > button {
+  #option-menu > button {
+    width: 100%;
     position: relative;
-    font-size: 1rem;
+    font-size: 0.75rem;
     border: 0px;
     background-color: unset;
-    float: right;
     cursor: pointer;
+    padding: 0.3rem;
+    text-align: left;
+  }
+  #option-menu > button:hover {
+    background-color: #f8f8f8;
   }
   #option-delete {
     color: #D02020;
   }
-  #mute-button {
-    border: 0px;
-    background-color: unset;
-    cursor: pointer;
-    padding: 0 2px;
-  }
-  #solo-button {
-    border: 0px;
-    font-weight: bold;
-    background-color: unset;
-    cursor: pointer;
-    padding: 0 2px;
-  }
-  .inactive {
-    opacity: 25%;
-  }
   #settings {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
-    width: 100%;
+    gap: 0.3rem;
+    padding: 0.5rem;
+  }
+  #settings > button {
+    width: 1rem;
+    height: 0.4rem;
+    border: 1px solid black;
+    cursor: pointer;
+    padding: 0;
+  }
+  .muted {
+    background-color: #F23818;
+  }
+  .solo {
+    background-color: #21FF67;
   }
   [hidden] {
     display: none !important;
   }
   </style>
-  <div id="options">
-    <button id="option-button">⋮</button>
-    <menu id="option-menu" hidden>
-      <li><button id="option-delete">Delete</button></li>
-    </menu>
-  </div>
-  <select name="instruments" id="instrument-select">
-    <option value="piano">Piano</option>
-    <option value="casio">Casio</option>
-    <option value="amsynth">AMSynth</option>
-    <option value="fmsynth">FMSynth</option>
-  </select>
-  <div id="settings">
-    <button id="solo-button" class="inactive">S</button>
-    <button id="mute-button" class="inactive">🔇</button>
-  </div>
+    <div id="settings">
+      <button id="mute-button"></button>
+      <button id="solo-button"></button>
+    </div>
+    <select name="instruments" id="instrument-select">
+      <option value="piano">Piano</option>
+      <option value="casio">Casio</option>
+      <option value="amsynth">AMSynth</option>
+      <option value="fmsynth">FMSynth</option>
+    </select>
+    <div id="options">
+      <button id="option-button"><img src="../img/gear.svg" alt="Gear"></button>
+      <div id="option-menu" hidden>
+        <button id="option-delete">Delete</button>
+      </div>
+    </div>
 `
 
 customElements.define('pt-instrument',
@@ -139,17 +150,17 @@ customElements.define('pt-instrument',
         this.remove()
       })
 
-      this.channel = new Tone.Channel({ channelCount: 2, volume: 0 }).toDestination()
+      this.channel = new Tone.Channel({ channelCount: 2, volume: -6 }).toDestination()
 
       this.muteButton = this.shadowRoot.querySelector('#mute-button')
       this.muteButton.addEventListener('click', event => {
         event.stopPropagation()
         if (this.instrument) {
           if (this.channel.mute) {
-            this.muteButton.classList.add('inactive')
+            this.muteButton.classList.remove('muted')
             this.channel.mute = false
           } else {
-            this.muteButton.classList.remove('inactive')
+            this.muteButton.classList.add('muted')
             this.channel.mute = true
           }
         }
@@ -160,17 +171,17 @@ customElements.define('pt-instrument',
         event.stopPropagation()
         if (this.instrument) {
           if (this.channel.solo) {
-            this.soloButton.classList.add('inactive')
+            this.soloButton.classList.remove('solo')
             this.channel.solo = false
           } else {
-            this.soloButton.classList.remove('inactive')
+            this.soloButton.classList.add('solo')
             this.channel.solo = true
           }
-          console.log(this.channel.solo)
         }
       })
 
-      this.reverb = new Tone.Reverb(1)
+      this.reverb = new Tone.Reverb(0.5)
+      this.reverb.wet.value = 0
     }
 
     /**

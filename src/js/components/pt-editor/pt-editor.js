@@ -24,7 +24,7 @@ template.innerHTML = `
   button {
     height: 4rem;
     font-size: 3rem;
-    background-color: #f8f8f8;
+    background-color: #ffffff;
     border: 0px;
   }
   button:hover {
@@ -38,13 +38,13 @@ template.innerHTML = `
     border-right: 1px solid gray;
   }
   .selected {
-    background-color: white;
+    background-color: #f8f8f8;
   }
   pt-time-line {
     grid-area: time-line;
   }
   pt-instrument {
-    background-color: #f0f0f0;
+    background-color: #ffffff;
   }
   </style>
   <div id="list">

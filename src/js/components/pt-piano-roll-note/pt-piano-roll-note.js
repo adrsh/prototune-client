@@ -133,6 +133,8 @@ customElements.define('pt-piano-roll-note',
         document.addEventListener('pointerleave', this.onStopMoving)
         this.movementX = 0
         this.movementY = 0
+        this.oldX = this.x
+        this.oldY = this.y
         this.style.cursor = 'grabbing'
       }
     }
@@ -148,8 +150,8 @@ customElements.define('pt-piano-roll-note',
       this.movementY += event.movementY
 
       // Calculate the new position.
-      this.positionX = Math.round(this.movementX / 16) + this.x
-      this.positionY = Math.round(this.movementY / 16) + this.y
+      this.positionX = Math.round(this.movementX / 16) + this.oldX
+      this.positionY = Math.round(this.movementY / 16) + this.oldY
 
       if (this.positionX < 0) {
         this.positionX = 0
@@ -159,6 +161,15 @@ customElements.define('pt-piano-roll-note',
         this.positionY = 0
       } else if (this.positionY > 87) {
         this.positionY = 87
+      }
+
+      // Set x and y if the position has changed.
+      if (this.x !== this.positionX) {
+        this.setAttribute('x', this.positionX)
+      }
+      if (this.y !== this.positionY) {
+        this.setAttribute('y', this.positionY)
+        this.setAttribute('note', 108 - this.y)
       }
 
       this.style.left = this.positionX + 'rem'
@@ -213,10 +224,6 @@ customElements.define('pt-piano-roll-note',
       document.removeEventListener('pointerup', this.onStopResizing)
       document.removeEventListener('pointerleave', this.onStopResizing)
       document.removeEventListener('pointermove', this.onResize)
-
-      this.setAttribute('length', Math.round((this.startWidth) / 16))
-
-      this.#updateTransport()
     }
 
     /**
@@ -227,6 +234,7 @@ customElements.define('pt-piano-roll-note',
     #resize (event) {
       this.startWidth += event.movementX
       if (this.startWidth > 16) {
+        this.setAttribute('length', Math.round((this.startWidth) / 16))
         this.style.width = `${Math.round((this.startWidth) / 16)}rem`
       }
     }
@@ -268,15 +276,16 @@ customElements.define('pt-piano-roll-note',
       } else if (name === 'x') {
         this.x = parseInt(newValue)
         this.style.left = `${this.x}rem`
-        this.positionX = this.x
+        this.#updateTransport()
       } else if (name === 'y') {
         this.y = parseInt(newValue)
         this.style.top = `${this.y}rem`
-        this.positionY = this.y
         this.setAttribute('note', 108 - this.y)
+        this.#updateTransport()
       } else if (name === 'length') {
         this.length = parseInt(newValue)
         this.style.width = `${this.length}rem`
+        this.#updateTransport()
       } else if (name === 'uuid') {
         this.uuid = newValue
       }

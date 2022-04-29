@@ -12,7 +12,7 @@ template.innerHTML = `
   <style>
     :host {
       display: grid;
-      grid-template-rows: 40rem 2rem 16rem;
+      grid-template-rows: 40rem 3rem 16rem;
       grid-template-columns: auto;
       grid-template-areas:  "editor"
                             "options"
@@ -25,16 +25,12 @@ template.innerHTML = `
     pt-editor {
       grid-area: editor;
     }
-    #options {
+    pt-playback {
       grid-area: options;
     }
   </style>
   <pt-editor></pt-editor>
-  <div id="options">
-    <button id="play">Play</button>
-    <button id="pause">Pause</button>
-    <button id="stop">Stop</button>
-  </div>
+  <pt-playback></pt-playback>
   <pt-keyboard></pt-keyboard>
 `
 
@@ -51,13 +47,8 @@ customElements.define('pt-app',
       this.attachShadow({ mode: 'open' })
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
-      this.playButton = this.shadowRoot.querySelector('#play')
-      this.pauseButton = this.shadowRoot.querySelector('#pause')
-      this.stopButton = this.shadowRoot.querySelector('#stop')
-
       this.editor = this.shadowRoot.querySelector('pt-editor')
       this.keyboard = this.shadowRoot.querySelector('pt-keyboard')
-      this.roll = this.shadowRoot.querySelector('pt-piano-roll')
     }
 
     /**
@@ -71,21 +62,6 @@ customElements.define('pt-app',
       // Tone.setContext(new Tone.Context({ latencyHint: 'balanced' }))
 
       document.addEventListener('pointerdown', async () => await Tone.start(), { once: true })
-
-      this.playButton.addEventListener('click', async () => {
-        await Tone.start()
-        Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
-        Tone.Transport.loop = true
-        Tone.Transport.start()
-      })
-
-      this.pauseButton.addEventListener('click', async () => {
-        Tone.Transport.pause()
-      })
-
-      this.stopButton.addEventListener('click', async () => {
-        Tone.Transport.stop()
-      })
 
       this.editor.addEventListener('instrument-change', event => {
         this.keyboard.instrument = this.editor.instrument

@@ -104,6 +104,8 @@ template.innerHTML = `
     <select name="instruments" id="instrument-select">
       <option value="piano">Piano</option>
       <option value="casio">Casio</option>
+      <option value="808">808</option>
+      <option value="synth">Synth</option>
       <option value="amsynth">AMSynth</option>
       <option value="fmsynth">FMSynth</option>
     </select>
@@ -296,6 +298,24 @@ customElements.define('pt-instrument',
         this.instrument = new Tone.AMSynth()
       } else if (instrument === 'fmsynth') {
         this.instrument = new Tone.FMSynth()
+      } else if (instrument === 'synth') {
+        this.instrument = new Tone.Synth({ release: 1 })
+      } else if (instrument === '808') {
+        this.instrument = new Tone.Sampler({
+          urls: {
+            C1: 'Kick Short.ogg',
+            'C#1': 'Rimshot.ogg',
+            D1: 'Snare Bright.ogg',
+            'D#1': 'Clap.ogg',
+            E1: 'Snare Low.ogg',
+            F1: 'Tom Low.ogg',
+            'F#1': 'Hihat.ogg',
+            G1: 'Tom High.ogg',
+            'G#1': 'Open Hat Short.ogg',
+            A1: 'Tom Mid.ogg'
+          },
+          baseUrl: '../samples/'
+        })
       }
       this.instrument.chain(this.reverb, this.channel, Tone.Destination)
     }

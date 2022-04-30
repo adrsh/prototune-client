@@ -50,9 +50,9 @@ template.innerHTML = `
     <input id="tempo-changer" type="number" min="30" max="300" value="120">
   </div>
   <div id="buttons">
-    <button id="play"><img src="../img/play-circle.svg" alt="Play"></button>
-    <button id="pause"><img src="../img/pause-circle.svg" alt="Pause"></button>
-    <button id="stop"><img src="../img/stop-circle.svg" alt="Stop"></button>
+    <button id="play"><img src="../img/play-fill.svg" alt="Play"></button>
+    <button id="pause"><img src="../img/pause-fill.svg" alt="Pause"></button>
+    <button id="stop"><img src="../img/stop-fill.svg" alt="Stop"></button>
   </div>
   <div id="volume">
     <input id="volume-slider" type="range" max="0" min="-40" value="-5">
@@ -78,6 +78,9 @@ customElements.define('pt-playback',
 
       this.volumeSlider = this.shadowRoot.querySelector('#volume-slider')
       this.tempoChanger = this.shadowRoot.querySelector('#tempo-changer')
+
+      Tone.getDestination().volume.rampTo(parseInt(this.volumeSlider.value), 0.1)
+      Tone.Transport.bpm.rampTo(parseInt(this.tempoChanger.value), 0.1)
     }
 
     /**

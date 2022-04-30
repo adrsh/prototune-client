@@ -27,6 +27,7 @@ template.innerHTML = `
     }
     pt-playback {
       grid-area: options;
+      border-bottom: 1px solid gray;
     }
   </style>
   <pt-editor></pt-editor>

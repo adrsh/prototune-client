@@ -314,6 +314,7 @@ customElements.define('pt-instrument',
             'G#1': 'Open Hat Short.ogg',
             A1: 'Tom Mid.ogg'
           },
+          release: 2,
           baseUrl: '../samples/'
         })
       }

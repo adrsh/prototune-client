@@ -4,3 +4,10 @@ body, html {
 	width: 100%;
 	overflow: hidden;
 }
+
+#main {
+	display: flex;
+	width: 16rem;
+	height: 32rem;
+	flex-direction: column;
+}

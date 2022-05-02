@@ -22,8 +22,52 @@ window.ws = new WebSocket('ws://localhost:8080')
  * @param {MessageEvent} event Event to be handled.
  */
 window.ws.onmessage = async function (event) {
-  event.message = event.data.text().then(JSON.parse)
+  try {
+    event.message = JSON.parse(event.data)
+  } catch (e) {
+    console.log(event.data)
+  }
+  // event.message = event.data.text().then(JSON.parse)
 }
 
-const app = document.createElement('pt-app')
-document.body.append(app)
+window.ws.addEventListener('message', async event => {
+  const message = await event.message
+  console.log(message)
+  if (message.action === 'session-start') {
+    const app = document.createElement('pt-app')
+    document.body.replaceChildren(app)
+  }
+})
+
+const url = new URL(window.location)
+const id = url.search.substring(1, 37)
+
+const sessionPassword = document.querySelector('#session-password')
+const submitButton = document.querySelector('#submit-button')
+
+submitButton.addEventListener('click', event => {
+  if (window.ws.readyState === window.ws.OPEN) {
+    if (id.length === 36) {
+      window.ws.send(JSON.stringify({
+        action: 'session-auth',
+        id,
+        password: sessionPassword.value
+      }))
+    }
+  }
+})
+
+const sessionCreateButton = document.querySelector('#session-create')
+const sessionCreatePassword = document.querySelector('#session-create-password')
+
+sessionCreateButton.addEventListener('click', event => {
+  if (window.ws.readyState === window.ws.OPEN) {
+    window.ws.send(JSON.stringify({
+      action: 'session-create',
+      password: sessionCreatePassword.value
+    }))
+  }
+})
+
+// const app = document.createElement('pt-app')
+// document.body.append(app)

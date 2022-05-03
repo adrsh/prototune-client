@@ -10,13 +10,17 @@
 </head>
 <body>
   <div id="main">
-    <label for="session-create-password">Enter a password for the session:</label>
-    <input id="session-create-password" type="password">
-    <button id="session-create">Create a new session</button>
-    <br>
-    <label for="session-password">Enter the password for the session:</label>
-    <input id="session-password" type="password">
-    <button id="submit-button">Submit</button>
+    <div id="content">
+      <h1>Prototune</h1>
+      <div id="session-join" hidden>
+        <p>Join the session</p>
+        <input id="session-password" type="password" placeholder="Enter the password for the session">
+        <button id="submit-button">Join the session</button>
+        <p>or create a new session</p>
+      </div>
+      <input id="session-create-password" type="password" placeholder="Password (leave empty for no password)">
+      <button id="session-create">Create a new session</button>
+    </div>
   </div>
 </body>
 </html>

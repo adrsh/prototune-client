@@ -86,6 +86,9 @@ customElements.define('pt-editor',
         attributeFilter: ['instrument']
       }
 
+      // Try to get a session, and one is recieved if there is an id associated with the client on the server.
+      this.#sendMessage({ action: 'session-get' })
+
       this.observer = new MutationObserver(records => this.#handleMutations(records))
       this.observer.observe(this.list, this.config)
     }

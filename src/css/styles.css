@@ -37,7 +37,7 @@ body, html {
 	gap: 0.5rem;
 }
 
-#session-join > p, #content > p {
+#session-join > p {
 	display: flex;
 	justify-content: center;
 	font-size: 1.1rem;

@@ -303,16 +303,16 @@ customElements.define('pt-instrument',
       } else if (instrument === '808') {
         this.instrument = new Tone.Sampler({
           urls: {
-            C1: 'Kick Short.ogg',
+            C1: 'KickShort.ogg',
             'C#1': 'Rimshot.ogg',
-            D1: 'Snare Bright.ogg',
+            D1: 'SnareBright.ogg',
             'D#1': 'Clap.ogg',
-            E1: 'Snare Low.ogg',
-            F1: 'Tom Low.ogg',
+            E1: 'SnareLow.ogg',
+            F1: 'TomLow.ogg',
             'F#1': 'Hihat.ogg',
-            G1: 'Tom High.ogg',
-            'G#1': 'Open Hat Short.ogg',
-            A1: 'Tom Mid.ogg'
+            G1: 'TomHigh.ogg',
+            'G#1': 'OpenHatShort.ogg',
+            A1: 'TomMid.ogg'
           },
           release: 2,
           baseUrl: '../samples/'

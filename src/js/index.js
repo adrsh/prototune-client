@@ -86,6 +86,7 @@ sessionCreateButton.addEventListener('click', event => {
 const playOfflineButton = document.querySelector('#play-offline-button')
 
 playOfflineButton.addEventListener('click', () => {
+  window.ws.close()
   const app = document.createElement('pt-app')
   document.body.replaceChildren(app)
 })

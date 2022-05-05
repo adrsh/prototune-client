@@ -10,16 +10,15 @@ template.innerHTML = `
   <style>
   :host {
     display: grid;
-    grid-template-rows: 1.25rem 38.75rem;
+    grid-template-rows: 40rem;
     grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
-    grid-template-areas:  "instruments time-line"
-                          "instruments piano-roll";
+    grid-template-areas:  "instruments editor";
     border-bottom: 1px solid gray;
   }
   #roll {
-    overflow-y: scroll;
     grid-area: piano-roll;
     border-bottom: 1px solid gray;
+    overflow-y: scroll;
   }
   button {
     height: 4rem;
@@ -40,19 +39,32 @@ template.innerHTML = `
   .selected {
     background-color: #f8f8f8;
   }
+  #editor {
+    grid-area: editor;
+    display: grid;
+    grid-template-rows: 1.25rem 38.75rem;
+    grid-template-areas:  "time-line" "piano-roll";
+    overflow-x: scroll;
+    overflow-y: hidden;
+  }
   pt-time-line {
     grid-area: time-line;
   }
   pt-instrument {
     background-color: #ffffff;
   }
+  pt-piano-roll {
+    overflow: auto;
+  }
   </style>
   <div id="list">
     <button>+</button>
   </div>
-  <pt-time-line></pt-time-line>
-  <div id="roll">
-  </div>
+  <div id="editor">
+    <pt-time-line></pt-time-line>
+    <div id="roll">
+    </div>
+</div>
 `
 
 customElements.define('pt-editor',

@@ -22,8 +22,63 @@ window.ws = new WebSocket('ws://localhost:8080')
  * @param {MessageEvent} event Event to be handled.
  */
 window.ws.onmessage = async function (event) {
-  event.message = event.data.text().then(JSON.parse)
+  try {
+    event.message = JSON.parse(event.data)
+  } catch (e) {
+    console.log('Something went wrong when parsing: ' + event.data)
+  }
 }
 
-const app = document.createElement('pt-app')
-document.body.append(app)
+window.ws.addEventListener('message', async event => {
+  const message = await event.message
+  if (message.action === 'session-authenticated') {
+    const app = document.createElement('pt-app')
+    document.body.replaceChildren(app)
+  }
+})
+
+window.ws.addEventListener('message', async event => {
+  const message = await event.message
+  if (message['session-id']) {
+    window.history.pushState('Prototune', '', `?${message['session-id']}`)
+    const app = document.createElement('pt-app')
+    document.body.replaceChildren(app)
+  }
+})
+
+const url = new URL(window.location)
+const id = url.search.substring(1, 37)
+
+const sessionPassword = document.querySelector('#session-password')
+const submitButton = document.querySelector('#submit-button')
+const sessionJoin = document.querySelector('#session-join')
+
+if (id.length === 36) {
+  sessionJoin.toggleAttribute('hidden', false)
+} else {
+  sessionJoin.toggleAttribute('hidden', true)
+}
+
+submitButton.addEventListener('click', event => {
+  if (window.ws.readyState === window.ws.OPEN) {
+    if (id.length === 36) {
+      window.ws.send(JSON.stringify({
+        action: 'session-auth',
+        id,
+        password: sessionPassword.value
+      }))
+    }
+  }
+})
+
+const sessionCreateButton = document.querySelector('#session-create')
+const sessionCreatePassword = document.querySelector('#session-create-password')
+
+sessionCreateButton.addEventListener('click', event => {
+  if (window.ws.readyState === window.ws.OPEN) {
+    window.ws.send(JSON.stringify({
+      action: 'session-create',
+      password: sessionCreatePassword.value
+    }))
+  }
+})

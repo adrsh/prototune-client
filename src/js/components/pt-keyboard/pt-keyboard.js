@@ -218,18 +218,16 @@ customElements.define('pt-keyboard',
 
       this.ws = window.ws
 
-      this.ws.addEventListener('open', () => {
-        this.ws.addEventListener('message', async event => {
-          const message = await event.message
-          if (message.action === 'play') {
-            this.#playNote(message.note)
-          } else if (message.action === 'stop') {
-            this.#stopNote(message.note)
-          }
-        })
-        this.addEventListener('note-play', event => this.#sendMessage({ note: event.detail.note, action: 'play' }))
-        this.addEventListener('note-stop', event => this.#sendMessage({ note: event.detail.note, action: 'stop' }))
+      this.ws.addEventListener('message', async event => {
+        const message = await event.message
+        if (message.action === 'play') {
+          this.#playNote(message.note)
+        } else if (message.action === 'stop') {
+          this.#stopNote(message.note)
+        }
       })
+      this.addEventListener('note-play', event => this.#sendMessage({ note: event.detail.note, action: 'play' }))
+      this.addEventListener('note-stop', event => this.#sendMessage({ note: event.detail.note, action: 'stop' }))
 
       this.instrument = new Tone.Sampler({
         urls: {

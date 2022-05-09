@@ -264,6 +264,8 @@ customElements.define('pt-editor',
         instrument.setAttribute('uuid', uuid)
         instrument.roll = roll
         instrument.setAttribute('instrument', props.instrument)
+        instrument.setAttribute('volume', props.volume)
+        instrument.setAttribute('reverb', props.reverb)
 
         roll.setAttribute('uuid', props.roll)
         roll.toggleAttribute('hidden', true)

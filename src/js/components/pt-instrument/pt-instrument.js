@@ -106,6 +106,9 @@ template.innerHTML = `
       <option value="casio">Casio</option>
       <option value="808">808</option>
       <option value="synth">Synth</option>
+      <option value="pulse">Pulse</option>
+      <option value="square">Square</option>
+      <option value="sine">Sine</option>
       <option value="amsynth">AMSynth</option>
       <option value="fmsynth">FMSynth</option>
     </select>
@@ -235,7 +238,7 @@ customElements.define('pt-instrument',
      */
     #setInstrument (instrument) {
       if (this.instrument) {
-        // this.instrument.dispose()
+        this.instrument.dispose()
       }
       if (instrument === 'casio') {
         this.instrument = new Tone.Sampler({
@@ -316,6 +319,58 @@ customElements.define('pt-instrument',
           },
           release: 2,
           baseUrl: '../samples/'
+        })
+      } else if (instrument === 'square') {
+        this.instrument = new Tone.Synth({
+          portamento: 0.05,
+          volume: -6,
+          oscillator: {
+            type: 'square'
+          },
+          envelope: {
+            attack: 0.025,
+            attackCurve: 'exponential',
+            decay: 0.3,
+            decayCurve: 'exponential',
+            sustain: 0.2,
+            release: 1.5,
+            releaseCurve: 'exponential'
+          }
+        })
+      } else if (instrument === 'sine') {
+        this.instrument = new Tone.Synth({
+          portamento: 0.05,
+          volume: -6,
+          oscillator: {
+            type: 'sine'
+          },
+          envelope: {
+            attack: 0.025,
+            attackCurve: 'exponential',
+            decay: 0.3,
+            decayCurve: 'exponential',
+            sustain: 0.2,
+            release: 1.5,
+            releaseCurve: 'exponential'
+          }
+        })
+      } else if (instrument === 'pulse') {
+        this.instrument = new Tone.Synth({
+          portamento: 0.05,
+          volume: -6,
+          oscillator: {
+            type: 'pulse',
+            width: 0
+          },
+          envelope: {
+            attack: 0.025,
+            attackCurve: 'exponential',
+            decay: 0.3,
+            decayCurve: 'exponential',
+            sustain: 0.2,
+            release: 1.5,
+            releaseCurve: 'exponential'
+          }
         })
       }
       this.instrument.chain(this.reverb, this.channel, Tone.Destination)

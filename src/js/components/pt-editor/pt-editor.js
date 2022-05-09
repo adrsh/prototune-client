@@ -95,7 +95,7 @@ customElements.define('pt-editor',
         attributes: true,
         childList: true,
         subtree: true,
-        attributeFilter: ['instrument']
+        attributeFilter: ['instrument', 'volume', 'reverb']
       }
 
       // Try to get a session, and one is recieved if there is an id associated with the client on the server.
@@ -264,6 +264,8 @@ customElements.define('pt-editor',
         instrument.setAttribute('uuid', uuid)
         instrument.roll = roll
         instrument.setAttribute('instrument', props.instrument)
+        instrument.setAttribute('volume', props.volume)
+        instrument.setAttribute('reverb', props.reverb)
 
         roll.setAttribute('uuid', props.roll)
         roll.toggleAttribute('hidden', true)

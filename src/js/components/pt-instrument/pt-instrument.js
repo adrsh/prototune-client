@@ -322,6 +322,8 @@ customElements.define('pt-instrument',
         })
       } else if (instrument === 'square') {
         this.instrument = new Tone.Synth({
+          portamento: 0.05,
+          volume: -6,
           oscillator: {
             type: 'square'
           },
@@ -337,6 +339,8 @@ customElements.define('pt-instrument',
         })
       } else if (instrument === 'sine') {
         this.instrument = new Tone.Synth({
+          portamento: 0.05,
+          volume: -6,
           oscillator: {
             type: 'sine'
           },
@@ -352,11 +356,21 @@ customElements.define('pt-instrument',
         })
       } else if (instrument === 'pulse') {
         this.instrument = new Tone.Synth({
+          portamento: 0.05,
+          volume: -6,
           oscillator: {
             type: 'pulse',
-            width: 0.5
+            width: 0
           },
-          envelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 1, attackCurve: 'linear', releaseCurve: 'exponential' }
+          envelope: {
+            attack: 0.025,
+            attackCurve: 'exponential',
+            decay: 0.3,
+            decayCurve: 'exponential',
+            sustain: 0.2,
+            release: 1.5,
+            releaseCurve: 'exponential'
+          }
         })
       }
       this.instrument.chain(this.reverb, this.channel, Tone.Destination)

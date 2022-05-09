@@ -30,6 +30,9 @@ template.innerHTML = `
     border-radius: 0.1rem;
   }
   #options {
+    display: flex;
+    gap: 0.25rem;
+    justify-content: flex-end;
     width: 100%;
     height: 1rem;
     padding: 0.5rem;
@@ -96,6 +99,17 @@ template.innerHTML = `
   [hidden] {
     display: none !important;
   }
+  #volume {
+    display: flex;
+    align-items: center;
+  }
+  #volume > input[type="number"] {
+      font-size: 0.75rem;
+      width: 2rem;
+      height: 0.75rem;
+      margin: 0;
+      padding: 0;
+  }
   </style>
     <div id="settings">
       <button id="mute-button"></button>
@@ -113,6 +127,9 @@ template.innerHTML = `
       <option value="fmsynth">FMSynth</option>
     </select>
     <div id="options">
+      <div id="volume">
+        <input id="volume-changer" type="number" min="-60" max="0" value="-5">
+      </div>
       <button id="option-button"><img src="../img/gear.svg" alt="Gear"></button>
       <div id="option-menu" hidden>
         <button id="option-delete">Delete</button>
@@ -185,6 +202,8 @@ customElements.define('pt-instrument',
         }
       })
 
+      this.volumeChanger = this.shadowRoot.querySelector('#volume-changer')
+
       this.reverb = new Tone.Reverb(0.5)
       this.reverb.wet.value = 0
     }
@@ -193,6 +212,9 @@ customElements.define('pt-instrument',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
+      this.volumeChanger.addEventListener('input', async () => {
+        this.setAttribute('volume', this.volumeChanger.value)
+      })
     }
 
     /**
@@ -208,7 +230,7 @@ customElements.define('pt-instrument',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['instrument', 'uuid']
+      return ['instrument', 'uuid', 'volume']
     }
 
     /**
@@ -228,6 +250,13 @@ customElements.define('pt-instrument',
         this.selector.querySelector(`option[value="${newValue}"]`).toggleAttribute('selected')
       } else if (name === 'uuid') {
         this.uuid = newValue
+      } else if (name === 'volume') {
+        this.volumeChanger.value = newValue
+        if (parseInt(newValue) === -60) {
+          this.channel.volume.rampTo(-Infinity, 0)
+        } else {
+          this.channel.volume.rampTo(parseInt(newValue), 0)
+        }
       }
     }
 

@@ -95,7 +95,7 @@ customElements.define('pt-editor',
         attributes: true,
         childList: true,
         subtree: true,
-        attributeFilter: ['instrument']
+        attributeFilter: ['instrument', 'volume']
       }
 
       // Try to get a session, and one is recieved if there is an id associated with the client on the server.

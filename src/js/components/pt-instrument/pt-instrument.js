@@ -110,6 +110,17 @@ template.innerHTML = `
       margin: 0;
       padding: 0;
   }
+  #reverb {
+    display: flex;
+    align-items: center;
+  }
+  #reverb > input[type="number"] {
+      font-size: 0.75rem;
+      width: 2.5rem;
+      height: 0.75rem;
+      margin: 0;
+      padding: 0;
+  }
   </style>
     <div id="settings">
       <button id="mute-button"></button>
@@ -127,6 +138,9 @@ template.innerHTML = `
       <option value="fmsynth">FMSynth</option>
     </select>
     <div id="options">
+      <div id="reverb">
+        <input id="reverb-changer" type="number" min="0" max="1" value="0" step="0.05">
+      </div>
       <div id="volume">
         <input id="volume-changer" type="number" min="-60" max="0" value="-5">
       </div>
@@ -203,8 +217,9 @@ customElements.define('pt-instrument',
       })
 
       this.volumeChanger = this.shadowRoot.querySelector('#volume-changer')
+      this.reverbChanger = this.shadowRoot.querySelector('#reverb-changer')
 
-      this.reverb = new Tone.Reverb(0.5)
+      this.reverb = new Tone.Reverb(2)
       this.reverb.wet.value = 0
     }
 
@@ -214,6 +229,9 @@ customElements.define('pt-instrument',
     connectedCallback () {
       this.volumeChanger.addEventListener('input', async () => {
         this.setAttribute('volume', this.volumeChanger.value)
+      })
+      this.reverbChanger.addEventListener('input', async () => {
+        this.setAttribute('reverb', this.reverbChanger.value)
       })
     }
 
@@ -230,7 +248,7 @@ customElements.define('pt-instrument',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['instrument', 'uuid', 'volume']
+      return ['instrument', 'uuid', 'volume', 'reverb']
     }
 
     /**
@@ -257,6 +275,9 @@ customElements.define('pt-instrument',
         } else {
           this.channel.volume.rampTo(parseInt(newValue), 0)
         }
+      } else if (name === 'reverb') {
+        this.reverbChanger.value = newValue
+        this.reverb.wet.rampTo(parseFloat(newValue), 0)
       }
     }
 

@@ -345,7 +345,13 @@ customElements.define('pt-keyboard',
      * @param {string} note Note to be released, ex. 'C4'.
      */
     #stopNote (note) {
-      this.instrument.triggerRelease(Tone.Midi(note), Tone.now())
+      if (this.instrument.name === 'Sampler') {
+        this.instrument.triggerRelease(Tone.Midi(note), Tone.now())
+      } else if (this.instrument.name === 'Synth') {
+        this.instrument.triggerRelease()
+      } else {
+        this.instrument.triggerRelease(Tone.Midi(note), Tone.now())
+      }
       const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
       target.classList.remove('playing')
     }

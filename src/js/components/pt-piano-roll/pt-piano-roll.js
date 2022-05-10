@@ -21,17 +21,17 @@ template.innerHTML = `
       background-image:
         repeating-linear-gradient(
           90deg,
-          transparent 0.03125rem 3.96875rem,
-          #b0b0b0 3.96875rem 4.03125rem
+          transparent 0 63px,
+          #c0c0c0 63px 64px
         ),
         repeating-linear-gradient(
-          transparent 0.03125rem 0.96875rem,
-          #e0e0e0 0.96875rem 1.03125rem
+          transparent 0 15px,
+          #e8e8e8 15px 16px
         ),
         repeating-linear-gradient(
           90deg,
-          transparent 0.03125rem 0.96875rem,
-          #e0e0e0 0.96875rem 1.03125rem
+          transparent 0 15px,
+          #e8e8e8 15px 16px
         ),
         repeating-linear-gradient(
           transparent 0rem 1rem,

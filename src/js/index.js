@@ -29,6 +29,16 @@ window.ws.onmessage = async function (event) {
   }
 }
 
+/**
+ * Sends a ping to the Websocket server.
+ */
+function ping () {
+  window.ws.send(JSON.stringify('ping'))
+}
+
+// Send a ping message to Websocket server to keep the connection alive.
+setInterval(ping, 45000)
+
 window.ws.addEventListener('message', async event => {
   const message = await event.message
   if (message.action === 'session-authenticated') {

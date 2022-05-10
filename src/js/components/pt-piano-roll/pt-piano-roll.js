@@ -21,17 +21,17 @@ template.innerHTML = `
       background-image:
         repeating-linear-gradient(
           90deg,
-          transparent 0.03125rem 3.96875rem,
-          #b0b0b0 3.96875rem 4.03125rem
+          transparent 0 3.9375rem,
+          #c0c0c0 3.9375rem 4rem
         ),
         repeating-linear-gradient(
-          transparent 0.03125rem 0.96875rem,
-          #e0e0e0 0.96875rem 1.03125rem
+          transparent 0 0.9375rem,
+          #e8e8e8 0.9375rem 1rem
         ),
         repeating-linear-gradient(
           90deg,
-          transparent 0.03125rem 0.96875rem,
-          #e0e0e0 0.96875rem 1.03125rem
+          transparent 0 0.9375rem,
+          #e8e8e8 0.9375rem 1rem
         ),
         repeating-linear-gradient(
           transparent 0rem 1rem,
@@ -75,13 +75,6 @@ customElements.define('pt-piano-roll',
       }
 
       this.ws = window.ws
-
-      /* this.ws.addEventListener('open', () => {
-        this.ws.addEventListener('message', async event => {
-          const message = await event.message
-          this.#handleMessage(message)
-        })
-      }) */
 
       this.ws.addEventListener('message', async event => {
         const message = await event.message
@@ -269,8 +262,9 @@ customElements.define('pt-piano-roll',
      * @param {PointerEvent} event Pointer event.
      */
     #createNote (event) {
-      const x = Math.trunc(event.offsetX / 16)
-      const y = Math.trunc(event.offsetY / 16)
+      const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
+      const x = Math.trunc(event.offsetX / fontSize)
+      const y = Math.trunc(event.offsetY / fontSize)
       const note = document.createElement('pt-piano-roll-note')
       note.instrument = this.instrument
       note.setAttribute('note', 108 - y)

@@ -20,13 +20,13 @@ template.innerHTML = `
     background-image:
         repeating-linear-gradient(
           90deg,
-          transparent 0px 63px,
-          #a0a0a0 63px 64px
+          transparent 0 3.9375rem,
+          #a0a0a0 3.9375rem 4rem
         ),
         repeating-linear-gradient(
           90deg,
-          transparent 0px 15px,
-          #d8d8d8 15px 16px
+          transparent 0 0.9375rem,
+          #d8d8d8 0.9375rem 1rem
         );
   }
   #time-line {
@@ -88,7 +88,8 @@ customElements.define('pt-time-line',
       })
 
       this.addEventListener('click', event => {
-        this.tick = Math.floor(parseInt(event.offsetX) / 16)
+        const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
+        this.tick = Math.floor(parseInt(event.offsetX) / fontSize)
         this.line.style.left = `${this.tick}rem`
         Tone.Transport.position = `0:0:${this.tick}`
       })

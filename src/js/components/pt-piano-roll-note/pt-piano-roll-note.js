@@ -12,7 +12,8 @@ template.innerHTML = `
   <style>
     :host {
       position: absolute;
-      background-color: #404040;
+      background-color: #202020;
+      opacity: 50%;
       height: 1rem;
       width: 1rem;
       display: flex;
@@ -67,7 +68,6 @@ customElements.define('pt-piano-roll-note',
         // Stops grid underneath from getting triggered by the click.
         event.stopImmediatePropagation()
         if (event.button === 2) {
-          Tone.Transport.clear(this.transport)
           this.remove()
         } else if (event.button === 0) {
           this.#startMoving(event)
@@ -78,7 +78,6 @@ customElements.define('pt-piano-roll-note',
       this.addEventListener('pointerenter', event => {
         event.stopPropagation()
         if (event.buttons === 2) {
-          Tone.Transport.clear(this.transport)
           this.remove()
         }
       })
@@ -149,12 +148,16 @@ customElements.define('pt-piano-roll-note',
       this.movementX += event.movementX
       this.movementY += event.movementY
 
+      const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
       // Calculate the new position.
-      this.positionX = Math.round(this.movementX / 16) + this.oldX
-      this.positionY = Math.round(this.movementY / 16) + this.oldY
+      this.positionX = Math.round(this.movementX / fontSize) + this.oldX
+      this.positionY = Math.round(this.movementY / fontSize) + this.oldY
 
+      // Check limits
       if (this.positionX < 0) {
         this.positionX = 0
+      } else if (this.positionX > 63) {
+        this.positionX = 63
       }
 
       if (this.positionY < 0) {
@@ -171,9 +174,6 @@ customElements.define('pt-piano-roll-note',
         this.setAttribute('y', this.positionY)
         this.setAttribute('note', 108 - this.y)
       }
-
-      this.style.left = this.positionX + 'rem'
-      this.style.top = this.positionY + 'rem'
     }
 
     /**
@@ -231,9 +231,10 @@ customElements.define('pt-piano-roll-note',
      */
     #resize (event) {
       this.startWidth += event.movementX
-      if (this.startWidth > 16) {
-        this.setAttribute('length', Math.round((this.startWidth) / 16))
-        this.style.width = `${Math.round((this.startWidth) / 16)}rem`
+      const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
+      if (this.startWidth > fontSize) {
+        this.setAttribute('length', Math.round((this.startWidth) / fontSize))
+        this.style.width = `${Math.round((this.startWidth) / fontSize)}rem`
       }
     }
 

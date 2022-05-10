@@ -51,9 +51,15 @@ template.innerHTML = `
     .invisible {
       visibility: hidden;
     }
+    label {
+      font-family: sans-serif;
+      font-size: 0.75rem;
+    }
   </style>
+  <input type="checkbox" id="play-solo">
+  <label for="play-solo">Solo</label>
   <div id="keyboard">
-  <div class="octave">
+    <div class="octave">
       <div class="white-notes">
         <pt-keyboard-note note="21"></pt-keyboard-note>
         <pt-keyboard-note note="23"></pt-keyboard-note>
@@ -220,10 +226,12 @@ customElements.define('pt-keyboard',
 
       this.ws.addEventListener('message', async event => {
         const message = await event.message
-        if (message.action === 'play') {
-          this.#playNote(message.note)
-        } else if (message.action === 'stop') {
-          this.#stopNote(message.note)
+        if (!this.solo) {
+          if (message.action === 'play') {
+            this.#playNote(message.note)
+          } else if (message.action === 'stop') {
+            this.#stopNote(message.note)
+          }
         }
       })
       this.addEventListener('note-play', event => this.#sendMessage({ note: event.detail.note, action: 'play' }))
@@ -281,6 +289,11 @@ customElements.define('pt-keyboard',
       })
       document.addEventListener('keyup', event => this.#keyUp(event))
 
+      const playSoloCheckbox = this.shadowRoot.querySelector('#play-solo')
+      playSoloCheckbox.addEventListener('change', event => {
+        this.solo = playSoloCheckbox.checked
+      })
+
       this.#initMidi().then(console.log('MIDI device connected.'))
     }
 
@@ -316,7 +329,7 @@ customElements.define('pt-keyboard',
      * @param {object} data Data to be sent.
      */
     #sendMessage (data) {
-      if (this.ws.readyState === this.ws.OPEN) {
+      if (this.ws.readyState === this.ws.OPEN && !this.solo) {
         this.ws.send(JSON.stringify(data))
       }
     }

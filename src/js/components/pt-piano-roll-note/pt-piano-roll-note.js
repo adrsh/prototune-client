@@ -12,7 +12,8 @@ template.innerHTML = `
   <style>
     :host {
       position: absolute;
-      background-color: #404040;
+      background-color: #202020;
+      opacity: 50%;
       height: 1rem;
       width: 1rem;
       display: flex;

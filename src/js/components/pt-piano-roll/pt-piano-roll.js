@@ -76,13 +76,6 @@ customElements.define('pt-piano-roll',
 
       this.ws = window.ws
 
-      /* this.ws.addEventListener('open', () => {
-        this.ws.addEventListener('message', async event => {
-          const message = await event.message
-          this.#handleMessage(message)
-        })
-      }) */
-
       this.ws.addEventListener('message', async event => {
         const message = await event.message
         if (message.roll === this.uuid) {
@@ -269,8 +262,9 @@ customElements.define('pt-piano-roll',
      * @param {PointerEvent} event Pointer event.
      */
     #createNote (event) {
-      const x = Math.trunc(event.offsetX / 16)
-      const y = Math.trunc(event.offsetY / 16)
+      const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
+      const x = Math.trunc(event.offsetX / fontSize)
+      const y = Math.trunc(event.offsetY / fontSize)
       const note = document.createElement('pt-piano-roll-note')
       note.instrument = this.instrument
       note.setAttribute('note', 108 - y)

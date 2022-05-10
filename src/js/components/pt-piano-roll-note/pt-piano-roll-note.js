@@ -150,9 +150,10 @@ customElements.define('pt-piano-roll-note',
       this.movementX += event.movementX
       this.movementY += event.movementY
 
+      const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
       // Calculate the new position.
-      this.positionX = Math.round(this.movementX / 16) + this.oldX
-      this.positionY = Math.round(this.movementY / 16) + this.oldY
+      this.positionX = Math.round(this.movementX / fontSize) + this.oldX
+      this.positionY = Math.round(this.movementY / fontSize) + this.oldY
 
       if (this.positionX < 0) {
         this.positionX = 0
@@ -232,9 +233,10 @@ customElements.define('pt-piano-roll-note',
      */
     #resize (event) {
       this.startWidth += event.movementX
-      if (this.startWidth > 16) {
-        this.setAttribute('length', Math.round((this.startWidth) / 16))
-        this.style.width = `${Math.round((this.startWidth) / 16)}rem`
+      const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
+      if (this.startWidth > fontSize) {
+        this.setAttribute('length', Math.round((this.startWidth) / fontSize))
+        this.style.width = `${Math.round((this.startWidth) / fontSize)}rem`
       }
     }
 

@@ -88,7 +88,8 @@ customElements.define('pt-time-line',
       })
 
       this.addEventListener('click', event => {
-        this.tick = Math.floor(parseInt(event.offsetX) / 16)
+        const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
+        this.tick = Math.floor(parseInt(event.offsetX) / fontSize)
         this.line.style.left = `${this.tick}rem`
         Tone.Transport.position = `0:0:${this.tick}`
       })

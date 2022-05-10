@@ -53,6 +53,7 @@ template.innerHTML = `
     <button id="play"><img src="../img/play-fill.svg" alt="Play"></button>
     <button id="pause"><img src="../img/pause-fill.svg" alt="Pause"></button>
     <button id="stop"><img src="../img/stop-fill.svg" alt="Stop"></button>
+    <button id="download"><img src="../img/download.svg" alt="Download"></button>
   </div>
   <div id="volume">
     <input id="volume-slider" type="range" max="0" min="-40" value="-5">
@@ -75,6 +76,8 @@ customElements.define('pt-playback',
       this.playButton = this.shadowRoot.querySelector('#play')
       this.pauseButton = this.shadowRoot.querySelector('#pause')
       this.stopButton = this.shadowRoot.querySelector('#stop')
+
+      this.downloadButton = this.shadowRoot.querySelector('#download')
 
       this.volumeSlider = this.shadowRoot.querySelector('#volume-slider')
       this.tempoChanger = this.shadowRoot.querySelector('#tempo-changer')
@@ -100,6 +103,28 @@ customElements.define('pt-playback',
 
       this.stopButton.addEventListener('click', async () => {
         Tone.Transport.stop()
+      })
+
+      const recorder = new Tone.Recorder()
+      Tone.Destination.connect(recorder)
+      this.downloadButton.addEventListener('click', async () => {
+        // Prevent looping for just recording one loop.
+        Tone.Transport.loop = false
+        // Reset transport position
+        Tone.Transport.position = 0
+        recorder.start()
+        Tone.Transport.start()
+        // Stop the transport a little after the loop has ended.
+        Tone.Transport.stop(Tone.now() + Tone.TransportTime('5:0:0'))
+        Tone.Transport.on('stop', async event => {
+          const recording = await recorder.stop()
+          // https://tonejs.github.io/docs/14.7.77/Recorder
+          const url = URL.createObjectURL(recording)
+          const anchor = document.createElement('a')
+          anchor.download = 'recording.ogg'
+          anchor.href = url
+          anchor.click()
+        })
       })
 
       this.volumeSlider.addEventListener('input', async () => {

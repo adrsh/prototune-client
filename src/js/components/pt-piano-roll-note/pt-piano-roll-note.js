@@ -68,7 +68,6 @@ customElements.define('pt-piano-roll-note',
         // Stops grid underneath from getting triggered by the click.
         event.stopImmediatePropagation()
         if (event.button === 2) {
-          Tone.Transport.clear(this.transport)
           this.remove()
         } else if (event.button === 0) {
           this.#startMoving(event)
@@ -79,7 +78,6 @@ customElements.define('pt-piano-roll-note',
       this.addEventListener('pointerenter', event => {
         event.stopPropagation()
         if (event.buttons === 2) {
-          Tone.Transport.clear(this.transport)
           this.remove()
         }
       })
@@ -155,8 +153,11 @@ customElements.define('pt-piano-roll-note',
       this.positionX = Math.round(this.movementX / fontSize) + this.oldX
       this.positionY = Math.round(this.movementY / fontSize) + this.oldY
 
+      // Check limits
       if (this.positionX < 0) {
         this.positionX = 0
+      } else if (this.positionX > 63) {
+        this.positionX = 63
       }
 
       if (this.positionY < 0) {
@@ -173,9 +174,6 @@ customElements.define('pt-piano-roll-note',
         this.setAttribute('y', this.positionY)
         this.setAttribute('note', 108 - this.y)
       }
-
-      this.style.left = this.positionX + 'rem'
-      this.style.top = this.positionY + 'rem'
     }
 
     /**

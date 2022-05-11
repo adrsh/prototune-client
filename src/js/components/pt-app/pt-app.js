@@ -63,7 +63,7 @@ customElements.define('pt-app',
       // Tone.setContext(new Tone.Context({ latencyHint: 'balanced' }))
 
       // Seems like the transport time floating point gets less variance with this, which in turn fixes double scheduling
-      Tone.Transport.PPQ = 256
+      Tone.Transport.PPQ = 512
 
       document.addEventListener('pointerdown', async () => await Tone.start(), { once: true })
 

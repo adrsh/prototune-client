@@ -59,12 +59,6 @@ customElements.define('pt-app',
       // Make the keyboard instrument be the same as the editors current instrument.
       this.keyboard.instrument = this.editor.instrument
 
-      // This bugs out once in a while, but decreases latency.
-      // Tone.setContext(new Tone.Context({ latencyHint: 'balanced' }))
-
-      // Seems like the transport time floating point gets less variance with this, which in turn fixes double scheduling
-      Tone.Transport.PPQ = 512
-
       document.addEventListener('pointerdown', async () => await Tone.start(), { once: true })
 
       this.editor.addEventListener('instrument-change', event => {

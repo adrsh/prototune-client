@@ -12,6 +12,7 @@ template.innerHTML = `
   <style>
   :host {
     display: flex;
+    position: relative;
     flex-direction: row;
     align-items: center;
     width: 100%;
@@ -54,12 +55,14 @@ template.innerHTML = `
     flex-direction: column;
     list-style: none;
     padding: 0rem;
-    position: relative;
-    float: right;
+    position: absolute;
+    right: -6rem;
+    top: 0.5rem;
     font-family: sans-serif;
     background-color: #ffffff;
     border: 1px solid black;
     width: 6rem;
+    z-index: 10;
   }
   #option-menu > button {
     width: 100%;
@@ -148,9 +151,10 @@ template.innerHTML = `
         <input id="volume-changer" type="number" min="-60" max="0" value="-5">
       </div>
       <button id="option-button"><img src="../img/gear.svg" alt="Gear"></button>
-      <div id="option-menu" hidden>
-        <button id="option-delete">Delete</button>
-      </div>
+
+    </div>
+    <div id="option-menu" hidden>
+      <button id="option-delete">Delete</button>
     </div>
 `
 

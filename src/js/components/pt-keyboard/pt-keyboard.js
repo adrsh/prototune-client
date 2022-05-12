@@ -35,18 +35,22 @@ template.innerHTML = `
     .black-notes > pt-keyboard-note {
       background-color: #101010;
       outline: 1px solid white;
+      border-radius: 0  0 0.3rem 0.3rem;
     }
     .black-notes > pt-keyboard-note:hover {
       background-color: #202020;
     }
     .black-notes > .playing {
-      background-color: #404040 !important;
+      background-color: #303030 !important;
     }
     .white-notes > pt-keyboard-note:hover {
       background-color: #F0F0F0;
     }
     .white-notes > .playing {
       background-color: #e0e0e0 !important;
+    }
+    .black-notes > pt-keyboard-note {
+      color: #606060;
     }
     .invisible {
       visibility: hidden;

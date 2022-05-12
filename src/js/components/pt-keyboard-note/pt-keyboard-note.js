@@ -5,15 +5,28 @@
  * @version 1.0.0
  */
 
+import * as Tone from 'tone'
+
 const template = document.createElement('template')
 template.innerHTML = `
   <style>
     :host {
+      display: flex;
       width: 2.5rem;
       background-color: #FFFFFF;
       outline: 1px solid black;
+      align-items: flex-end;
+      justify-content: center;
+      color: #808080;
+    }
+    #note {
+      font-family: sans-serif;
+      font-size: 0.6rem;
+      user-select: none;
+      padding: 0.5rem;
     }
   </style>
+  <div id="note">C4</div>
 `
 
 customElements.define('pt-keyboard-note',
@@ -70,6 +83,10 @@ customElements.define('pt-keyboard-note',
 
       this.addEventListener('pointerdown', this.onPointerDown)
       this.addEventListener('pointerenter', this.onPointerEnter)
+
+      const noteName = this.shadowRoot.querySelector('#note')
+
+      noteName.textContent = Tone.Frequency(this.note, 'midi').toNote()
     }
 
     /**

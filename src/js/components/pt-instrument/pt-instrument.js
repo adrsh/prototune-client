@@ -35,8 +35,7 @@ template.innerHTML = `
     gap: 0.25rem;
     justify-content: flex-end;
     width: 100%;
-    height: 1rem;
-    padding: 0.5rem;
+    padding-right: 0.5rem;
   }
   #option-button {
     font-size: 1rem;
@@ -105,24 +104,28 @@ template.innerHTML = `
   #volume {
     display: flex;
     align-items: center;
+    flex-direction: column;
   }
-  #volume > input[type="number"] {
-      font-size: 0.75rem;
-      width: 2rem;
-      height: 0.75rem;
-      margin: 0;
-      padding: 0;
+  #volume > pt-knob {
+    width: 1.25rem;
+    height: 1.25rem;
   }
   #reverb {
     display: flex;
     align-items: center;
+    flex-direction: column;
   }
-  #reverb > input[type="number"] {
-      font-size: 0.75rem;
-      width: 2.5rem;
-      height: 0.75rem;
-      margin: 0;
-      padding: 0;
+  #reverb > pt-knob {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  #reverb > span {
+    font-size: 0.6rem;
+    font-family: sans-serif;
+  }
+  #volume > span {
+    font-size: 0.6rem;
+    font-family: sans-serif;
   }
   </style>
     <div id="settings">
@@ -145,10 +148,12 @@ template.innerHTML = `
     </select>
     <div id="options">
       <div id="reverb">
-        <input id="reverb-changer" type="number" min="0" max="1" value="0" step="0.05">
+        <pt-knob id="reverb-changer" min="0" max="1" value="0" step="0.05"></pt-knob>
+        <span>REV</span>
       </div>
       <div id="volume">
-        <input id="volume-changer" type="number" min="-60" max="0" value="-5">
+        <pt-knob id="volume-changer" min="-60" max="0" value="-5"></pt-knob>
+        <span>VOL</span>
       </div>
       <button id="option-button"><img src="../img/gear.svg" alt="Gear"></button>
 

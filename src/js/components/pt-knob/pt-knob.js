@@ -9,15 +9,15 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
   :host {
-    height: 1.5rem;
-    width: 1.5rem;
+    height: 100%;
+    width: 100%;
   }
   #knob {
     height: 100%;
     width: 100%;
     display: flex;
     position: relative;
-    background-color: black;
+    background-color: #BBB;
     border-radius: 50%;
     cursor: ns-resize;
     justify-content: center;
@@ -34,8 +34,8 @@ template.innerHTML = `
     transform-origin: center top;
   }
   #circle {
-    height: 75%;
-    width: 75%;
+    height: 80%;
+    width: 80%;
     border-radius: 50%;
     background-color: white;
   }
@@ -129,7 +129,6 @@ customElements.define('pt-knob',
         this.max = parseFloat(newValue)
       } else if (name === 'value') {
         if (oldValue !== newValue) {
-          console.log(newValue)
           const value = parseFloat(newValue)
           if (value >= this.min && value <= this.max) {
             this.value = value
@@ -137,6 +136,8 @@ customElements.define('pt-knob',
               this.angle = (((value - this.min) / (this.max - this.min)) * 270) + 45
             }
             this.line.style.transform = `rotate(${this.angle}deg)`
+            this.setAttribute('title', this.value.toPrecision(2))
+            this.dispatchEvent(new CustomEvent('input'))
           }
         }
       } else if (name === 'step') {
@@ -188,7 +189,6 @@ customElements.define('pt-knob',
       */
       this.value = this.min + Math.floor((((this.angle - 45) / 270) * delta) / this.step) * this.step
       this.setAttribute('value', this.value.toPrecision(2))
-      this.setAttribute('title', this.value.toPrecision(2))
     }
   }
 )

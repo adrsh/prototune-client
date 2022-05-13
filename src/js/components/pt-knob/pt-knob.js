@@ -9,25 +9,42 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
   :host {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+  #knob {
+    height: 100%;
+    width: 100%;
+    display: flex;
     position: relative;
-    height: 5rem;
-    width: 5rem;
-    background-color: #88ff88;
+    background-color: black;
     border-radius: 50%;
     cursor: ns-resize;
-   }
+    justify-content: center;
+    align-items: center;
+  }
   #line {
     position: absolute;
     top: 50%;
-    left: 47%;
+    left: 45%;
     height: 45%;
-    width: 6%;
+    width: 10%;
     background-color: #000;
-    transform: rotate(45deg);
+    transform: rotate(180deg);
     transform-origin: center top;
   }
+  #circle {
+    height: 75%;
+    width: 75%;
+    border-radius: 50%;
+    background-color: white;
+  }
   </style>
-  <div id="line"></div>
+  <div id="knob">
+    <div id="circle"></div>
+    <div id="line"></div>
+  </div>
+  
 `
 
 customElements.define('pt-knob',
@@ -44,7 +61,8 @@ customElements.define('pt-knob',
       this.shadowRoot.appendChild(template.content.cloneNode(true))
 
       this.line = this.shadowRoot.querySelector('#line')
-      this.angle = 45
+      this.angle = 0
+      this.step = 1
     }
 
     /**
@@ -72,11 +90,11 @@ customElements.define('pt-knob',
       this.onRotate = event => this.#rotate(event)
 
       /**
-      * Handles stopping rotation and is here to be able to remove the event listener.
-      *
-      * @param {PointerEvent} event Pointer event.
-      * @returns {void}
-      */
+       * Handles stopping rotation and is here to be able to remove the event listener.
+       *
+       * @param {PointerEvent} event Pointer event.
+       * @returns {void}
+       */
       this.onStopRotate = event => this.#stopRotate(event)
 
       this.addEventListener('pointerdown', this.onPointerDown)
@@ -106,13 +124,20 @@ customElements.define('pt-knob',
      */
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'min') {
-        this.min = parseInt(newValue)
+        this.min = parseFloat(newValue)
       } else if (name === 'max') {
-        this.max = parseInt(newValue)
+        this.max = parseFloat(newValue)
       } else if (name === 'value') {
-        const value = parseFloat(this.value)
-        if (value >= this.min && value <= this.max) {
-          this.value = value
+        if (oldValue !== newValue) {
+          console.log(newValue)
+          const value = parseFloat(newValue)
+          if (value >= this.min && value <= this.max) {
+            this.value = value
+            if (!this.rotating) {
+              this.angle = (((value - this.min) / (this.max - this.min)) * 270) + 45
+            }
+            this.line.style.transform = `rotate(${this.angle}deg)`
+          }
         }
       } else if (name === 'step') {
         this.step = parseFloat(newValue)
@@ -128,6 +153,7 @@ customElements.define('pt-knob',
       document.addEventListener('pointermove', this.onRotate)
       document.addEventListener('pointerup', this.onStopRotate)
       document.addEventListener('pointerleave', this.onStopRotate)
+      this.rotating = true
     }
 
     /**
@@ -139,6 +165,8 @@ customElements.define('pt-knob',
       document.removeEventListener('pointermove', this.onRotate)
       document.removeEventListener('pointerup', this.onStopRotate)
       document.removeEventListener('pointerleave', this.onStopRotate)
+      this.rotating = false
+      this.setAttribute('value', this.value.toPrecision(2))
     }
 
     /**
@@ -147,14 +175,20 @@ customElements.define('pt-knob',
      * @param {PointerEvent} event Pointer event.
      */
     #rotate (event) {
-      console.log(event.movementY)
       this.angle += event.movementY
       if (this.angle < 45) {
         this.angle = 45
       } else if (this.angle > 315) {
         this.angle = 315
       }
-      this.line.style.transform = `rotate(${this.angle}deg)`
+      const delta = this.max - this.min
+      /*
+      * Calculate which percentage the angle is between 0 and 270, and calculate how much that corresponds between the min and max values, integer divide it by the amount of steps, and then multiply it by the steps to get a corresponding step amount.
+      * not actual correct angles are being used right now.
+      */
+      this.value = this.min + Math.floor((((this.angle - 45) / 270) * delta) / this.step) * this.step
+      this.setAttribute('value', this.value.toPrecision(2))
+      this.setAttribute('title', this.value.toPrecision(2))
     }
   }
 )

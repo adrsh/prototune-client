@@ -226,7 +226,6 @@ customElements.define('pt-editor',
      */
     #updateInstrument (message) {
       this.observer.disconnect()
-      console.log(message)
       const existingInstrument = this.list.querySelector(`pt-instrument[uuid="${message.uuid}"]`)
       if (existingInstrument) {
         for (const [key, value] of Object.entries(message.props)) {

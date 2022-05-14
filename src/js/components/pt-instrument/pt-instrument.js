@@ -147,11 +147,11 @@ template.innerHTML = `
       <option value="fmsynth">FMSynth</option>
     </select>
     <div id="options">
-      <div id="reverb">
+      <div id="reverb" title="Reverb">
         <pt-knob id="reverb-changer" min="0" max="1" value="0" step="0.05"></pt-knob>
         <span>REV</span>
       </div>
-      <div id="volume">
+      <div id="volume" title="Volume">
         <pt-knob id="volume-changer" min="-60" max="0" value="-5"></pt-knob>
         <span>VOL</span>
       </div>
@@ -240,10 +240,16 @@ customElements.define('pt-instrument',
      */
     connectedCallback () {
       this.volumeChanger.addEventListener('input', async () => {
-        this.setAttribute('volume', this.volumeChanger.value)
+        this.channel.volume.rampTo(this.volumeChanger.value, 0)
       })
       this.reverbChanger.addEventListener('input', async () => {
-        this.setAttribute('reverb', this.reverbChanger.value)
+        this.reverb.wet.rampTo(this.reverbChanger.value, 0)
+      })
+      this.volumeChanger.addEventListener('change', async () => {
+        this.setAttribute('volume', this.volumeChanger.getAttribute('value'))
+      })
+      this.reverbChanger.addEventListener('change', async () => {
+        this.setAttribute('reverb', this.reverbChanger.getAttribute('value'))
       })
     }
 
@@ -281,15 +287,9 @@ customElements.define('pt-instrument',
       } else if (name === 'uuid') {
         this.uuid = newValue
       } else if (name === 'volume') {
-        this.volumeChanger.value = newValue
-        if (parseInt(newValue) === -60) {
-          this.channel.volume.rampTo(-Infinity, 0)
-        } else {
-          this.channel.volume.rampTo(parseInt(newValue), 0)
-        }
+        this.volumeChanger.setAttribute('value', newValue)
       } else if (name === 'reverb') {
-        this.reverbChanger.value = newValue
-        this.reverb.wet.rampTo(parseFloat(newValue), 0)
+        this.reverbChanger.setAttribute('value', newValue)
       }
     }
 

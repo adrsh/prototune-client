@@ -168,6 +168,7 @@ customElements.define('pt-knob',
       document.removeEventListener('pointerleave', this.onStopRotate)
       this.rotating = false
       this.setAttribute('value', this.value.toPrecision(2))
+      this.dispatchEvent(new CustomEvent('change'))
     }
 
     /**

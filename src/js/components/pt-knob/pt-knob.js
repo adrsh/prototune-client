@@ -177,7 +177,7 @@ customElements.define('pt-knob',
      * @param {PointerEvent} event Pointer event.
      */
     #rotate (event) {
-      this.angle += event.movementY
+      this.angle -= event.movementY * 2
       if (this.angle < 45) {
         this.angle = 45
       } else if (this.angle > 315) {

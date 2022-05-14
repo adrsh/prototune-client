@@ -5,6 +5,10 @@
  * @version 1.0.0
  */
 
+import '../pt-piano-roll'
+import '../pt-instrument'
+import '../pt-time-line'
+
 const template = document.createElement('template')
 template.innerHTML = `
   <style>

@@ -5,6 +5,7 @@
  * @version 1.0.0
  */
 
+import '../pt-knob'
 import * as Tone from 'tone'
 
 const template = document.createElement('template')

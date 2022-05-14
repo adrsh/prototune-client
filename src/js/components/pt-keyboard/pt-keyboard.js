@@ -35,7 +35,7 @@ template.innerHTML = `
     .black-notes > pt-keyboard-note {
       background-color: #101010;
       outline: 1px solid white;
-      border-radius: 0  0 0.3rem 0.3rem;
+      border-radius: 0 0 0.3rem 0.3rem;
     }
     .black-notes > pt-keyboard-note:hover {
       background-color: #202020;

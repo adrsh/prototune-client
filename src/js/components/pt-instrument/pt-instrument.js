@@ -129,8 +129,8 @@ template.innerHTML = `
   }
   </style>
     <div id="settings">
-      <button id="mute-button"></button>
-      <button id="solo-button"></button>
+      <button id="mute-button" title="Mute"></button>
+      <button id="solo-button" title="Solo"></button>
     </div>
     <select name="instruments" id="instrument-select">
       <option value="piano">Piano</option>

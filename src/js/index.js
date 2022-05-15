@@ -6,13 +6,6 @@
  */
 
 import './components/pt-app'
-import './components/pt-keyboard'
-import './components/pt-piano-roll'
-import './components/pt-editor'
-import './components/pt-time-line'
-import './components/pt-instrument'
-import './components/pt-playback'
-import './components/pt-knob'
 
 // window.ws = new WebSocket('wss://cscloud7-168.lnu.se/websocket/')
 window.ws = new WebSocket('ws://localhost:8080')

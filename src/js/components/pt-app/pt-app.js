@@ -5,6 +5,9 @@
  * @version 1.0.0
  */
 
+import '../pt-editor'
+import '../pt-keyboard'
+import '../pt-playback'
 import * as Tone from 'tone'
 
 const template = document.createElement('template')

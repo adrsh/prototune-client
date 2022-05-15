@@ -5,6 +5,10 @@
  * @version 1.0.0
  */
 
+import '../pt-piano-roll'
+import '../pt-instrument'
+import '../pt-time-line'
+
 const template = document.createElement('template')
 template.innerHTML = `
   <style>
@@ -27,7 +31,7 @@ template.innerHTML = `
     border: 0px;
   }
   button:hover {
-    color: gray;
+    background-color: #eee;
     cursor: pointer;
   }
   #list {
@@ -58,7 +62,7 @@ template.innerHTML = `
   }
   </style>
   <div id="list">
-    <button>+</button>
+    <button title="Add a new instrument">+</button>
   </div>
   <div id="editor">
     <pt-time-line></pt-time-line>

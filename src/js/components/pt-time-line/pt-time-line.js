@@ -70,19 +70,30 @@ customElements.define('pt-time-line',
     connectedCallback () {
       this.line = this.shadowRoot.querySelector('#time-line')
       this.tick = 0
-      Tone.Transport.scheduleRepeat((time) => {
-        Tone.Draw.schedule(() => {
-          this.line.style.left = `${this.tick++}rem`
-        }, time)
-      }, '0:0:1')
-      // Tone.Transport.on('start', event => console.log('start'))
+
+      Tone.Transport.on('start', event => {
+        // Only create a new schedule if no exist
+        if (!this.draw) {
+          this.draw = Tone.Transport.scheduleRepeat((time) => {
+            Tone.Draw.schedule(() => {
+              this.line.style.left = `${this.tick}rem`
+            }, time)
+            this.tick++
+          }, '0:0:1')
+        }
+      })
+
       Tone.Transport.on('stop', event => {
+        // Checks if the stop was triggered by position change
         if (Tone.Transport.state !== 'started') {
+          Tone.Transport.clear(this.draw)
+          delete this.draw
           this.line.style.left = 0
           this.tick = 0
         }
       })
-      Tone.Transport.on('loop', event => {
+
+      Tone.Transport.on('loopEnd', event => {
         this.line.style.left = 0
         this.tick = 0
       })

@@ -51,7 +51,7 @@ template.innerHTML = `
   </div>
   <div id="buttons">
     <button id="play"><img src="../img/play-fill.svg" alt="Play"></button>
-    <button id="pause"><img src="../img/pause-fill.svg" alt="Pause"></button>
+    <button id="pause" hidden><img src="../img/pause-fill.svg" alt="Pause"></button>
     <button id="stop"><img src="../img/stop-fill.svg" alt="Stop"></button>
     <button id="download"><img src="../img/download.svg" alt="Download"></button>
   </div>
@@ -95,14 +95,18 @@ customElements.define('pt-playback',
         Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
         Tone.Transport.loop = true
         Tone.Transport.start()
+        this.pauseButton.removeAttribute('hidden')
+        this.playButton.replaceWith(this.pauseButton)
       })
 
       this.pauseButton.addEventListener('click', async () => {
         Tone.Transport.pause()
+        this.pauseButton.replaceWith(this.playButton)
       })
 
       this.stopButton.addEventListener('click', async () => {
         Tone.Transport.stop()
+        this.pauseButton.replaceWith(this.playButton)
       })
 
       const recorder = new Tone.Recorder()

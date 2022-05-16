@@ -18,7 +18,7 @@
   "private": true,
   "devDependencies": {
     "@lnu/eslint-config": "^1.1.5",
-    "vite": "^2.9.5"
+    "vite": "^2.9.9"
   },
   "dependencies": {
     "bootstrap-icons": "^1.8.1",

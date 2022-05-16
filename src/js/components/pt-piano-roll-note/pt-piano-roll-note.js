@@ -132,6 +132,8 @@ customElements.define('pt-piano-roll-note',
         document.addEventListener('pointerleave', this.onStopMoving)
         this.movementX = 0
         this.movementY = 0
+        this.positionX = this.x
+        this.positionY = this.y
         this.oldX = this.x
         this.oldY = this.y
         this.style.cursor = 'grabbing'
@@ -187,6 +189,8 @@ customElements.define('pt-piano-roll-note',
       document.removeEventListener('pointerleave', this.onStopMoving)
 
       this.style.cursor = 'grab'
+
+      console.log(this.positionX, this.positionY)
 
       // TODO: Don't need to make a new transport and all that if nothing has changed.
       if (this.x !== this.positionX) {

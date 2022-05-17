@@ -17,31 +17,25 @@ template.innerHTML = `
     width: 100%;
     display: flex;
     position: relative;
-    background-color: #BBB;
     border-radius: 50%;
     cursor: ns-resize;
     justify-content: center;
     align-items: center;
+    box-sizing: border-box;
+    border: 0.15rem solid black;
   }
   #line {
     position: absolute;
     top: 50%;
     left: 45%;
-    height: 45%;
+    height: 50%;
     width: 10%;
     background-color: #000;
     transform: rotate(180deg);
     transform-origin: center top;
   }
-  #circle {
-    height: 80%;
-    width: 80%;
-    border-radius: 50%;
-    background-color: white;
-  }
   </style>
   <div id="knob">
-    <div id="circle"></div>
     <div id="line"></div>
   </div>
   

@@ -13,12 +13,16 @@ template.innerHTML = `
   <style>
   :host {
     display: flex;
-    position: relative;
+    flex-direction: column;
+    width: 100%;
+    border-bottom: 1px solid gray;
+  }
+  #top {
+    display: flex;
     flex-direction: row;
     align-items: center;
     width: 100%;
     height: 2.5rem;
-    border-bottom: 1px solid gray;
   }
   #instrument-select {
     width: 60%;
@@ -39,8 +43,10 @@ template.innerHTML = `
     padding-right: 0.5rem;
   }
   #option-button {
-    font-size: 1rem;
+    height: 1rem;
+    width: 1rem;
     border: 0px;
+    background-image: url("../img/caret-down-fill.svg");
     background-color: unset;
     float: right;
     padding: 0;
@@ -49,36 +55,6 @@ template.innerHTML = `
   #option-button:hover {
     cursor: pointer;
     opacity: 100%;
-  }
-  #option-menu {
-    display: flex;
-    flex-direction: column;
-    list-style: none;
-    padding: 0rem;
-    position: absolute;
-    right: -6rem;
-    top: 0.5rem;
-    font-family: sans-serif;
-    background-color: #ffffff;
-    border: 1px solid black;
-    width: 6rem;
-    z-index: 10;
-  }
-  #option-menu > button {
-    width: 100%;
-    position: relative;
-    font-size: 0.75rem;
-    border: 0px;
-    background-color: unset;
-    cursor: pointer;
-    padding: 0.3rem;
-    text-align: left;
-  }
-  #option-menu > button:hover {
-    background-color: #f8f8f8;
-  }
-  #option-delete {
-    color: #D02020;
   }
   #settings {
     display: flex;
@@ -102,36 +78,56 @@ template.innerHTML = `
   [hidden] {
     display: none !important;
   }
-  #volume {
+  #effects > div {
     display: flex;
     align-items: center;
+    height: 4rem;
+    width: 4rem;
+    justify-content: space-evenly;
     flex-direction: column;
   }
-  #volume > pt-knob {
-    width: 1.25rem;
-    height: 1.25rem;
+  #effects > div > pt-knob {
+    width: 1.75rem;
+    height: 1.75rem;
   }
-  #reverb {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-  }
-  #reverb > pt-knob {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-  #reverb > span {
+  #effects > div > span {
     font-size: 0.6rem;
     font-family: sans-serif;
   }
-  #volume > span {
+  #sub-menu {
+    display: flex;
+    flex-direction: column;
+  }
+  #effects {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 4rem;
+  }
+  #delete {
+    display: flex;
+    justify-content: left;
+  }
+  #delete-button {
+    border: 0;
+    background-color: unset;
+    cursor: pointer;
     font-size: 0.6rem;
     font-family: sans-serif;
+    padding: 0;
+    margin: 0.5rem;
+  }
+  #delete-button:hover {
+    color: red;
+  }
+  .flip {
+    transform: rotate(180deg);
   }
   </style>
+  <div id="top">
     <div id="settings">
-      <button id="mute-button" title="Mute"></button>
-      <button id="solo-button" title="Solo"></button>
+      <button id="mute-button" title="Mute">
+      <button id="solo-button" title="Solo">
     </div>
     <select name="instruments" id="instrument-select">
       <option value="piano">Piano</option>
@@ -148,20 +144,28 @@ template.innerHTML = `
       <option value="fmsynth">FMSynth</option>
     </select>
     <div id="options">
+      <button id="option-button">
+    </div>
+  </div>
+  <div id="sub-menu" hidden>
+    <div id="effects">
       <div id="reverb" title="Reverb">
         <pt-knob id="reverb-changer" min="0" max="1" value="0" step="0.05"></pt-knob>
-        <span>REV</span>
+        <span>REVERB</span>
+      </div>
+      <div id="delay" title="Delay">
+        <pt-knob id="delay-changer" min="0" max="1" value="0" step="0.05"></pt-knob>
+        <span>DELAY</span>
       </div>
       <div id="volume" title="Volume">
         <pt-knob id="volume-changer" min="-60" max="0" value="-5"></pt-knob>
-        <span>VOL</span>
+        <span>VOLUME</span>
       </div>
-      <button id="option-button"><img src="../img/gear.svg" alt="Gear"></button>
-
     </div>
-    <div id="option-menu" hidden>
-      <button id="option-delete">Delete</button>
+    <div id="delete">
+      <button id="delete-button">DELETE</button>
     </div>
+  </div>
 `
 
 customElements.define('pt-instrument',
@@ -187,13 +191,14 @@ customElements.define('pt-instrument',
       this.addEventListener('click', () => this.dispatchEvent(new CustomEvent('instrument-select')))
 
       this.optionButton = this.shadowRoot.querySelector('#option-button')
-      this.optionMenu = this.shadowRoot.querySelector('#option-menu')
+      this.subMenu = this.shadowRoot.querySelector('#sub-menu')
       this.optionButton.addEventListener('click', event => {
         event.stopPropagation()
-        this.optionMenu.toggleAttribute('hidden')
+        this.subMenu.toggleAttribute('hidden')
+        this.optionButton.classList.toggle('flip')
       })
 
-      this.deleteButton = this.shadowRoot.querySelector('#option-delete')
+      this.deleteButton = this.shadowRoot.querySelector('#delete-button')
       this.deleteButton.addEventListener('click', event => {
         event.stopPropagation()
         this.remove()

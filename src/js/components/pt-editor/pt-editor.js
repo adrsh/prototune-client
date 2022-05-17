@@ -99,7 +99,7 @@ customElements.define('pt-editor',
         attributes: true,
         childList: true,
         subtree: true,
-        attributeFilter: ['instrument', 'volume', 'reverb']
+        attributeFilter: ['instrument', 'volume', 'reverb', 'delay']
       }
 
       // Try to get a session, and one is recieved if there is an id associated with the client on the server.
@@ -136,8 +136,15 @@ customElements.define('pt-editor',
         // Checking if multiple attributes were changed at the same time, and combining them.
         if (mutation.type === 'attributes') {
           target.uuid = mutation.target.uuid
-          target.props = {
-            [mutation.attributeName]: mutation.target.getAttribute(mutation.attributeName)
+          // Make sure that values gets sent as numbers and not strings
+          if (mutation.attributeName === 'instrument') {
+            target.props = {
+              [mutation.attributeName]: mutation.target.getAttribute(mutation.attributeName)
+            }
+          } else {
+            target.props = {
+              [mutation.attributeName]: parseFloat(mutation.target.getAttribute(mutation.attributeName))
+            }
           }
         } else if (mutation.type === 'childList') {
           if (mutation.addedNodes.length > 0) {
@@ -149,7 +156,8 @@ customElements.define('pt-editor',
                   roll: node.roll.uuid,
                   instrument: node.getAttribute('instrument'),
                   volume: parseFloat(node.getAttribute('volume')),
-                  reverb: parseFloat(node.getAttribute('reverb'))
+                  reverb: parseFloat(node.getAttribute('reverb')),
+                  delay: parseFloat(node.getAttribute('delay'))
                 }
               })
             }
@@ -198,6 +206,7 @@ customElements.define('pt-editor',
       instrument.setAttribute('instrument', message.props.instrument)
       instrument.setAttribute('volume', message.props.volume)
       instrument.setAttribute('reverb', message.props.reverb)
+      instrument.setAttribute('delay', message.props.delay)
 
       roll.setAttribute('uuid', message.props.roll)
 
@@ -273,6 +282,7 @@ customElements.define('pt-editor',
         instrument.setAttribute('instrument', props.instrument)
         instrument.setAttribute('volume', props.volume)
         instrument.setAttribute('reverb', props.reverb)
+        instrument.setAttribute('delay', props.delay)
 
         roll.setAttribute('uuid', props.roll)
         roll.toggleAttribute('hidden', true)
@@ -336,6 +346,7 @@ customElements.define('pt-editor',
       instrument.setAttribute('instrument', 'piano')
       instrument.setAttribute('volume', '-6')
       instrument.setAttribute('reverb', '0')
+      instrument.setAttribute('delay', '0')
 
       instrument.setAttribute('uuid', crypto.randomUUID())
       roll.setAttribute('uuid', crypto.randomUUID())

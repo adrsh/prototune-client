@@ -236,9 +236,13 @@ customElements.define('pt-instrument',
 
       this.volumeChanger = this.shadowRoot.querySelector('#volume-changer')
       this.reverbChanger = this.shadowRoot.querySelector('#reverb-changer')
+      this.delayChanger = this.shadowRoot.querySelector('#delay-changer')
 
       this.reverb = new Tone.Reverb(2)
       this.reverb.wet.value = 0
+
+      this.delay = new Tone.FeedbackDelay('4n')
+      this.delay.wet.value = 0
     }
 
     /**
@@ -248,14 +252,20 @@ customElements.define('pt-instrument',
       this.volumeChanger.addEventListener('input', async () => {
         this.channel.volume.rampTo(this.volumeChanger.value, 0)
       })
-      this.reverbChanger.addEventListener('input', async () => {
-        this.reverb.wet.rampTo(this.reverbChanger.value, 0)
-      })
       this.volumeChanger.addEventListener('change', async () => {
         this.setAttribute('volume', this.volumeChanger.getAttribute('value'))
       })
+      this.reverbChanger.addEventListener('input', async () => {
+        this.reverb.wet.rampTo(this.reverbChanger.value, 0)
+      })
       this.reverbChanger.addEventListener('change', async () => {
         this.setAttribute('reverb', this.reverbChanger.getAttribute('value'))
+      })
+      this.delayChanger.addEventListener('input', async () => {
+        this.delay.wet.rampTo(this.delayChanger.value, 0)
+      })
+      this.delayChanger.addEventListener('change', async () => {
+        this.setAttribute('delay', this.delayChanger.getAttribute('value'))
       })
     }
 
@@ -272,7 +282,7 @@ customElements.define('pt-instrument',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['instrument', 'uuid', 'volume', 'reverb']
+      return ['instrument', 'uuid', 'volume', 'reverb', 'delay']
     }
 
     /**
@@ -296,6 +306,8 @@ customElements.define('pt-instrument',
         this.volumeChanger.setAttribute('value', newValue)
       } else if (name === 'reverb') {
         this.reverbChanger.setAttribute('value', newValue)
+      } else if (name === 'delay') {
+        this.delayChanger.setAttribute('value', newValue)
       }
     }
 
@@ -491,7 +503,7 @@ customElements.define('pt-instrument',
           }
         })
       }
-      this.instrument.chain(this.reverb, this.channel, Tone.Destination)
+      this.instrument.chain(this.reverb, this.delay, this.channel, Tone.Destination)
     }
   }
 )

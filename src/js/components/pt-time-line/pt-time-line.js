@@ -79,7 +79,7 @@ customElements.define('pt-time-line',
               this.line.style.left = `${this.tick}rem`
             }, time)
             this.tick++
-          }, '0:0:1')
+          }, '0:0:1', '0:0:0')
         }
       })
 

@@ -136,8 +136,15 @@ customElements.define('pt-editor',
         // Checking if multiple attributes were changed at the same time, and combining them.
         if (mutation.type === 'attributes') {
           target.uuid = mutation.target.uuid
-          target.props = {
-            [mutation.attributeName]: mutation.target.getAttribute(mutation.attributeName)
+          // Make sure that values gets sent as numbers and not strings
+          if (mutation.attributeName === 'instrument') {
+            target.props = {
+              [mutation.attributeName]: mutation.target.getAttribute(mutation.attributeName)
+            }
+          } else {
+            target.props = {
+              [mutation.attributeName]: parseFloat(mutation.target.getAttribute(mutation.attributeName))
+            }
           }
         } else if (mutation.type === 'childList') {
           if (mutation.addedNodes.length > 0) {

@@ -147,7 +147,9 @@ customElements.define('pt-editor',
                 uuid: node.uuid,
                 props: {
                   roll: node.roll.uuid,
-                  instrument: node.getAttribute('instrument')
+                  instrument: node.getAttribute('instrument'),
+                  volume: parseFloat(node.getAttribute('volume')),
+                  reverb: parseFloat(node.getAttribute('reverb'))
                 }
               })
             }
@@ -194,6 +196,8 @@ customElements.define('pt-editor',
 
       instrument.setAttribute('uuid', message.uuid)
       instrument.setAttribute('instrument', message.props.instrument)
+      instrument.setAttribute('volume', message.props.volume)
+      instrument.setAttribute('reverb', message.props.reverb)
 
       roll.setAttribute('uuid', message.props.roll)
 
@@ -330,6 +334,8 @@ customElements.define('pt-editor',
       instrument.roll = roll
 
       instrument.setAttribute('instrument', 'piano')
+      instrument.setAttribute('volume', '-6')
+      instrument.setAttribute('reverb', '0')
 
       instrument.setAttribute('uuid', crypto.randomUUID())
       roll.setAttribute('uuid', crypto.randomUUID())

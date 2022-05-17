@@ -148,7 +148,7 @@ customElements.define('pt-piano-roll',
     #handleMessage (message) {
       console.log(message)
       if (message.action === 'note-update') {
-        this.#updateNote(message.changes)
+        this.#updateNote(message.note)
       } else if (message.action === 'note-create') {
         this.#addNote(message.note)
       } else if (message.action === 'note-remove') {
@@ -204,7 +204,7 @@ customElements.define('pt-piano-roll',
         }
       }
       if (Object.keys(target).length > 0) {
-        this.#sendMessage({ action: 'note-update', roll: this.uuid, changes: target })
+        this.#sendMessage({ action: 'note-update', roll: this.uuid, note: target })
       }
     }
 

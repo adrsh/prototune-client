@@ -231,15 +231,15 @@ customElements.define('pt-keyboard',
       this.ws.addEventListener('message', async event => {
         const message = await event.message
         if (!this.solo) {
-          if (message.action === 'play') {
-            this.#playNote(message.note)
-          } else if (message.action === 'stop') {
-            this.#stopNote(message.note)
+          if (message.action === 'keyboard-play') {
+            this.#playNote(message['keyboard-note'])
+          } else if (message.action === 'keyboard-stop') {
+            this.#stopNote(message['keyboard-note'])
           }
         }
       })
-      this.addEventListener('note-play', event => this.#sendMessage({ note: event.detail.note, action: 'play' }))
-      this.addEventListener('note-stop', event => this.#sendMessage({ note: event.detail.note, action: 'stop' }))
+      this.addEventListener('note-play', event => this.#sendMessage({ 'keyboard-note': parseInt(event.detail.note), action: 'keyboard-play' }))
+      this.addEventListener('note-stop', event => this.#sendMessage({ 'keyboard-note': parseInt(event.detail.note), action: 'keyboard-stop' }))
 
       this.instrument = new Tone.Sampler({
         urls: {
@@ -310,7 +310,7 @@ customElements.define('pt-keyboard',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#playNote(note)
-        this.#sendMessage({ note, action: 'play' })
+        this.#sendMessage({ 'keyboard-note': parseInt(note), action: 'keyboard-play' })
       }
     }
 
@@ -323,7 +323,7 @@ customElements.define('pt-keyboard',
       const note = this.#getNoteFromKey(event.code)
       if (note) {
         this.#stopNote(note)
-        this.#sendMessage({ note, action: 'stop' })
+        this.#sendMessage({ 'keyboard-note': parseInt(note), action: 'keyboard-stop' })
       }
     }
 
@@ -390,10 +390,10 @@ customElements.define('pt-keyboard',
       // 0 means note up and anything else is the velocity
       if (event.data[2] === 0) {
         this.#stopNote(event.data[1])
-        this.#sendMessage({ note: event.data[1], action: 'stop' })
+        this.#sendMessage({ 'keyboard-note': parseInt(event.data[1]), action: 'keyboard-stop' })
       } else {
         this.#playNote(event.data[1], (event.data[2] / 128).toFixed(3))
-        this.#sendMessage({ note: event.data[1], action: 'play' })
+        this.#sendMessage({ 'keyboard-note': parseInt(event.data[1]), action: 'keyboard-play' })
       }
     }
 

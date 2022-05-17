@@ -190,8 +190,6 @@ customElements.define('pt-piano-roll-note',
 
       this.style.cursor = 'grab'
 
-      console.log(this.positionX, this.positionY)
-
       // TODO: Don't need to make a new transport and all that if nothing has changed.
       if (this.x !== this.positionX) {
         this.setAttribute('x', this.positionX)

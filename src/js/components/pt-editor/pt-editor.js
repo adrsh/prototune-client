@@ -39,6 +39,8 @@ template.innerHTML = `
     flex-direction: column;
     grid-area: instruments;
     border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
+    overflow-y: scroll;
   }
   .selected {
     background-color: #f8f8f8;

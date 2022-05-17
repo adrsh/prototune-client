@@ -27,7 +27,7 @@ window.ws.onmessage = async function (event) {
  * Sends a ping to the Websocket server.
  */
 function ping () {
-  window.ws.send(JSON.stringify('ping'))
+  window.ws.send(JSON.stringify({ action: 'ping' }))
 }
 
 // Send a ping message to Websocket server to keep the connection alive.

@@ -140,8 +140,8 @@ template.innerHTML = `
       <option value="pulse">Pulse</option>
       <option value="square">Square</option>
       <option value="sine">Sine</option>
-      <option value="amsynth">AMSynth</option>
-      <option value="fmsynth">FMSynth</option>
+      <option value="triangle">Triangle</option>
+      <option value="sawtooth">Sawtooth</option>
     </select>
     <div id="options">
       <button id="option-button">
@@ -377,10 +377,6 @@ customElements.define('pt-instrument',
           release: 1,
           baseUrl: 'https://tonejs.github.io/audio/salamander/'
         })
-      } else if (instrument === 'amsynth') {
-        this.instrument = new Tone.AMSynth()
-      } else if (instrument === 'fmsynth') {
-        this.instrument = new Tone.FMSynth()
       } else if (instrument === 'synth') {
         this.instrument = new Tone.Synth({ release: 1 })
       } else if (instrument === '808') {
@@ -451,55 +447,49 @@ customElements.define('pt-instrument',
           baseUrl: '../samples/room/'
         })
       } else if (instrument === 'square') {
-        this.instrument = new Tone.Synth({
-          portamento: 0.05,
-          volume: -6,
+        this.instrument = new Tone.PolySynth(Tone.Synth, {
           oscillator: {
             type: 'square'
           },
           envelope: {
-            attack: 0.025,
-            attackCurve: 'exponential',
-            decay: 0.3,
-            decayCurve: 'exponential',
-            sustain: 0.2,
-            release: 1.5,
-            releaseCurve: 'exponential'
+            release: 0.07
           }
         })
       } else if (instrument === 'sine') {
-        this.instrument = new Tone.Synth({
-          portamento: 0.05,
-          volume: -6,
+        this.instrument = new Tone.PolySynth(Tone.Synth, {
           oscillator: {
             type: 'sine'
           },
           envelope: {
-            attack: 0.025,
-            attackCurve: 'exponential',
-            decay: 0.3,
-            decayCurve: 'exponential',
-            sustain: 0.2,
-            release: 1.5,
-            releaseCurve: 'exponential'
+            release: 0.07
           }
         })
       } else if (instrument === 'pulse') {
-        this.instrument = new Tone.Synth({
-          portamento: 0.05,
-          volume: -6,
+        this.instrument = new Tone.PolySynth(Tone.Synth, {
           oscillator: {
             type: 'pulse',
-            width: 0
+            width: 0.25
           },
           envelope: {
-            attack: 0.025,
-            attackCurve: 'exponential',
-            decay: 0.3,
-            decayCurve: 'exponential',
-            sustain: 0.2,
-            release: 1.5,
-            releaseCurve: 'exponential'
+            release: 0.07
+          }
+        })
+      } else if (instrument === 'triangle') {
+        this.instrument = new Tone.PolySynth(Tone.Synth, {
+          oscillator: {
+            type: 'triangle'
+          },
+          envelope: {
+            release: 0.07
+          }
+        })
+      } else if (instrument === 'sawtooth') {
+        this.instrument = new Tone.PolySynth(Tone.Synth, {
+          oscillator: {
+            type: 'sawtooth'
+          },
+          envelope: {
+            release: 0.07
           }
         })
       }

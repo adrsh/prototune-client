@@ -23,6 +23,9 @@ template.innerHTML = `
     grid-area: piano-roll;
     border-bottom: 1px solid gray;
     overflow-y: scroll;
+    position: relative;
+    display: flex;
+    flex-direction: row;
   }
   button {
     height: 4rem;
@@ -48,26 +51,77 @@ template.innerHTML = `
   #editor {
     grid-area: editor;
     display: grid;
-    grid-template-rows: 1.25rem 38.75rem;
-    grid-template-areas:  "time-line" "piano-roll";
+    grid-template-rows: 1rem 39rem;
+    grid-template-columns: 3rem auto;
+    grid-template-areas:  "blocker time-line" "note-bar piano-roll";
     overflow-x: scroll;
     overflow-y: hidden;
   }
+  #blocker {
+    grid-area: blocker;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    z-index: 2;
+  }
   pt-time-line {
     grid-area: time-line;
+    z-index: 2;
   }
   pt-instrument {
     background-color: #ffffff;
   }
   pt-piano-roll {
-    overflow: auto;
+  }
+  #note-bar {
+    grid-area: note-bar;
+    position: sticky;
+    height: 88rem;
+    width: 3rem;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+    background-image:
+        repeating-linear-gradient(
+          transparent 0 0.9375rem,
+          #e8e8e8 0.9375rem 1rem
+        ),
+        repeating-linear-gradient(
+          transparent 0rem 1rem,
+          transparent 1rem 2rem,
+          #f0f0f0 2rem 3rem,
+          transparent 3rem 4rem,
+          #f0f0f0 4rem 5rem,
+          transparent 5rem 6rem,
+          #f0f0f0 6rem 7rem,
+          transparent 7rem 8rem,
+          transparent 8rem 9rem,
+          #f0f0f0 9rem 10rem,
+          transparent 10rem 11rem,
+          #f0f0f0 11rem 12rem
+        );
+    display: flex;
+    flex-direction: column;
+  }
+  #note-bar > span {
+    height: 1rem;
+    width: 3rem;
+    font-family: sans-serif;
+    font-size: 0.6rem;
+    float: right;
   }
   </style>
   <div id="list">
     <button title="Add a new instrument">+</button>
   </div>
   <div id="editor">
+    <div id="blocker"></div>
     <pt-time-line></pt-time-line>
+    <div id="note-bar">
+      <span>C4</span>
+      <span>C4</span>
+      <span>C4</span>
+    </div>
     <div id="roll">
     </div>
 </div>
@@ -118,6 +172,11 @@ customElements.define('pt-editor',
       this.button.addEventListener('click', event => {
         event.preventDefault()
         this.#newInstrument()
+      })
+      // Make the sticky note-bar get scrolled at the same time as the active roll
+      this.noteBar = this.shadowRoot.querySelector('#note-bar')
+      this.rollHolder.addEventListener('scroll', event => {
+        this.noteBar.style.transform = `translateY(-${this.rollHolder.scrollTop}px)`
       })
     }
 

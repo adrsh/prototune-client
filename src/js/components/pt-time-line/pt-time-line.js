@@ -12,7 +12,7 @@ template.innerHTML = `
   <style>
   :host {
     position: relative;
-    height: 1.25rem;
+    height: 1rem;
     width: 64rem;
     background-color: #ededed;
     border-bottom: 1px solid gray;
@@ -31,7 +31,7 @@ template.innerHTML = `
   }
   #time-line {
     position: relative;
-    height: 1.25rem;
+    height: 1rem;
     width: 1px;
   }
   #arrow {

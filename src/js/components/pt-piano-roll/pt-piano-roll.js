@@ -12,7 +12,6 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
     :host {
-      outline: 1px grey solid;
     }
     #grid {
       position: relative;

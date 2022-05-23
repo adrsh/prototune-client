@@ -12,7 +12,7 @@ template.innerHTML = `
   <style>
   :host {
     position: relative;
-    height: 1.25rem;
+    height: 1rem;
     width: 64rem;
     background-color: #ededed;
     border-bottom: 1px solid gray;
@@ -31,7 +31,7 @@ template.innerHTML = `
   }
   #time-line {
     position: relative;
-    height: 1.25rem;
+    height: 1rem;
     width: 1px;
   }
   #arrow {
@@ -72,8 +72,8 @@ customElements.define('pt-time-line',
       this.tick = 0
 
       Tone.Transport.on('start', event => {
-        // Only create a new schedule if no exist
-        if (!this.draw) {
+        // Only create a new schedule if no exist and for undefined because it can be 0
+        if (this.draw === undefined) {
           this.draw = Tone.Transport.scheduleRepeat((time) => {
             Tone.Draw.schedule(() => {
               this.line.style.left = `${this.tick}rem`

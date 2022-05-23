@@ -8,6 +8,7 @@
 import '../pt-piano-roll'
 import '../pt-instrument'
 import '../pt-time-line'
+import * as Tone from 'tone'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -23,6 +24,9 @@ template.innerHTML = `
     grid-area: piano-roll;
     border-bottom: 1px solid gray;
     overflow-y: scroll;
+    position: relative;
+    display: flex;
+    flex-direction: row;
   }
   button {
     height: 4rem;
@@ -48,26 +52,79 @@ template.innerHTML = `
   #editor {
     grid-area: editor;
     display: grid;
-    grid-template-rows: 1.25rem 38.75rem;
-    grid-template-areas:  "time-line" "piano-roll";
-    overflow-x: scroll;
+    grid-template-rows: 1rem 39rem;
+    grid-template-columns: 3rem auto;
+    grid-template-areas:  "blocker time-line" "note-bar piano-roll";
     overflow-y: hidden;
+    border-bottom: 1px solid gray;
+  }
+  #blocker {
+    grid-area: blocker;
+    width: 100%;
+    background-color: #ededed;
+    border-bottom: 1px solid gray;
+    z-index: 2;
+    box-sizing: border-box;
   }
   pt-time-line {
     grid-area: time-line;
+    z-index: 2;
   }
   pt-instrument {
     background-color: #ffffff;
   }
   pt-piano-roll {
-    overflow: auto;
+  }
+  #note-bar {
+    grid-area: note-bar;
+    position: sticky;
+    height: 88rem;
+    width: 3rem;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+    background-image:
+        repeating-linear-gradient(
+          transparent 0 0.9375rem,
+          #e8e8e8 0.9375rem 1rem
+        ),
+        repeating-linear-gradient(
+          white 0rem 1rem,
+          white 1rem 2rem,
+          #e0e0e0 2rem 3rem,
+          white 3rem 4rem,
+          #e0e0e0 4rem 5rem,
+          white 5rem 6rem,
+          #e0e0e0 6rem 7rem,
+          white 7rem 8rem,
+          white 8rem 9rem,
+          #e0e0e0 9rem 10rem,
+          white 10rem 11rem,
+          #e0e0e0 11rem 12rem
+        );
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid black;
+  }
+  #note-bar > span {
+    height: 100%;
+    width: 100%;
+    font-family: sans-serif;
+    font-size: 0.6rem;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 0.2rem;
+    box-sizing: border-box;
   }
   </style>
   <div id="list">
     <button title="Add a new instrument">+</button>
   </div>
   <div id="editor">
+    <div id="blocker"></div>
     <pt-time-line></pt-time-line>
+    <div id="note-bar">
+    </div>
     <div id="roll">
     </div>
 </div>
@@ -119,6 +176,17 @@ customElements.define('pt-editor',
         event.preventDefault()
         this.#newInstrument()
       })
+      // Make the sticky note-bar get scrolled at the same time as the active roll
+      this.noteBar = this.shadowRoot.querySelector('#note-bar')
+      this.rollHolder.addEventListener('scroll', event => {
+        this.noteBar.style.transform = `translateY(-${this.rollHolder.scrollTop}px)`
+      })
+
+      for (let i = 108; i >= 21; i--) {
+        const div = document.createElement('span')
+        div.textContent = Tone.Frequency(i, 'midi').toNote()
+        this.noteBar.append(div)
+      }
     }
 
     /**

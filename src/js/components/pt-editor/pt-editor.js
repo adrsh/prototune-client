@@ -8,6 +8,7 @@
 import '../pt-piano-roll'
 import '../pt-instrument'
 import '../pt-time-line'
+import * as Tone from 'tone'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -54,15 +55,16 @@ template.innerHTML = `
     grid-template-rows: 1rem 39rem;
     grid-template-columns: 3rem auto;
     grid-template-areas:  "blocker time-line" "note-bar piano-roll";
-    overflow-x: scroll;
     overflow-y: hidden;
+    border-bottom: 1px solid gray;
   }
   #blocker {
     grid-area: blocker;
     width: 100%;
-    height: 100%;
-    background-color: #ffffff;
+    background-color: #ededed;
+    border-bottom: 1px solid gray;
     z-index: 2;
+    box-sizing: border-box;
   }
   pt-time-line {
     grid-area: time-line;
@@ -87,28 +89,32 @@ template.innerHTML = `
           #e8e8e8 0.9375rem 1rem
         ),
         repeating-linear-gradient(
-          transparent 0rem 1rem,
-          transparent 1rem 2rem,
-          #f0f0f0 2rem 3rem,
-          transparent 3rem 4rem,
-          #f0f0f0 4rem 5rem,
-          transparent 5rem 6rem,
-          #f0f0f0 6rem 7rem,
-          transparent 7rem 8rem,
-          transparent 8rem 9rem,
-          #f0f0f0 9rem 10rem,
-          transparent 10rem 11rem,
-          #f0f0f0 11rem 12rem
+          white 0rem 1rem,
+          white 1rem 2rem,
+          #e0e0e0 2rem 3rem,
+          white 3rem 4rem,
+          #e0e0e0 4rem 5rem,
+          white 5rem 6rem,
+          #e0e0e0 6rem 7rem,
+          white 7rem 8rem,
+          white 8rem 9rem,
+          #e0e0e0 9rem 10rem,
+          white 10rem 11rem,
+          #e0e0e0 11rem 12rem
         );
     display: flex;
     flex-direction: column;
+    border-right: 1px solid black;
   }
   #note-bar > span {
-    height: 1rem;
-    width: 3rem;
+    height: 100%;
+    width: 100%;
     font-family: sans-serif;
     font-size: 0.6rem;
-    float: right;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 0.2rem;
+    box-sizing: border-box;
   }
   </style>
   <div id="list">
@@ -118,9 +124,6 @@ template.innerHTML = `
     <div id="blocker"></div>
     <pt-time-line></pt-time-line>
     <div id="note-bar">
-      <span>C4</span>
-      <span>C4</span>
-      <span>C4</span>
     </div>
     <div id="roll">
     </div>
@@ -178,6 +181,12 @@ customElements.define('pt-editor',
       this.rollHolder.addEventListener('scroll', event => {
         this.noteBar.style.transform = `translateY(-${this.rollHolder.scrollTop}px)`
       })
+
+      for (let i = 108; i >= 21; i--) {
+        const div = document.createElement('span')
+        div.textContent = Tone.Frequency(i, 'midi').toNote()
+        this.noteBar.append(div)
+      }
     }
 
     /**

@@ -97,6 +97,7 @@ const playOfflineButton = document.querySelector('#play-offline-button')
 
 playOfflineButton.addEventListener('click', () => {
   window.ws.close()
+  window.history.pushState('Prototune', '', '?')
   const app = document.createElement('pt-app')
   document.body.replaceChildren(app)
 })

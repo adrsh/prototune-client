@@ -346,7 +346,7 @@ customElements.define('pt-instrument',
             G4: 'G2.mp3'
           },
           release: 1,
-          baseUrl: 'https://tonejs.github.io/audio/casio/'
+          baseUrl: '../samples/casio/'
         })
       } else if (instrument === 'piano') {
         this.instrument = new Tone.Sampler({
@@ -383,7 +383,7 @@ customElements.define('pt-instrument',
             C8: 'C8.mp3'
           },
           release: 1,
-          baseUrl: 'https://tonejs.github.io/audio/salamander/'
+          baseUrl: '../samples/piano/'
         })
       } else if (instrument === 'clarinet') {
         this.instrument = new Tone.Sampler({

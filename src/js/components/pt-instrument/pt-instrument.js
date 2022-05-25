@@ -130,18 +130,25 @@ template.innerHTML = `
       <button id="solo-button" title="Solo">
     </div>
     <select name="instruments" id="instrument-select">
-      <option value="piano">Piano</option>
-      <option value="casio">Casio</option>
-      <option value="808">808</option>
-      <option value="909">909</option>
-      <option value="cr78">CR-78</option>
-      <option value="room">Room</option>
-      <option value="synth">Synth</option>
-      <option value="pulse">Pulse</option>
-      <option value="square">Square</option>
-      <option value="sine">Sine</option>
-      <option value="triangle">Triangle</option>
-      <option value="sawtooth">Sawtooth</option>
+      <optgroup label="Instruments">
+        <option value="piano">Piano</option>
+        <option value="casio">Casio</option>
+      </optgroup>
+      <optgroup label="Drums">
+        <option value="808">808</option>
+        <option value="909">909</option>
+        <option value="cr78">CR-78</option>
+        <option value="room">Room</option>
+        <option value="bedroom">Bedroom</option>
+      </optgroup>
+      <optgroup label="Synths">
+        <option value="synth">Synth</option>
+        <option value="pulse">Pulse</option>
+        <option value="square">Square</option>
+        <option value="sine">Sine</option>
+        <option value="triangle">Triangle</option>
+        <option value="sawtooth">Sawtooth</option>
+      </optgroup>
     </select>
     <div id="options">
       <button id="option-button">
@@ -382,69 +389,99 @@ customElements.define('pt-instrument',
       } else if (instrument === '808') {
         this.instrument = new Tone.Sampler({
           urls: {
-            C1: 'BassDrum.ogg',
-            'C#1': 'SideStick.ogg',
-            D1: 'AcousticSnare.ogg',
-            'D#1': 'Clap.ogg',
-            E1: 'ElectricSnare.ogg',
-            F1: 'LowTom.ogg',
-            'F#1': 'ClosedHiHat.ogg',
-            G1: 'HighTom.ogg',
-            'G#1': 'ClosedHiHat.ogg',
-            A1: 'MidTom.ogg',
-            'A#1': 'OpenHiHat.ogg'
+            B0: 'silent.ogg',
+            C1: '808_Kick_short.ogg',
+            'C#1': '808_Rimshot.ogg',
+            D1: '808_Snare_lo2.ogg',
+            'D#1': '808_Clap.ogg',
+            E1: '808_Snare_lo3.ogg',
+            F1: 'silent.ogg',
+            'F#1': '808_Hat_closed.ogg',
+            G1: 'silent.ogg',
+            'G#1': 'silent.ogg',
+            A1: 'silent.ogg',
+            'A#1': '808_Hat_long.ogg',
+            B1: 'silent.ogg'
           },
-          release: 2,
           baseUrl: '../samples/808/'
         })
       } else if (instrument === '909') {
         this.instrument = new Tone.Sampler({
           urls: {
-            C1: 'BassDrum.ogg',
-            'C#1': 'SideStick.ogg',
-            D1: 'AcousticSnare.ogg',
-            'D#1': 'Clap.ogg',
-            E1: 'ElectricSnare.ogg',
-            'F#1': 'ClosedHiHat.ogg',
-            'G#1': 'ClosedHiHat.ogg',
-            'A#1': 'OpenHiHat.ogg'
+            B0: 'silent.ogg',
+            C1: '909_Kick_long.ogg',
+            'C#1': '909_Rim.ogg',
+            D1: '909_Snare2_2.ogg',
+            'D#1': '909_Clap.ogg',
+            E1: '909_Snare2_3.ogg',
+            F1: 'silent.ogg',
+            'F#1': '909_Hat_closed.ogg',
+            G1: 'silent.ogg',
+            'G#1': 'silent.ogg',
+            A1: 'silent.ogg',
+            'A#1': '909_Hat_open.ogg',
+            B1: 'silent.ogg'
           },
-          release: 2,
           baseUrl: '../samples/909/'
         })
       } else if (instrument === 'cr78') {
         this.instrument = new Tone.Sampler({
           urls: {
-            C1: 'BassDrum.ogg',
-            'C#1': 'SideStick.ogg',
-            D1: 'AcousticSnare.ogg',
-            'D#1': 'Clap.ogg',
-            E1: 'ElectricSnare.ogg',
-            F1: 'LowTom.ogg',
-            'F#1': 'ClosedHiHat.ogg',
-            G1: 'HighTom.ogg',
-            'G#1': 'ClosedHiHat.ogg',
-            A1: 'LowTom.ogg',
-            'A#1': 'OpenHiHat.ogg'
+            B0: 'silent.ogg',
+            C1: 'CR78_kick.ogg',
+            'C#1': 'CR78_sidestick.ogg',
+            D1: 'CR78_snare.ogg',
+            'D#1': 'CR78_snare_accen.ogg',
+            E1: 'CR78_snare.ogg',
+            F1: 'silent.ogg',
+            'F#1': 'CR78_closed_hat.ogg',
+            G1: 'silent.ogg',
+            'G#1': 'silent.ogg',
+            A1: 'silent.ogg',
+            'A#1': 'CR78_open_hat.ogg',
+            B1: 'silent.ogg'
           },
-          release: 2,
           baseUrl: '../samples/cr78/'
         })
       } else if (instrument === 'room') {
         this.instrument = new Tone.Sampler({
           urls: {
-            C1: 'BassDrum.ogg',
-            D1: 'AcousticSnare.ogg',
-            E1: 'ElectricSnare.ogg',
-            F1: 'LowTom.ogg',
-            'F#1': 'ClosedHiHat.ogg',
-            G1: 'HighTom.ogg',
-            'G#1': 'ClosedHiHat.ogg',
-            A1: 'LowTom.ogg',
-            'A#1': 'OpenHiHat.ogg'
+            B0: 'silent.ogg',
+            C1: 'Room_Kick_1.ogg',
+            'C#1': 'silent.ogg',
+            D1: 'Room_Snare_1.ogg',
+            'D#1': 'silent.ogg',
+            E1: 'Room_Snare_2a.ogg',
+            F1: 'silent.ogg',
+            'F#1': 'Room_HH_short.ogg',
+            G1: 'silent.ogg',
+            'G#1': 'silent.ogg',
+            A1: 'silent.ogg',
+            'A#1': 'Room_HH_med.ogg',
+            B1: 'silent.ogg'
           },
-          release: 2,
+          release: 1,
           baseUrl: '../samples/room/'
+        })
+      } else if (instrument === 'bedroom') {
+        this.instrument = new Tone.Sampler({
+          urls: {
+            B0: 'silent.ogg',
+            C1: 'BR_Kick_2.ogg',
+            'C#1': 'BR_Sidestick.ogg',
+            D1: 'BR_Snare_hard.ogg',
+            'D#1': 'silent.ogg',
+            E1: 'BR_Snare_hard.ogg',
+            F1: 'silent.ogg',
+            'F#1': 'BR_Hat_Cl_1.ogg',
+            G1: 'silent.ogg',
+            'G#1': 'silent.ogg',
+            A1: 'silent.ogg',
+            'A#1': 'BR_Hat_Open.ogg',
+            B1: 'silent.ogg'
+          },
+          release: 1,
+          baseUrl: '../samples/bedroom/'
         })
       } else if (instrument === 'square') {
         this.instrument = new Tone.PolySynth(Tone.Synth, {

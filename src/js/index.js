@@ -6,6 +6,7 @@
  */
 
 import './components/pt-app'
+import isUUID from 'validator/es/lib/isUUID'
 
 // window.ws = new WebSocket('wss://cscloud7-168.lnu.se/websocket/')
 window.ws = new WebSocket('ws://localhost:8080')
@@ -27,12 +28,15 @@ window.ws.onmessage = async function (event) {
  * Sends a ping to the Websocket server.
  */
 function ping () {
-  window.ws.send(JSON.stringify({ action: 'ping' }))
+  if (window.ws.readyState === window.ws.OPEN) {
+    window.ws.send(JSON.stringify({ action: 'ping' }))
+  }
 }
 
 // Send a ping message to Websocket server to keep the connection alive.
 setInterval(ping, 45000)
 
+// Start the app if the user was authenticated
 window.ws.addEventListener('message', async event => {
   const message = await event.message
   if (message.action === 'session-authenticated') {
@@ -41,6 +45,7 @@ window.ws.addEventListener('message', async event => {
   }
 })
 
+// Add id to the url with the newly created session and add it to the browser history
 window.ws.addEventListener('message', async event => {
   const message = await event.message
   if (message['session-id']) {
@@ -57,15 +62,16 @@ const sessionPassword = document.querySelector('#session-password')
 const submitButton = document.querySelector('#submit-button')
 const sessionJoin = document.querySelector('#session-join')
 
-if (id.length === 36) {
+if (isUUID(id)) {
   sessionJoin.toggleAttribute('hidden', false)
 } else {
   sessionJoin.toggleAttribute('hidden', true)
 }
 
+// Only try to authenticate if the id is valid
 submitButton.addEventListener('click', event => {
   if (window.ws.readyState === window.ws.OPEN) {
-    if (id.length === 36) {
+    if (isUUID(id)) {
       window.ws.send(JSON.stringify({
         action: 'session-auth',
         id,
@@ -87,10 +93,11 @@ sessionCreateButton.addEventListener('click', event => {
   }
 })
 
-const playOfflineButton = document.querySelector('#play-offline-button')
+const playAloneButton = document.querySelector('#play-alone-button')
 
-playOfflineButton.addEventListener('click', () => {
+playAloneButton.addEventListener('click', () => {
   window.ws.close()
+  window.history.pushState('Prototune', '', '?')
   const app = document.createElement('pt-app')
   document.body.replaceChildren(app)
 })

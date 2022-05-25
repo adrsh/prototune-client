@@ -93,9 +93,9 @@ sessionCreateButton.addEventListener('click', event => {
   }
 })
 
-const playOfflineButton = document.querySelector('#play-offline-button')
+const playAloneButton = document.querySelector('#play-alone-button')
 
-playOfflineButton.addEventListener('click', () => {
+playAloneButton.addEventListener('click', () => {
   window.ws.close()
   window.history.pushState('Prototune', '', '?')
   const app = document.createElement('pt-app')

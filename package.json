@@ -23,6 +23,7 @@
   "dependencies": {
     "bootstrap-icons": "^1.8.1",
     "patch-package": "^6.4.7",
-    "tone": "^14.8.39"
+    "tone": "^14.8.39",
+    "validator": "^13.7.0"
   }
 }

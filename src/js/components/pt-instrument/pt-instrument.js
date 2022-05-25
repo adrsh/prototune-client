@@ -133,6 +133,7 @@ template.innerHTML = `
       <optgroup label="Instruments">
         <option value="piano">Piano</option>
         <option value="casio">Casio</option>
+        <option value="clarinet">Clarinet</option>
       </optgroup>
       <optgroup label="Drums">
         <option value="808">808</option>
@@ -383,6 +384,22 @@ customElements.define('pt-instrument',
           },
           release: 1,
           baseUrl: 'https://tonejs.github.io/audio/salamander/'
+        })
+      } else if (instrument === 'clarinet') {
+        this.instrument = new Tone.Sampler({
+          urls: {
+            D3: 'D3.ogg',
+            D4: 'D4.ogg',
+            D5: 'D5.ogg',
+            F3: 'F3.ogg',
+            F4: 'F4.ogg',
+            F5: 'F5.ogg',
+            'A#3': 'Bb3.ogg',
+            'A#4': 'Bb4.ogg',
+            'A#5': 'Bb5.ogg'
+          },
+          release: 1,
+          baseUrl: '../samples/clarinet/'
         })
       } else if (instrument === 'synth') {
         this.instrument = new Tone.Synth({ release: 1 })

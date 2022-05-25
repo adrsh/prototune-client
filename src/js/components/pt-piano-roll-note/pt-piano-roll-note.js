@@ -246,7 +246,11 @@ customElements.define('pt-piano-roll-note',
     #updateTransport () {
       Tone.Transport.clear(this.transport)
       this.transport = Tone.Transport.schedule((time) => {
-        this.instrument.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time)
+        if (this.instrument.type === 'drum') {
+          this.instrument.triggerAttack(Tone.Midi(this.note), time)
+        } else {
+          this.instrument.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time)
+        }
       }, `0:0:${this.x}`)
     }
 

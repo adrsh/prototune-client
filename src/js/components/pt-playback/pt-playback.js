@@ -34,12 +34,20 @@ template.innerHTML = `
     button:active {
       transform: scale(0.95);
     }
+    #tempo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
     #tempo > label {
       font-family: sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
     }
     #tempo > input[type="number"] {
       width: 3rem;
+      border: 1px solid black;
+      padding: 0.2rem;
+      font-size: 0.7rem;
     }
     #play {
       background-image: url("../img/play-fill.svg")

@@ -19,23 +19,20 @@ template.innerHTML = `
       display: flex;
       gap: 0.75rem;
     }
-    #buttons > button {
+    button {
       height: 2.5rem;
       width: 2.5rem;
       background-color: unset;
+      background-size: contain;
       border: 0px;
       padding: 0;
       opacity: 75%;
     }
-    #buttons > button:hover {
+    button:hover {
       opacity: 100%;
     }
-    #buttons > button:active {
+    button:active {
       transform: scale(0.95);
-    }
-    #buttons > button > img {
-      height: 2.5rem;
-      width: 2.5rem;
     }
     #tempo > label {
       font-family: sans-serif;
@@ -44,19 +41,33 @@ template.innerHTML = `
     #tempo > input[type="number"] {
       width: 3rem;
     }
+    #play {
+      background-image: url("../img/play-fill.svg")
+    }
+    #pause {
+      background-image: url("../img/pause-fill.svg")
+    }
+    #stop {
+      background-image: url("../img/stop-fill.svg")
+    }
+    #download {
+      height: 1.75rem;
+      width: 1.75rem;
+      background-image: url("../img/download.svg")
+    }
   </style>
   <div id="tempo">
     <label for="tempo-changer">BPM</label>
     <input id="tempo-changer" type="number" min="30" max="300" value="120">
   </div>
   <div id="buttons">
-    <button id="play"><img src="../img/play-fill.svg" alt="Play"></button>
-    <button id="pause" hidden><img src="../img/pause-fill.svg" alt="Pause"></button>
-    <button id="stop"><img src="../img/stop-fill.svg" alt="Stop"></button>
-    <button id="download"><img src="../img/download.svg" alt="Download"></button>
+    <button id="play" title="Play">
+    <button id="pause" title="Pause" hidden>
+    <button id="stop" title="Stop">
   </div>
-  <div id="volume">
+  <div id="buttons">
     <input id="volume-slider" type="range" max="0" min="-40" value="-5">
+    <button id="download">
   </div>
 `
 

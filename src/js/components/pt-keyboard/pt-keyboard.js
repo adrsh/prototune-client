@@ -363,7 +363,7 @@ customElements.define('pt-keyboard',
      * @param {string} note Note to be played, ex. 'C4'.
      * @param {number} velocity Velocity as a number between 0 and 1.
      */
-    #playNote (note, velocity = 0.5) {
+    #playNote (note, velocity = 1) {
       this.instrument.triggerAttack(Tone.Midi(note), Tone.now(), velocity)
       const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
       target.classList.add('playing')

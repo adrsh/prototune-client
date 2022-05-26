@@ -327,6 +327,7 @@ customElements.define('pt-instrument',
     #setInstrument (instrument) {
       if (this.instrument) {
         this.instrument.dispose()
+        this.instrument.type = undefined
       }
       if (instrument === 'casio') {
         this.instrument = new Tone.Sampler({
@@ -422,6 +423,7 @@ customElements.define('pt-instrument',
           },
           baseUrl: '../samples/808/'
         })
+        this.instrument.type = 'drum'
       } else if (instrument === '909') {
         this.instrument = new Tone.Sampler({
           urls: {
@@ -441,6 +443,7 @@ customElements.define('pt-instrument',
           },
           baseUrl: '../samples/909/'
         })
+        this.instrument.type = 'drum'
       } else if (instrument === 'cr78') {
         this.instrument = new Tone.Sampler({
           urls: {
@@ -460,6 +463,7 @@ customElements.define('pt-instrument',
           },
           baseUrl: '../samples/cr78/'
         })
+        this.instrument.type = 'drum'
       } else if (instrument === 'room') {
         this.instrument = new Tone.Sampler({
           urls: {
@@ -480,6 +484,7 @@ customElements.define('pt-instrument',
           release: 1,
           baseUrl: '../samples/room/'
         })
+        this.instrument.type = 'drum'
       } else if (instrument === 'bedroom') {
         this.instrument = new Tone.Sampler({
           urls: {
@@ -500,6 +505,7 @@ customElements.define('pt-instrument',
           release: 1,
           baseUrl: '../samples/bedroom/'
         })
+        this.instrument.type = 'drum'
       } else if (instrument === 'square') {
         this.instrument = new Tone.PolySynth(Tone.Synth, {
           oscillator: {

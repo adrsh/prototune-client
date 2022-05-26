@@ -285,7 +285,7 @@ customElements.define('pt-keyboard',
           C8: 'C8.mp3'
         },
         release: 1,
-        baseUrl: 'https://tonejs.github.io/audio/salamander/'
+        baseUrl: '../samples/piano/'
       }).toDestination()
     }
 
@@ -308,7 +308,10 @@ customElements.define('pt-keyboard',
         this.solo = playSoloCheckbox.checked
       })
 
-      this.#initMidi().then(console.log('MIDI device connected.'))
+      this.#initMidi().then()
+
+      // Make scrollbar get centered
+      this.scrollLeft = (this.scrollWidth - this.clientWidth) / 2
     }
 
     /**

@@ -105,6 +105,7 @@ template.innerHTML = `
     display: flex;
     flex-direction: column;
     border-right: 1px solid black;
+    user-select: none;
   }
   #note-bar > span {
     height: 100%;

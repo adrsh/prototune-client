@@ -44,7 +44,29 @@ template.innerHTML = `
     bottom: 0px;
     left: -0.3rem;
   }
+  #numbers {
+    position: absolute;
+    display: flex;
+    align-items: center;
+  }
+  .number {
+    display: flex;
+    align-items: center;
+    width: 16rem;
+    height: 1rem;
+    font-family: sans-serif;
+    font-size: 0.6rem;
+    box-sizing: border-box;
+    padding-left: 0.25rem;
+    user-select: none;
+  }
   </style>
+  <div id="numbers">
+    <div class="number">1</div>
+    <div class="number">2</div>
+    <div class="number">3</div>
+    <div class="number">4</div>
+  </div>
   <div id="time-line">
     <div id="arrow"></div>
   </div>

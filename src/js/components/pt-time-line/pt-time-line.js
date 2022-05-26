@@ -18,6 +18,16 @@ template.innerHTML = `
     border-bottom: 1px solid gray;
     box-sizing: border-box;
     background-image:
+        linear-gradient(
+          90deg,
+          #666 0 0.0625rem,
+          transparent 0.0625rem 64rem
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0 15.9375rem,
+          #666 15.9375rem 16rem
+        ),
         repeating-linear-gradient(
           90deg,
           transparent 0 3.9375rem,

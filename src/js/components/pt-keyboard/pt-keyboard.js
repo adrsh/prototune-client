@@ -57,11 +57,17 @@ template.innerHTML = `
     }
     label {
       font-family: sans-serif;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
+    }
+    #solo {
+      position: fixed;
+      width: 100%;
+      height: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   </style>
-  <input type="checkbox" id="play-solo">
-  <label for="play-solo">Solo</label>
   <div id="keyboard">
     <div class="octave">
       <div class="white-notes">
@@ -210,6 +216,10 @@ template.innerHTML = `
         <pt-keyboard-note note="108"></pt-keyboard-note>
       </div>
     </div>
+  </div>
+  <div id="solo">
+    <input type="checkbox" id="play-solo">
+    <label for="play-solo">Solo</label>
   </div>
 `
 

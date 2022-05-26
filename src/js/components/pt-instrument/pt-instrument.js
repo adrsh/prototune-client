@@ -93,6 +93,7 @@ template.innerHTML = `
   #effects > div > span {
     font-size: 0.6rem;
     font-family: sans-serif;
+    user-select: none;
   }
   #sub-menu {
     display: flex;
@@ -116,6 +117,7 @@ template.innerHTML = `
     font-family: sans-serif;
     padding: 0;
     margin: 0.5rem;
+    user-select: none;
   }
   #delete-button:hover {
     color: red;

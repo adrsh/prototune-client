@@ -328,234 +328,248 @@ customElements.define('pt-instrument',
      */
     #setInstrument (instrument) {
       if (this.instrument) {
-        this.instrument.dispose()
         this.instrument.type = undefined
       }
       if (instrument === 'casio') {
-        this.instrument = new Tone.Sampler({
-          urls: {
-            A3: 'A1.mp3',
-            'A#3': 'As1.mp3',
-            B3: 'B1.mp3',
-            'G#3': 'Gs1.mp3',
-            A4: 'A2.mp3',
-            C4: 'C2.mp3',
-            'C#4': 'Cs2.mp3',
-            D4: 'D2.mp3',
-            'D#4': 'Ds2.mp3',
-            E4: 'E2.mp3',
-            F4: 'F2.mp3',
-            'F#4': 'Fs2.mp3',
-            G4: 'G2.mp3'
-          },
-          release: 1,
-          baseUrl: '../samples/casio/'
-        })
+        this.instrument = casio
       } else if (instrument === 'piano') {
-        this.instrument = new Tone.Sampler({
-          urls: {
-            A0: 'A0.mp3',
-            C1: 'C1.mp3',
-            'D#1': 'Ds1.mp3',
-            'F#1': 'Fs1.mp3',
-            A1: 'A1.mp3',
-            C2: 'C2.mp3',
-            'D#2': 'Ds2.mp3',
-            'F#2': 'Fs2.mp3',
-            A2: 'A2.mp3',
-            C3: 'C3.mp3',
-            'D#3': 'Ds3.mp3',
-            'F#3': 'Fs3.mp3',
-            A3: 'A3.mp3',
-            C4: 'C4.mp3',
-            'D#4': 'Ds4.mp3',
-            'F#4': 'Fs4.mp3',
-            A4: 'A4.mp3',
-            C5: 'C5.mp3',
-            'D#5': 'Ds5.mp3',
-            'F#5': 'Fs5.mp3',
-            A5: 'A5.mp3',
-            C6: 'C6.mp3',
-            'D#6': 'Ds6.mp3',
-            'F#6': 'Fs6.mp3',
-            A6: 'A6.mp3',
-            C7: 'C7.mp3',
-            'D#7': 'Ds7.mp3',
-            'F#7': 'Fs7.mp3',
-            A7: 'A7.mp3',
-            C8: 'C8.mp3'
-          },
-          release: 1,
-          baseUrl: '../samples/piano/'
-        })
+        this.instrument = piano
       } else if (instrument === 'clarinet') {
-        this.instrument = new Tone.Sampler({
-          urls: {
-            D3: 'D3.ogg',
-            D4: 'D4.ogg',
-            D5: 'D5.ogg',
-            F3: 'F3.ogg',
-            F4: 'F4.ogg',
-            F5: 'F5.ogg',
-            'A#3': 'Bb3.ogg',
-            'A#4': 'Bb4.ogg',
-            'A#5': 'Bb5.ogg'
-          },
-          release: 1,
-          baseUrl: '../samples/clarinet/'
-        })
+        this.instrument = clarinet
       } else if (instrument === 'synth') {
-        this.instrument = new Tone.Synth({ release: 1 })
+        this.instrument = synth
       } else if (instrument === '808') {
-        this.instrument = new Tone.Sampler({
-          urls: {
-            B0: 'silent.ogg',
-            C1: '808_Kick_short.ogg',
-            'C#1': '808_Rimshot.ogg',
-            D1: '808_Snare_lo2.ogg',
-            'D#1': '808_Clap.ogg',
-            E1: '808_Snare_lo3.ogg',
-            F1: 'silent.ogg',
-            'F#1': '808_Hat_closed.ogg',
-            G1: 'silent.ogg',
-            'G#1': 'silent.ogg',
-            A1: 'silent.ogg',
-            'A#1': '808_Hat_long.ogg',
-            B1: 'silent.ogg'
-          },
-          baseUrl: '../samples/808/'
-        })
+        this.instrument = tr808
         this.instrument.type = 'drum'
       } else if (instrument === '909') {
-        this.instrument = new Tone.Sampler({
-          urls: {
-            B0: 'silent.ogg',
-            C1: '909_Kick_long.ogg',
-            'C#1': '909_Rim.ogg',
-            D1: '909_Snare2_2.ogg',
-            'D#1': '909_Clap.ogg',
-            E1: '909_Snare2_3.ogg',
-            F1: 'silent.ogg',
-            'F#1': '909_Hat_closed.ogg',
-            G1: 'silent.ogg',
-            'G#1': 'silent.ogg',
-            A1: 'silent.ogg',
-            'A#1': '909_Hat_open.ogg',
-            B1: 'silent.ogg'
-          },
-          baseUrl: '../samples/909/'
-        })
+        this.instrument = tr909
         this.instrument.type = 'drum'
       } else if (instrument === 'cr78') {
-        this.instrument = new Tone.Sampler({
-          urls: {
-            B0: 'silent.ogg',
-            C1: 'CR78_kick.ogg',
-            'C#1': 'CR78_sidestick.ogg',
-            D1: 'CR78_snare.ogg',
-            'D#1': 'CR78_snare_accen.ogg',
-            E1: 'CR78_snare.ogg',
-            F1: 'silent.ogg',
-            'F#1': 'CR78_closed_hat.ogg',
-            G1: 'silent.ogg',
-            'G#1': 'silent.ogg',
-            A1: 'silent.ogg',
-            'A#1': 'CR78_open_hat.ogg',
-            B1: 'silent.ogg'
-          },
-          baseUrl: '../samples/cr78/'
-        })
+        this.instrument = cr78
         this.instrument.type = 'drum'
       } else if (instrument === 'room') {
-        this.instrument = new Tone.Sampler({
-          urls: {
-            B0: 'silent.ogg',
-            C1: 'Room_Kick_1.ogg',
-            'C#1': 'silent.ogg',
-            D1: 'Room_Snare_1.ogg',
-            'D#1': 'silent.ogg',
-            E1: 'Room_Snare_2a.ogg',
-            F1: 'silent.ogg',
-            'F#1': 'Room_HH_short.ogg',
-            G1: 'silent.ogg',
-            'G#1': 'silent.ogg',
-            A1: 'silent.ogg',
-            'A#1': 'Room_HH_med.ogg',
-            B1: 'silent.ogg'
-          },
-          release: 1,
-          baseUrl: '../samples/room/'
-        })
+        this.instrument = room
         this.instrument.type = 'drum'
       } else if (instrument === 'bedroom') {
-        this.instrument = new Tone.Sampler({
-          urls: {
-            B0: 'silent.ogg',
-            C1: 'BR_Kick_2.ogg',
-            'C#1': 'BR_Sidestick.ogg',
-            D1: 'BR_Snare_hard.ogg',
-            'D#1': 'silent.ogg',
-            E1: 'BR_Snare_hard.ogg',
-            F1: 'silent.ogg',
-            'F#1': 'BR_Hat_Cl_1.ogg',
-            G1: 'silent.ogg',
-            'G#1': 'silent.ogg',
-            A1: 'silent.ogg',
-            'A#1': 'BR_Hat_Open.ogg',
-            B1: 'silent.ogg'
-          },
-          release: 1,
-          baseUrl: '../samples/bedroom/'
-        })
+        this.instrument = bedroom
         this.instrument.type = 'drum'
       } else if (instrument === 'square') {
-        this.instrument = new Tone.PolySynth(Tone.Synth, {
-          oscillator: {
-            type: 'square'
-          },
-          envelope: {
-            release: 0.07
-          }
-        })
+        this.instrument = square
       } else if (instrument === 'sine') {
-        this.instrument = new Tone.PolySynth(Tone.Synth, {
-          oscillator: {
-            type: 'sine'
-          },
-          envelope: {
-            release: 0.07
-          }
-        })
+        this.instrument = sine
       } else if (instrument === 'pulse') {
-        this.instrument = new Tone.PolySynth(Tone.Synth, {
-          oscillator: {
-            type: 'pulse',
-            width: 0.25
-          },
-          envelope: {
-            release: 0.07
-          }
-        })
+        this.instrument = pulse
       } else if (instrument === 'triangle') {
-        this.instrument = new Tone.PolySynth(Tone.Synth, {
-          oscillator: {
-            type: 'triangle'
-          },
-          envelope: {
-            release: 0.07
-          }
-        })
+        this.instrument = triangle
       } else if (instrument === 'sawtooth') {
-        this.instrument = new Tone.PolySynth(Tone.Synth, {
-          oscillator: {
-            type: 'sawtooth'
-          },
-          envelope: {
-            release: 0.07
-          }
-        })
+        this.instrument = sawtooth
       }
       this.instrument.chain(this.reverb, this.delay, this.channel, Tone.Destination)
     }
   }
 )
+
+const piano = new Tone.Sampler({
+  urls: {
+    A0: 'A0.mp3',
+    C1: 'C1.mp3',
+    'D#1': 'Ds1.mp3',
+    'F#1': 'Fs1.mp3',
+    A1: 'A1.mp3',
+    C2: 'C2.mp3',
+    'D#2': 'Ds2.mp3',
+    'F#2': 'Fs2.mp3',
+    A2: 'A2.mp3',
+    C3: 'C3.mp3',
+    'D#3': 'Ds3.mp3',
+    'F#3': 'Fs3.mp3',
+    A3: 'A3.mp3',
+    C4: 'C4.mp3',
+    'D#4': 'Ds4.mp3',
+    'F#4': 'Fs4.mp3',
+    A4: 'A4.mp3',
+    C5: 'C5.mp3',
+    'D#5': 'Ds5.mp3',
+    'F#5': 'Fs5.mp3',
+    A5: 'A5.mp3',
+    C6: 'C6.mp3',
+    'D#6': 'Ds6.mp3',
+    'F#6': 'Fs6.mp3',
+    A6: 'A6.mp3',
+    C7: 'C7.mp3',
+    'D#7': 'Ds7.mp3',
+    'F#7': 'Fs7.mp3',
+    A7: 'A7.mp3',
+    C8: 'C8.mp3'
+  },
+  release: 1,
+  baseUrl: '../samples/piano/'
+})
+const casio = new Tone.Sampler({
+  urls: {
+    A3: 'A1.mp3',
+    'A#3': 'As1.mp3',
+    B3: 'B1.mp3',
+    'G#3': 'Gs1.mp3',
+    A4: 'A2.mp3',
+    C4: 'C2.mp3',
+    'C#4': 'Cs2.mp3',
+    D4: 'D2.mp3',
+    'D#4': 'Ds2.mp3',
+    E4: 'E2.mp3',
+    F4: 'F2.mp3',
+    'F#4': 'Fs2.mp3',
+    G4: 'G2.mp3'
+  },
+  release: 1,
+  baseUrl: '../samples/casio/'
+})
+const clarinet = new Tone.Sampler({
+  urls: {
+    D3: 'D3.ogg',
+    D4: 'D4.ogg',
+    D5: 'D5.ogg',
+    F3: 'F3.ogg',
+    F4: 'F4.ogg',
+    F5: 'F5.ogg',
+    'A#3': 'Bb3.ogg',
+    'A#4': 'Bb4.ogg',
+    'A#5': 'Bb5.ogg'
+  },
+  release: 1,
+  baseUrl: '../samples/clarinet/'
+})
+const tr808 = new Tone.Sampler({
+  urls: {
+    B0: 'silent.ogg',
+    C1: '808_Kick_short.ogg',
+    'C#1': '808_Rimshot.ogg',
+    D1: '808_Snare_lo2.ogg',
+    'D#1': '808_Clap.ogg',
+    E1: '808_Snare_lo3.ogg',
+    F1: 'silent.ogg',
+    'F#1': '808_Hat_closed.ogg',
+    G1: 'silent.ogg',
+    'G#1': 'silent.ogg',
+    A1: 'silent.ogg',
+    'A#1': '808_Hat_long.ogg',
+    B1: 'silent.ogg'
+  },
+  baseUrl: '../samples/808/'
+})
+const tr909 = new Tone.Sampler({
+  urls: {
+    B0: 'silent.ogg',
+    C1: '909_Kick_long.ogg',
+    'C#1': '909_Rim.ogg',
+    D1: '909_Snare2_2.ogg',
+    'D#1': '909_Clap.ogg',
+    E1: '909_Snare2_3.ogg',
+    F1: 'silent.ogg',
+    'F#1': '909_Hat_closed.ogg',
+    G1: 'silent.ogg',
+    'G#1': 'silent.ogg',
+    A1: 'silent.ogg',
+    'A#1': '909_Hat_open.ogg',
+    B1: 'silent.ogg'
+  },
+  baseUrl: '../samples/909/'
+})
+const cr78 = new Tone.Sampler({
+  urls: {
+    B0: 'silent.ogg',
+    C1: 'CR78_kick.ogg',
+    'C#1': 'CR78_sidestick.ogg',
+    D1: 'CR78_snare.ogg',
+    'D#1': 'CR78_snare_accen.ogg',
+    E1: 'CR78_snare.ogg',
+    F1: 'silent.ogg',
+    'F#1': 'CR78_closed_hat.ogg',
+    G1: 'silent.ogg',
+    'G#1': 'silent.ogg',
+    A1: 'silent.ogg',
+    'A#1': 'CR78_open_hat.ogg',
+    B1: 'silent.ogg'
+  },
+  baseUrl: '../samples/cr78/'
+})
+const room = new Tone.Sampler({
+  urls: {
+    B0: 'silent.ogg',
+    C1: 'Room_Kick_1.ogg',
+    'C#1': 'silent.ogg',
+    D1: 'Room_Snare_1.ogg',
+    'D#1': 'silent.ogg',
+    E1: 'Room_Snare_2a.ogg',
+    F1: 'silent.ogg',
+    'F#1': 'Room_HH_short.ogg',
+    G1: 'silent.ogg',
+    'G#1': 'silent.ogg',
+    A1: 'silent.ogg',
+    'A#1': 'Room_HH_med.ogg',
+    B1: 'silent.ogg'
+  },
+  release: 1,
+  baseUrl: '../samples/room/'
+})
+const bedroom = new Tone.Sampler({
+  urls: {
+    B0: 'silent.ogg',
+    C1: 'BR_Kick_2.ogg',
+    'C#1': 'BR_Sidestick.ogg',
+    D1: 'BR_Snare_hard.ogg',
+    'D#1': 'silent.ogg',
+    E1: 'BR_Snare_hard.ogg',
+    F1: 'silent.ogg',
+    'F#1': 'BR_Hat_Cl_1.ogg',
+    G1: 'silent.ogg',
+    'G#1': 'silent.ogg',
+    A1: 'silent.ogg',
+    'A#1': 'BR_Hat_Open.ogg',
+    B1: 'silent.ogg'
+  },
+  release: 1,
+  baseUrl: '../samples/bedroom/'
+})
+const synth = new Tone.PolySynth(Tone.Synth, { release: 1 })
+const square = new Tone.PolySynth(Tone.Synth, {
+  oscillator: {
+    type: 'square'
+  },
+  envelope: {
+    release: 0.07
+  }
+})
+const sine = new Tone.PolySynth(Tone.Synth, {
+  oscillator: {
+    type: 'sine'
+  },
+  envelope: {
+    release: 0.07
+  }
+})
+const pulse = new Tone.PolySynth(Tone.Synth, {
+  oscillator: {
+    type: 'pulse',
+    width: 0.25
+  },
+  envelope: {
+    release: 0.07
+  }
+})
+const triangle = new Tone.PolySynth(Tone.Synth, {
+  oscillator: {
+    type: 'triangle'
+  },
+  envelope: {
+    release: 0.07
+  }
+})
+const sawtooth = new Tone.PolySynth(Tone.Synth, {
+  oscillator: {
+    type: 'sawtooth'
+  },
+  envelope: {
+    release: 0.07
+  }
+})

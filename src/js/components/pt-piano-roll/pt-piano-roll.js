@@ -150,7 +150,6 @@ customElements.define('pt-piano-roll',
      * @param {object} message Message to be handled.
      */
     #handleMessage (message) {
-      console.log(message)
       if (message.action === 'note-update') {
         this.#updateNote(message.note)
       } else if (message.action === 'note-create') {

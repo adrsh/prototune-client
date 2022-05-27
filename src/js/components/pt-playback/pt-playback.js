@@ -109,10 +109,11 @@ customElements.define('pt-playback',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
+      Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
+      Tone.Transport.loop = true
+
       this.playButton.addEventListener('click', async () => {
         await Tone.start()
-        Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
-        Tone.Transport.loop = true
         Tone.Transport.start()
         this.pauseButton.removeAttribute('hidden')
         this.playButton.replaceWith(this.pauseButton)
@@ -121,6 +122,19 @@ customElements.define('pt-playback',
       this.pauseButton.addEventListener('click', async () => {
         Tone.Transport.pause()
         this.pauseButton.replaceWith(this.playButton)
+      })
+
+      document.addEventListener('keydown', event => {
+        if (event.code === 'Space') {
+          if (Tone.Transport.state !== 'started') {
+            Tone.Transport.start()
+            this.pauseButton.removeAttribute('hidden')
+            this.playButton.replaceWith(this.pauseButton)
+          } else {
+            Tone.Transport.stop()
+            this.pauseButton.replaceWith(this.playButton)
+          }
+        }
       })
 
       this.stopButton.addEventListener('click', async () => {

@@ -128,18 +128,18 @@ customElements.define('pt-playback',
         this.pauseButton.replaceWith(this.playButton)
       })
 
-      const recorder = new Tone.Recorder()
+      const recorder = new Tone.Recorder({ mimeType: 'audio/webm' })
       Tone.Destination.connect(recorder)
       this.downloadButton.addEventListener('click', async () => {
         // Prevent looping for just recording one loop.
         Tone.Transport.loop = false
         // Reset transport position
-        Tone.Transport.position = 0
+        Tone.Transport.position = '0:0:0'
         recorder.start()
-        Tone.Transport.start()
+        Tone.Transport.start('+8n')
         // Stop the transport a little after the loop has ended.
         Tone.Transport.stop(Tone.now() + Tone.TransportTime('5:0:0'))
-        Tone.Transport.on('stop', async event => {
+        Tone.Transport.once('stop', async event => {
           const recording = await recorder.stop()
           // https://tonejs.github.io/docs/14.7.77/Recorder
           const url = URL.createObjectURL(recording)

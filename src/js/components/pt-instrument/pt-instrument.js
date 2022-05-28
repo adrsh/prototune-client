@@ -284,6 +284,7 @@ customElements.define('pt-instrument',
      */
     disconnectedCallback () {
       this.roll.remove()
+      this.instrument.dispose()
     }
 
     /**

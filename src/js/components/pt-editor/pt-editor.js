@@ -15,10 +15,9 @@ template.innerHTML = `
   <style>
   :host {
     display: grid;
-    grid-template-rows: 40rem;
+    grid-template-rows: minmax(8rem, 40rem);
     grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
     grid-template-areas:  "instruments editor";
-    border-bottom: 1px solid gray;
   }
   #roll {
     grid-area: piano-roll;
@@ -43,7 +42,6 @@ template.innerHTML = `
     flex-direction: column;
     grid-area: instruments;
     border-right: 1px solid gray;
-    border-bottom: 1px solid gray;
     overflow-y: scroll;
   }
   .selected {
@@ -56,7 +54,6 @@ template.innerHTML = `
     grid-template-columns: 3rem auto;
     grid-template-areas:  "blocker time-line" "note-bar piano-roll";
     overflow-y: hidden;
-    border-bottom: 1px solid gray;
   }
   #blocker {
     grid-area: blocker;

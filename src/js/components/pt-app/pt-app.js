@@ -15,7 +15,7 @@ template.innerHTML = `
   <style>
     :host {
       display: grid;
-      grid-template-rows: 40rem 3rem 16rem;
+      grid-template-rows: minmax(8rem, auto) 3rem 16rem;
       grid-template-columns: auto;
       grid-template-areas:  "editor"
                             "options"
@@ -27,6 +27,7 @@ template.innerHTML = `
     }
     pt-editor {
       grid-area: editor;
+      border-bottom: 1px solid gray;
     }
     pt-playback {
       grid-area: options;

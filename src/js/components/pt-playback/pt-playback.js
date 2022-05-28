@@ -43,11 +43,14 @@ template.innerHTML = `
       font-family: sans-serif;
       font-size: 0.7rem;
     }
-    #tempo > input[type="number"] {
+    #tempo > input[type="number"], #loop-count {
       width: 3rem;
       border: 1px solid black;
       padding: 0.2rem;
       font-size: 0.7rem;
+    }
+    #loop-count {
+      width: 2rem;
     }
     #play {
       background-image: url("../img/play-fill.svg")
@@ -75,6 +78,7 @@ template.innerHTML = `
   </div>
   <div id="buttons">
     <input id="volume-slider" type="range" max="0" min="-40" value="-5">
+    <input id="loop-count" type="number" min="1" value="1" title="How many loops to record">
     <button id="download">
   </div>
 `
@@ -97,6 +101,7 @@ customElements.define('pt-playback',
       this.stopButton = this.shadowRoot.querySelector('#stop')
 
       this.downloadButton = this.shadowRoot.querySelector('#download')
+      this.loopCount = this.shadowRoot.querySelector('#loop-count')
 
       this.volumeSlider = this.shadowRoot.querySelector('#volume-slider')
       this.tempoChanger = this.shadowRoot.querySelector('#tempo-changer')
@@ -145,14 +150,25 @@ customElements.define('pt-playback',
       const recorder = new Tone.Recorder({ mimeType: 'audio/webm' })
       Tone.Destination.connect(recorder)
       this.downloadButton.addEventListener('click', async () => {
-        // Prevent looping for just recording one loop.
-        Tone.Transport.loop = false
         // Reset transport position
         Tone.Transport.position = '0:0:0'
+        // Keep check of loops and when to stop the loop and finish recording
+        let loop = 1
+        if (parseInt(this.loopCount.value) === loop) {
+          Tone.Transport.loop = false
+        } else {
+          Tone.Transport.loop = true
+        }
+        this.looper = Tone.Transport.on('loop', () => {
+          loop++
+          if (parseInt(this.loopCount.value) === loop) {
+            Tone.Transport.loop = false
+          }
+        })
         recorder.start()
-        Tone.Transport.start('+8n')
+        Tone.Transport.start(Tone.now())
         // Stop the transport a little after the loop has ended.
-        Tone.Transport.stop(Tone.now() + Tone.TransportTime('5:0:0'))
+        Tone.Transport.stop(Tone.now() + Tone.TransportTime(`${(parseInt(this.loopCount.value) * 4) + 1}:0:0`))
         Tone.Transport.once('stop', async event => {
           const recording = await recorder.stop()
           // https://tonejs.github.io/docs/14.7.77/Recorder
@@ -161,6 +177,7 @@ customElements.define('pt-playback',
           anchor.download = 'recording.ogg'
           anchor.href = url
           anchor.click()
+          Tone.Transport.clear(this.looper)
         })
       })
 

@@ -31,6 +31,7 @@ template.innerHTML = `
     font-size: 3rem;
     background-color: #ffffff;
     border: 0px;
+    user-select: none;
   }
   button:hover {
     background-color: #eee;

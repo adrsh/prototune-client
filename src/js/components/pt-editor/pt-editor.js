@@ -21,11 +21,10 @@ template.innerHTML = `
   }
   #roll {
     grid-area: piano-roll;
-    border-bottom: 1px solid gray;
-    overflow-y: scroll;
     position: relative;
     display: flex;
     flex-direction: row;
+    overflow-x: hidden;
   }
   button {
     height: 4rem;
@@ -50,10 +49,10 @@ template.innerHTML = `
   #editor {
     grid-area: editor;
     display: grid;
-    grid-template-rows: 1rem 39rem;
+    grid-template-rows: 1rem 88rem;
     grid-template-columns: 3rem auto;
     grid-template-areas:  "blocker time-line" "note-bar piano-roll";
-    overflow-y: hidden;
+    overflow-y: scroll;
   }
   #blocker {
     grid-area: blocker;
@@ -174,12 +173,14 @@ customElements.define('pt-editor',
         event.preventDefault()
         this.#newInstrument()
       })
-      // Make the sticky note-bar get scrolled at the same time as the active roll
-      this.noteBar = this.shadowRoot.querySelector('#note-bar')
-      this.rollHolder.addEventListener('scroll', event => {
-        this.noteBar.style.transform = `translateY(-${this.rollHolder.scrollTop}px)`
+      // Make the timeline follow when scrolling in the editor
+      this.timeLine = this.shadowRoot.querySelector('pt-time-line')
+      this.editor = this.shadowRoot.querySelector('#editor')
+      this.editor.addEventListener('scroll', event => {
+        this.timeLine.style.transform = `translateY(${this.editor.scrollTop}px)`
       })
-
+      // Create divs with note names
+      this.noteBar = this.shadowRoot.querySelector('#note-bar')
       for (let i = 108; i >= 21; i--) {
         const div = document.createElement('span')
         div.textContent = Tone.Frequency(i, 'midi').toNote()

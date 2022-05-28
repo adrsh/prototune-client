@@ -42,6 +42,9 @@ window.ws.addEventListener('message', async event => {
   if (message.action === 'session-authenticated') {
     const app = document.createElement('pt-app')
     document.body.replaceChildren(app)
+  } else if (message.message === 'authentication-failed') {
+    sessionPassword.setCustomValidity('Wrong password.')
+    sessionPassword.reportValidity()
   }
 })
 

@@ -56,6 +56,8 @@ template.innerHTML = `
   }
   #blocker {
     grid-area: blocker;
+    position: sticky;
+    top: 0px;
     width: 100%;
     background-color: #ededed;
     border-bottom: 1px solid gray;

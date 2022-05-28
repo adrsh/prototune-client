@@ -66,6 +66,8 @@ template.innerHTML = `
   }
   pt-time-line {
     grid-area: time-line;
+    position: sticky;
+    top: 0px;
     z-index: 2;
   }
   pt-instrument {
@@ -175,12 +177,7 @@ customElements.define('pt-editor',
         event.preventDefault()
         this.#newInstrument()
       })
-      // Make the timeline follow when scrolling in the editor
-      this.timeLine = this.shadowRoot.querySelector('pt-time-line')
-      this.editor = this.shadowRoot.querySelector('#editor')
-      this.editor.addEventListener('scroll', event => {
-        this.timeLine.style.transform = `translateY(${this.editor.scrollTop}px)`
-      })
+
       // Create divs with note names
       this.noteBar = this.shadowRoot.querySelector('#note-bar')
       for (let i = 108; i >= 21; i--) {

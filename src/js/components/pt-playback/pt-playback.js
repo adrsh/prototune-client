@@ -163,7 +163,7 @@ customElements.define('pt-playback',
         this.pauseButton.replaceWith(this.playButton)
       })
 
-      const recorder = new Tone.Recorder({ mimeType: 'audio/webm' })
+      const recorder = new Tone.Recorder()
       Tone.Destination.connect(recorder)
       this.downloadButton.addEventListener('click', async () => {
         // Reset transport position

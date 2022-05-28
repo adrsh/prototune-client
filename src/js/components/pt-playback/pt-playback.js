@@ -11,13 +11,20 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
     :host {
-      display: flex;
-      justify-content: space-evenly;
-      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
     }
-    #buttons {
+    #playback {
       display: flex;
       gap: 0.75rem;
+      justify-content: center;
+      align-items: center;
+    }
+    #volume-and-download {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: space-around;
+      align-items: center;
     }
     button {
       height: 2.5rem;
@@ -37,9 +44,10 @@ template.innerHTML = `
     #tempo {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.5rem;
     }
-    #tempo > label {
+    #tempo > label, #download-settings > label {
       font-family: sans-serif;
       font-size: 0.7rem;
     }
@@ -66,20 +74,28 @@ template.innerHTML = `
       width: 1.75rem;
       background-image: url("../img/download.svg")
     }
+    #download-settings {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
   </style>
   <div id="tempo">
     <label for="tempo-changer">BPM</label>
     <input id="tempo-changer" type="number" min="30" max="300" value="120">
   </div>
-  <div id="buttons">
+  <div id="playback">
     <button id="play" title="Play">
     <button id="pause" title="Pause" hidden>
     <button id="stop" title="Stop">
   </div>
-  <div id="buttons">
-    <input id="volume-slider" type="range" max="0" min="-40" value="-5">
-    <input id="loop-count" type="number" min="1" value="1" title="How many loops to record">
-    <button id="download">
+  <div id="volume-and-download">
+      <input id="volume-slider" type="range" max="0" min="-40" value="-5">
+    <div id="download-settings">
+      <label for="loop-count">LOOPS</label>
+      <input id="loop-count" type="number" min="1" value="1" title="How many loops to record">
+      <button id="download" title="Start recording and download">
+    </div>
   </div>
 `
 

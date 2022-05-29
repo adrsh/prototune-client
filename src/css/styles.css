@@ -22,6 +22,7 @@ body, html {
 	border: 1px solid gray;
 	border-radius: 1rem;
 	gap: 0.5rem;
+	font-family: sans-serif;
 }
 #content > h1 {
 	display: flex;
@@ -75,6 +76,10 @@ p {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+}
+
+span {
+	font-size: 0.8rem;
 }
 
 .disclaimer {

@@ -27,11 +27,11 @@ template.innerHTML = `
     overflow-x: hidden;
   }
   button {
-    height: 4rem;
     font-size: 3rem;
     background-color: #ffffff;
     border: 0px;
     user-select: none;
+    padding: 0;
   }
   button:hover {
     background-color: #eee;

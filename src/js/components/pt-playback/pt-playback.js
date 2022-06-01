@@ -135,6 +135,8 @@ customElements.define('pt-playback',
 
       this.playButton.addEventListener('click', async () => {
         await Tone.start()
+        Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
+        Tone.Transport.loop = true
         Tone.Transport.start()
         this.pauseButton.removeAttribute('hidden')
         this.playButton.replaceWith(this.pauseButton)

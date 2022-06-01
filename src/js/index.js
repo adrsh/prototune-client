@@ -8,8 +8,8 @@
 import './components/pt-app'
 import isUUID from 'validator/es/lib/isUUID'
 
-// window.ws = new WebSocket('wss://cscloud7-168.lnu.se/websocket/')
-window.ws = new WebSocket('ws://localhost:8080')
+window.ws = new WebSocket('wss://cscloud7-168.lnu.se/websocket/')
+// window.ws = new WebSocket('ws://localhost:8080')
 
 /**
  * Make the message blob text get parsed from JSON. Kind of like a middleware.

@@ -395,7 +395,7 @@ customElements.define('pt-keyboard',
     async #initMidi () {
       if (navigator.requestMIDIAccess) {
         try {
-          this.midi = await navigator.requestMIDIAccess({ sysex: false })
+          this.midi = await navigator.requestMIDIAccess()
           this.midi.inputs.forEach(entry => (entry.onmidimessage = this.#onMIDIMessage.bind(this)))
         } catch (error) {
           console.error('MIDI access could not be initialized.')

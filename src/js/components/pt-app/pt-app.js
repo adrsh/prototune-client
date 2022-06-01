@@ -24,10 +24,12 @@ template.innerHTML = `
     pt-editor {
       height: calc(100vh - 19rem);
       border-bottom: 1px solid gray;
+      box-sizing: border-box;
     }
     pt-playback {
       height: 3rem;
       border-bottom: 1px solid gray;
+      box-sizing: border-box;
     }
   </style>
   <pt-editor></pt-editor>

@@ -84,7 +84,7 @@ submitButton.addEventListener('click', event => {
   }
 })
 
-const sessionCreateButton = document.querySelector('#session-create')
+const sessionCreateButton = document.querySelector('#session-create-button')
 const sessionCreatePassword = document.querySelector('#session-create-password')
 
 sessionCreateButton.addEventListener('click', event => {

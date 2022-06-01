@@ -14,6 +14,7 @@ template.innerHTML = `
     #keyboard {
       display: flex;
       flex-direction: row;
+      position: relative;
     }
     .octave {
       position: relative;
@@ -60,7 +61,7 @@ template.innerHTML = `
       font-size: 0.7rem;
     }
     #solo {
-      position: fixed;
+      position: absolute;
       width: 100%;
       height: 2rem;
       display: flex;

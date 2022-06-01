@@ -14,13 +14,9 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
   :host {
-    display: grid;
-    grid-template-rows: minmax(8rem, 40rem);
-    grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
-    grid-template-areas:  "instruments editor";
+    display: flex;
   }
   #roll {
-    grid-area: piano-roll;
     position: relative;
     display: flex;
     flex-direction: row;
@@ -40,7 +36,8 @@ template.innerHTML = `
   #list {
     display: flex;
     flex-direction: column;
-    grid-area: instruments;
+    min-width: 20rem;
+    width: 20vw;
     border-right: 1px solid gray;
     overflow-y: scroll;
   }
@@ -48,6 +45,7 @@ template.innerHTML = `
     background-color: #f8f8f8;
   }
   #editor {
+    width: 80vw;
     grid-area: editor;
     display: grid;
     grid-template-rows: 1rem 88rem;

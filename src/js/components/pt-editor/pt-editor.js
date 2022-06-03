@@ -14,25 +14,20 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
   :host {
-    display: grid;
-    grid-template-rows: 40rem;
-    grid-template-columns: minmax(16rem, 24rem) minmax(48rem, auto);
-    grid-template-areas:  "instruments editor";
-    border-bottom: 1px solid gray;
+    display: flex;
   }
   #roll {
-    grid-area: piano-roll;
-    border-bottom: 1px solid gray;
-    overflow-y: scroll;
     position: relative;
     display: flex;
     flex-direction: row;
+    overflow-x: hidden;
   }
   button {
-    height: 4rem;
     font-size: 3rem;
     background-color: #ffffff;
     border: 0px;
+    user-select: none;
+    padding: 0;
   }
   button:hover {
     background-color: #eee;
@@ -41,25 +36,27 @@ template.innerHTML = `
   #list {
     display: flex;
     flex-direction: column;
-    grid-area: instruments;
+    min-width: 20rem;
+    width: 20vw;
     border-right: 1px solid gray;
-    border-bottom: 1px solid gray;
     overflow-y: scroll;
   }
   .selected {
     background-color: #f8f8f8;
   }
   #editor {
+    width: 80vw;
     grid-area: editor;
     display: grid;
-    grid-template-rows: 1rem 39rem;
+    grid-template-rows: 1rem 88rem;
     grid-template-columns: 3rem auto;
     grid-template-areas:  "blocker time-line" "note-bar piano-roll";
-    overflow-y: hidden;
-    border-bottom: 1px solid gray;
+    overflow-y: scroll;
   }
   #blocker {
     grid-area: blocker;
+    position: sticky;
+    top: 0px;
     width: 100%;
     background-color: #ededed;
     border-bottom: 1px solid gray;
@@ -68,6 +65,8 @@ template.innerHTML = `
   }
   pt-time-line {
     grid-area: time-line;
+    position: sticky;
+    top: 0px;
     z-index: 2;
   }
   pt-instrument {
@@ -105,6 +104,7 @@ template.innerHTML = `
     display: flex;
     flex-direction: column;
     border-right: 1px solid black;
+    user-select: none;
   }
   #note-bar > span {
     height: 100%;
@@ -176,12 +176,9 @@ customElements.define('pt-editor',
         event.preventDefault()
         this.#newInstrument()
       })
-      // Make the sticky note-bar get scrolled at the same time as the active roll
-      this.noteBar = this.shadowRoot.querySelector('#note-bar')
-      this.rollHolder.addEventListener('scroll', event => {
-        this.noteBar.style.transform = `translateY(-${this.rollHolder.scrollTop}px)`
-      })
 
+      // Create divs with note names
+      this.noteBar = this.shadowRoot.querySelector('#note-bar')
       for (let i = 108; i >= 21; i--) {
         const div = document.createElement('span')
         div.textContent = Tone.Frequency(i, 'midi').toNote()

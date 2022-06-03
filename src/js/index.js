@@ -8,8 +8,8 @@
 import './components/pt-app'
 import isUUID from 'validator/es/lib/isUUID'
 
-// window.ws = new WebSocket('wss://cscloud7-168.lnu.se/websocket/')
-window.ws = new WebSocket('ws://localhost:8080')
+window.ws = new WebSocket('wss://cscloud7-168.lnu.se/websocket/')
+// window.ws = new WebSocket('ws://localhost:8080')
 
 /**
  * Make the message blob text get parsed from JSON. Kind of like a middleware.
@@ -42,6 +42,9 @@ window.ws.addEventListener('message', async event => {
   if (message.action === 'session-authenticated') {
     const app = document.createElement('pt-app')
     document.body.replaceChildren(app)
+  } else if (message.message === 'authentication-failed') {
+    sessionPassword.setCustomValidity('Wrong password.')
+    sessionPassword.reportValidity()
   }
 })
 
@@ -81,7 +84,7 @@ submitButton.addEventListener('click', event => {
   }
 })
 
-const sessionCreateButton = document.querySelector('#session-create')
+const sessionCreateButton = document.querySelector('#session-create-button')
 const sessionCreatePassword = document.querySelector('#session-create-password')
 
 sessionCreateButton.addEventListener('click', event => {

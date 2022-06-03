@@ -14,23 +14,22 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
     :host {
-      display: grid;
-      grid-template-rows: 40rem 3rem 16rem;
-      grid-template-columns: auto;
-      grid-template-areas:  "editor"
-                            "options"
-                            "keyboard";
+      display: flex;
+      flex-direction: column;
     }
     pt-keyboard {
-      grid-area: keyboard;
+      height: 16rem;
       overflow-x: scroll;
     }
     pt-editor {
-      grid-area: editor;
+      height: calc(100vh - 19rem);
+      border-bottom: 1px solid gray;
+      box-sizing: border-box;
     }
     pt-playback {
-      grid-area: options;
+      height: 3rem;
       border-bottom: 1px solid gray;
+      box-sizing: border-box;
     }
   </style>
   <pt-editor></pt-editor>

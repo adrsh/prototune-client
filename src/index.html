@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <link rel="icon" href="./favicon.ico" />
+  <link rel="icon" href="./favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" type="text/css" href="./css/styles.css" />
   <title>Prototune</title>
@@ -12,16 +12,26 @@
   <div id="main">
     <div id="content">
       <h1>Prototune</h1>
-      <div id="session-join" hidden>
-        <p>Join the session</p>
-        <input id="session-password" type="password" placeholder="Enter the password for the session">
+      <div id="session-join" class="box" hidden>
+        <div id="text">Join the session</div>
+        <input id="session-password" type="password" placeholder="Password (leave empty if no password)">
         <button id="submit-button">Join the session</button>
       </div>
-      <p>Create a new session</p>
-      <input id="session-create-password" type="password" autocomplete="new-password" placeholder="Password (leave empty for no password)">
-      <button id="session-create">Create a new session</button>
-      <p>or play alone<br><span class="disclaimer">session will not be saved</span></p>
-      <button id="play-alone-button">Play alone</button>
+      <div id="session-create" class="box">
+        <div id="text">Create a new session</div>
+        <input id="session-create-password" type="password" autocomplete="new-password" placeholder="Password (leave empty for no password)">
+        <button id="session-create-button">Create a new session</button>
+      </div>
+      <div id="play-alone" class="box">
+        <div id="text">
+          Play alone<br>
+          <div class="disclaimer">session will not be saved</div>
+        </div>
+        <button id="play-alone-button">Play alone</button>
+      </div>
+      <!-- <div id="about">
+        <span>Firefox users - Install <a href="./addon/e01715b699894c1182d6-1.0.xpi">this addon</a> to allow access to MIDI devices</span>
+      </div> -->
     </div>
   </div>
 </body>

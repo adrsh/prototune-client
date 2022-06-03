@@ -93,6 +93,7 @@ template.innerHTML = `
   #effects > div > span {
     font-size: 0.6rem;
     font-family: sans-serif;
+    user-select: none;
   }
   #sub-menu {
     display: flex;
@@ -116,6 +117,7 @@ template.innerHTML = `
     font-family: sans-serif;
     padding: 0;
     margin: 0.5rem;
+    user-select: none;
   }
   #delete-button:hover {
     color: red;
@@ -193,7 +195,6 @@ customElements.define('pt-instrument',
 
       this.selector.addEventListener('change', event => {
         this.setAttribute('instrument', event.target.value)
-        this.dispatchEvent(new CustomEvent('instrument-change'))
       })
 
       this.addEventListener('click', () => this.dispatchEvent(new CustomEvent('instrument-select')))
@@ -282,6 +283,7 @@ customElements.define('pt-instrument',
      */
     disconnectedCallback () {
       this.roll.remove()
+      this.instrument.dispose()
     }
 
     /**
@@ -308,6 +310,7 @@ customElements.define('pt-instrument',
         this.roll.querySelectorAll('pt-piano-roll-note').forEach(element => (element.instrument = this.instrument))
         this.selector.querySelectorAll('option[selected]').forEach(element => element.toggleAttribute('selected'))
         this.selector.querySelector(`option[value="${newValue}"]`).toggleAttribute('selected')
+        this.dispatchEvent(new CustomEvent('instrument-change'))
       } else if (name === 'uuid') {
         this.uuid = newValue
       } else if (name === 'volume') {

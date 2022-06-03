@@ -11,52 +11,91 @@ const template = document.createElement('template')
 template.innerHTML = `
   <style>
     :host {
-      display: flex;
-      justify-content: space-evenly;
-      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
     }
-    #buttons {
+    #playback {
       display: flex;
       gap: 0.75rem;
+      justify-content: center;
+      align-items: center;
     }
-    #buttons > button {
+    #volume-and-download {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: space-around;
+      align-items: center;
+    }
+    button {
       height: 2.5rem;
       width: 2.5rem;
       background-color: unset;
+      background-size: contain;
       border: 0px;
       padding: 0;
       opacity: 75%;
     }
-    #buttons > button:hover {
+    button:hover {
       opacity: 100%;
     }
-    #buttons > button:active {
+    button:active {
       transform: scale(0.95);
     }
-    #buttons > button > img {
-      height: 2.5rem;
-      width: 2.5rem;
+    #tempo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
-    #tempo > label {
+    #tempo > label, #download-settings > label {
       font-family: sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
     }
-    #tempo > input[type="number"] {
+    #tempo > input[type="number"], #loop-count {
       width: 3rem;
+      border: 1px solid black;
+      padding: 0.2rem;
+      font-size: 0.7rem;
+    }
+    #loop-count {
+      width: 2rem;
+    }
+    #play {
+      background-image: url("../img/play-fill.svg")
+    }
+    #pause {
+      background-image: url("../img/pause-fill.svg")
+    }
+    #stop {
+      background-image: url("../img/stop-fill.svg")
+    }
+    #download {
+      height: 1.75rem;
+      width: 1.75rem;
+      background-image: url("../img/download.svg")
+    }
+    #download-settings {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
   </style>
   <div id="tempo">
     <label for="tempo-changer">BPM</label>
     <input id="tempo-changer" type="number" min="30" max="300" value="120">
   </div>
-  <div id="buttons">
-    <button id="play"><img src="../img/play-fill.svg" alt="Play"></button>
-    <button id="pause" hidden><img src="../img/pause-fill.svg" alt="Pause"></button>
-    <button id="stop"><img src="../img/stop-fill.svg" alt="Stop"></button>
-    <button id="download"><img src="../img/download.svg" alt="Download"></button>
+  <div id="playback">
+    <button id="play" title="Play">
+    <button id="pause" title="Pause" hidden>
+    <button id="stop" title="Stop">
   </div>
-  <div id="volume">
-    <input id="volume-slider" type="range" max="0" min="-40" value="-5">
+  <div id="volume-and-download">
+      <input id="volume-slider" type="range" max="0" min="-40" value="-5">
+    <div id="download-settings">
+      <label for="loop-count">LOOPS</label>
+      <input id="loop-count" type="number" min="1" value="1" title="How many loops to record">
+      <button id="download" title="Start recording and download">
+    </div>
   </div>
 `
 
@@ -78,6 +117,7 @@ customElements.define('pt-playback',
       this.stopButton = this.shadowRoot.querySelector('#stop')
 
       this.downloadButton = this.shadowRoot.querySelector('#download')
+      this.loopCount = this.shadowRoot.querySelector('#loop-count')
 
       this.volumeSlider = this.shadowRoot.querySelector('#volume-slider')
       this.tempoChanger = this.shadowRoot.querySelector('#tempo-changer')
@@ -90,6 +130,9 @@ customElements.define('pt-playback',
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
+      Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
+      Tone.Transport.loop = true
+
       this.playButton.addEventListener('click', async () => {
         await Tone.start()
         Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
@@ -104,6 +147,19 @@ customElements.define('pt-playback',
         this.pauseButton.replaceWith(this.playButton)
       })
 
+      document.addEventListener('keydown', event => {
+        if (event.code === 'Space') {
+          if (Tone.Transport.state !== 'started') {
+            Tone.Transport.start()
+            this.pauseButton.removeAttribute('hidden')
+            this.playButton.replaceWith(this.pauseButton)
+          } else {
+            Tone.Transport.stop()
+            this.pauseButton.replaceWith(this.playButton)
+          }
+        }
+      })
+
       this.stopButton.addEventListener('click', async () => {
         Tone.Transport.stop()
         this.pauseButton.replaceWith(this.playButton)
@@ -112,15 +168,26 @@ customElements.define('pt-playback',
       const recorder = new Tone.Recorder()
       Tone.Destination.connect(recorder)
       this.downloadButton.addEventListener('click', async () => {
-        // Prevent looping for just recording one loop.
-        Tone.Transport.loop = false
         // Reset transport position
-        Tone.Transport.position = 0
+        Tone.Transport.position = '0:0:0'
+        // Keep check of loops and when to stop the loop and finish recording
+        let loop = 1
+        if (parseInt(this.loopCount.value) === loop) {
+          Tone.Transport.loop = false
+        } else {
+          Tone.Transport.loop = true
+        }
+        this.looper = Tone.Transport.on('loop', () => {
+          loop++
+          if (parseInt(this.loopCount.value) === loop) {
+            Tone.Transport.loop = false
+          }
+        })
         recorder.start()
-        Tone.Transport.start()
+        Tone.Transport.start(Tone.now())
         // Stop the transport a little after the loop has ended.
-        Tone.Transport.stop(Tone.now() + Tone.TransportTime('5:0:0'))
-        Tone.Transport.on('stop', async event => {
+        Tone.Transport.stop(Tone.now() + Tone.TransportTime(`${(parseInt(this.loopCount.value) * 4) + 1}:0:0`))
+        Tone.Transport.once('stop', async event => {
           const recording = await recorder.stop()
           // https://tonejs.github.io/docs/14.7.77/Recorder
           const url = URL.createObjectURL(recording)
@@ -128,6 +195,7 @@ customElements.define('pt-playback',
           anchor.download = 'recording.ogg'
           anchor.href = url
           anchor.click()
+          Tone.Transport.clear(this.looper)
         })
       })
 

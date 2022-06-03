@@ -18,6 +18,16 @@ template.innerHTML = `
     border-bottom: 1px solid gray;
     box-sizing: border-box;
     background-image:
+        linear-gradient(
+          90deg,
+          #666 0 0.0625rem,
+          transparent 0.0625rem 64rem
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0 15.9375rem,
+          #666 15.9375rem 16rem
+        ),
         repeating-linear-gradient(
           90deg,
           transparent 0 3.9375rem,
@@ -44,7 +54,29 @@ template.innerHTML = `
     bottom: 0px;
     left: -0.3rem;
   }
+  #numbers {
+    position: absolute;
+    display: flex;
+    align-items: center;
+  }
+  .number {
+    display: flex;
+    align-items: center;
+    width: 16rem;
+    height: 1rem;
+    font-family: sans-serif;
+    font-size: 0.6rem;
+    box-sizing: border-box;
+    padding-left: 0.25rem;
+    user-select: none;
+  }
   </style>
+  <div id="numbers">
+    <div class="number">1</div>
+    <div class="number">2</div>
+    <div class="number">3</div>
+    <div class="number">4</div>
+  </div>
   <div id="time-line">
     <div id="arrow"></div>
   </div>

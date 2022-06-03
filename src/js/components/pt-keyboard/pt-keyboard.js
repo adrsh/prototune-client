@@ -14,6 +14,7 @@ template.innerHTML = `
     #keyboard {
       display: flex;
       flex-direction: row;
+      position: relative;
     }
     .octave {
       position: relative;
@@ -57,11 +58,17 @@ template.innerHTML = `
     }
     label {
       font-family: sans-serif;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
+    }
+    #solo {
+      position: absolute;
+      width: 100%;
+      height: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   </style>
-  <input type="checkbox" id="play-solo">
-  <label for="play-solo">Solo</label>
   <div id="keyboard">
     <div class="octave">
       <div class="white-notes">
@@ -211,6 +218,10 @@ template.innerHTML = `
       </div>
     </div>
   </div>
+  <div id="solo">
+    <input type="checkbox" id="play-solo">
+    <label for="play-solo">Solo</label>
+  </div>
 `
 
 customElements.define('pt-keyboard',
@@ -275,7 +286,7 @@ customElements.define('pt-keyboard',
           C8: 'C8.mp3'
         },
         release: 1,
-        baseUrl: 'https://tonejs.github.io/audio/salamander/'
+        baseUrl: '../samples/piano/'
       }).toDestination()
     }
 
@@ -298,7 +309,10 @@ customElements.define('pt-keyboard',
         this.solo = playSoloCheckbox.checked
       })
 
-      this.#initMidi().then(console.log('MIDI device connected.'))
+      this.#initMidi().then()
+
+      // Make scrollbar get centered
+      this.scrollLeft = (this.scrollWidth - this.clientWidth) / 2
     }
 
     /**
@@ -350,8 +364,10 @@ customElements.define('pt-keyboard',
      * @param {string} note Note to be played, ex. 'C4'.
      * @param {number} velocity Velocity as a number between 0 and 1.
      */
-    #playNote (note, velocity = 0.5) {
-      this.instrument.triggerAttack(Tone.Midi(note), Tone.now(), velocity)
+    #playNote (note, velocity = 1) {
+      if ((this.instrument.name === 'Sampler' && this.instrument.loaded) || this.instrument.name !== 'Sampler') {
+        this.instrument.triggerAttack(Tone.Midi(note), Tone.now(), velocity)
+      }
       const target = this.shadowRoot.querySelector(`pt-keyboard-note[note="${note}"]`)
       target.classList.add('playing')
     }
@@ -377,8 +393,14 @@ customElements.define('pt-keyboard',
      * Initializes MIDI functionality.
      */
     async #initMidi () {
-      this.midi = await navigator.requestMIDIAccess({ sysex: true })
-      this.midi.inputs.forEach(entry => (entry.onmidimessage = this.#onMIDIMessage.bind(this)))
+      if (navigator.requestMIDIAccess) {
+        try {
+          this.midi = await navigator.requestMIDIAccess()
+          this.midi.inputs.forEach(entry => (entry.onmidimessage = this.#onMIDIMessage.bind(this)))
+        } catch (error) {
+          console.error('MIDI access could not be initialized.')
+        }
+      }
     }
 
     /**

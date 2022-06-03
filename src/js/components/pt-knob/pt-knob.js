@@ -22,7 +22,7 @@ template.innerHTML = `
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    border: 0.15rem solid black;
+    border: 0.2rem solid #bbb;
   }
   #line {
     position: absolute;

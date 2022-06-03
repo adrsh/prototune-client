@@ -20,6 +20,11 @@ template.innerHTML = `
       background-image:
         repeating-linear-gradient(
           90deg,
+          transparent 0 15.9375rem,
+          #666 15.9375rem 16rem
+        ),
+        repeating-linear-gradient(
+          90deg,
           transparent 0 3.9375rem,
           #c0c0c0 3.9375rem 4rem
         ),
@@ -145,7 +150,6 @@ customElements.define('pt-piano-roll',
      * @param {object} message Message to be handled.
      */
     #handleMessage (message) {
-      console.log(message)
       if (message.action === 'note-update') {
         this.#updateNote(message.note)
       } else if (message.action === 'note-create') {

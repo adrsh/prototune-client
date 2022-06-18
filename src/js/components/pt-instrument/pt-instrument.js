@@ -144,13 +144,20 @@ template.innerHTML = `
         <option value="room">Room</option>
         <option value="bedroom">Bedroom</option>
       </optgroup>
-      <optgroup label="Synths">
+      <optgroup label="Synths (Poly)">
         <option value="synth">Synth</option>
         <option value="pulse">Pulse</option>
         <option value="square">Square</option>
         <option value="sine">Sine</option>
         <option value="triangle">Triangle</option>
         <option value="sawtooth">Sawtooth</option>
+      </optgroup>
+      <optgroup label="Synths (Mono)">
+        <option value="monopulse">Pulse</option>
+        <option value="monosquare">Square</option>
+        <option value="monosine">Sine</option>
+        <option value="monotriangle">Triangle</option>
+        <option value="monosawtooth">Sawtooth</option>
       </optgroup>
     </select>
     <div id="options">
@@ -515,6 +522,7 @@ customElements.define('pt-instrument',
         this.instrument.type = 'drum'
       } else if (instrument === 'square') {
         this.instrument = new Tone.PolySynth(Tone.Synth, {
+          volume: -10,
           oscillator: {
             type: 'square'
           },
@@ -533,6 +541,7 @@ customElements.define('pt-instrument',
         })
       } else if (instrument === 'pulse') {
         this.instrument = new Tone.PolySynth(Tone.Synth, {
+          volume: -10,
           oscillator: {
             type: 'pulse',
             width: 0.25
@@ -552,12 +561,67 @@ customElements.define('pt-instrument',
         })
       } else if (instrument === 'sawtooth') {
         this.instrument = new Tone.PolySynth(Tone.Synth, {
+          volume: -10,
           oscillator: {
             type: 'sawtooth'
           },
           envelope: {
             release: 0.07
           }
+        })
+      } else if (instrument === 'monosquare') {
+        this.instrument = new Tone.Synth({
+          volume: -10,
+          oscillator: {
+            type: 'square'
+          },
+          envelope: {
+            release: 0.1
+          },
+          portamento: 0.01
+        })
+      } else if (instrument === 'monosine') {
+        this.instrument = new Tone.Synth({
+          oscillator: {
+            type: 'sine'
+          },
+          envelope: {
+            release: 0.1
+          },
+          portamento: 0.01
+        })
+      } else if (instrument === 'monopulse') {
+        this.instrument = new Tone.Synth({
+          volume: -10,
+          oscillator: {
+            type: 'pulse',
+            width: 0.25
+          },
+          envelope: {
+            release: 0.1
+          },
+          portamento: 0.01
+        })
+      } else if (instrument === 'monotriangle') {
+        this.instrument = new Tone.Synth({
+          oscillator: {
+            type: 'triangle'
+          },
+          envelope: {
+            release: 0.1
+          },
+          portamento: 0.01
+        })
+      } else if (instrument === 'monosawtooth') {
+        this.instrument = new Tone.Synth({
+          volume: -10,
+          oscillator: {
+            type: 'sawtooth'
+          },
+          envelope: {
+            release: 0.1
+          },
+          portamento: 0.01
         })
       }
       this.instrument.chain(this.reverb, this.delay, this.channel, Tone.Destination)

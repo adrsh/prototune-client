@@ -222,6 +222,7 @@ customElements.define('pt-instrument',
           if (this.channel.mute) {
             this.muteButton.classList.remove('muted')
             this.channel.mute = false
+            this.channel.volume.rampTo(this.volumeChanger.value, 0)
           } else {
             this.muteButton.classList.add('muted')
             this.channel.mute = true
@@ -259,7 +260,9 @@ customElements.define('pt-instrument',
      */
     connectedCallback () {
       this.volumeChanger.addEventListener('input', async () => {
-        this.channel.volume.rampTo(this.volumeChanger.value, 0)
+        if (!this.channel.mute) {
+          this.channel.volume.rampTo(this.volumeChanger.value, 0)
+        }
       })
       this.volumeChanger.addEventListener('change', async () => {
         this.setAttribute('volume', this.volumeChanger.getAttribute('value'))

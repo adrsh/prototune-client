@@ -282,6 +282,7 @@ customElements.define('pt-instrument',
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
+      this.channel.solo = false
       this.roll.remove()
       this.instrument.dispose()
     }

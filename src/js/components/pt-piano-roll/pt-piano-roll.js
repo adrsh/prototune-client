@@ -128,7 +128,7 @@ customElements.define('pt-piano-roll',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['uuid']
+      return ['uuid', 'transpose']
     }
 
     /**
@@ -141,6 +141,9 @@ customElements.define('pt-piano-roll',
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'uuid') {
         this.uuid = newValue
+      } else if (name === 'transpose') {
+        this.transpose = parseInt(newValue)
+        this.querySelectorAll('pt-piano-roll-note').forEach(note => note.setAttribute('transpose', this.transpose))
       }
     }
 
@@ -225,6 +228,7 @@ customElements.define('pt-piano-roll',
       newNote.setAttribute('y', note.y)
       newNote.setAttribute('length', note.length)
       newNote.setAttribute('slot', 'grid')
+      newNote.setAttribute('transpose', this.transpose)
       this.append(newNote)
       this.observer.observe(this, this.config)
     }
@@ -275,13 +279,14 @@ customElements.define('pt-piano-roll',
       note.setAttribute('y', y)
       note.setAttribute('length', 1)
       note.setAttribute('slot', 'grid')
+      note.setAttribute('transpose', this.transpose)
 
       note.setAttribute('uuid', crypto.randomUUID())
 
       this.append(note)
 
       const now = Tone.now()
-      this.instrument.triggerAttackRelease(Tone.Midi(108 - y), '16n', now)
+      this.instrument.triggerAttackRelease(Tone.Midi(108 - y + this.transpose), '16n', now)
     }
   }
 )

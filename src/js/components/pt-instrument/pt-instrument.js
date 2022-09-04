@@ -178,6 +178,10 @@ template.innerHTML = `
         <pt-knob id="volume-changer" min="-60" max="0" value="-5"></pt-knob>
         <span>VOLUME</span>
       </div>
+      <div id="transpose" title="Transpose">
+        <pt-knob id="transpose-changer" min="-12" max="12" value="0"></pt-knob>
+        <span>TRANSPOSE</span>
+      </div>
     </div>
     <div id="delete">
       <button id="delete-button">DELETE</button>
@@ -254,6 +258,7 @@ customElements.define('pt-instrument',
       this.volumeChanger = this.shadowRoot.querySelector('#volume-changer')
       this.reverbChanger = this.shadowRoot.querySelector('#reverb-changer')
       this.delayChanger = this.shadowRoot.querySelector('#delay-changer')
+      this.transposeChanger = this.shadowRoot.querySelector('#transpose-changer')
 
       this.reverb = new Tone.Reverb(2)
       this.reverb.wet.value = 0
@@ -286,6 +291,12 @@ customElements.define('pt-instrument',
       this.delayChanger.addEventListener('change', async () => {
         this.setAttribute('delay', this.delayChanger.getAttribute('value'))
       })
+      this.transposeChanger.addEventListener('input', async () => {
+        this.roll.setAttribute('transpose', this.transposeChanger.getAttribute('value'))
+      })
+      this.transposeChanger.addEventListener('change', async () => {
+        this.setAttribute('transpose', this.transposeChanger.getAttribute('value'))
+      })
     }
 
     /**
@@ -303,7 +314,7 @@ customElements.define('pt-instrument',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['instrument', 'uuid', 'volume', 'reverb', 'delay']
+      return ['instrument', 'uuid', 'volume', 'reverb', 'delay', 'transpose']
     }
 
     /**
@@ -330,6 +341,8 @@ customElements.define('pt-instrument',
         this.reverbChanger.setAttribute('value', newValue)
       } else if (name === 'delay') {
         this.delayChanger.setAttribute('value', newValue)
+      } else if (name === 'transpose') {
+        this.transposeChanger.setAttribute('value', newValue)
       }
     }
 

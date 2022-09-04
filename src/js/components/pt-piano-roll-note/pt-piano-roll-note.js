@@ -250,7 +250,7 @@ customElements.define('pt-piano-roll-note',
           if (this.instrument.type === 'drum') {
             this.instrument.triggerAttack(Tone.Midi(this.note), time)
           } else {
-            this.instrument.triggerAttackRelease(Tone.Midi(this.note), `0:0:${this.length}`, time)
+            this.instrument.triggerAttackRelease(Tone.Midi(this.note + this.transpose), `0:0:${this.length}`, time)
           }
         }
       }, `0:0:${this.x}`)
@@ -269,7 +269,7 @@ customElements.define('pt-piano-roll-note',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['note', 'x', 'y', 'length', 'uuid']
+      return ['note', 'x', 'y', 'length', 'uuid', 'transpose']
     }
 
     /**
@@ -297,6 +297,9 @@ customElements.define('pt-piano-roll-note',
         this.#updateTransport()
       } else if (name === 'uuid') {
         this.uuid = newValue
+      } else if (name === 'transpose') {
+        this.transpose = parseInt(newValue)
+        this.#updateTransport()
       }
     }
   }

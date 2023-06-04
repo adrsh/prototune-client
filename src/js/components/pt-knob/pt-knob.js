@@ -119,8 +119,10 @@ customElements.define('pt-knob',
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'min') {
         this.min = parseFloat(newValue)
+        this.delta = Math.abs(this.max - this.min)
       } else if (name === 'max') {
         this.max = parseFloat(newValue)
+        this.delta = Math.abs(this.max - this.min)
       } else if (name === 'value') {
         if (oldValue !== newValue) {
           const value = parseFloat(newValue)
@@ -171,19 +173,22 @@ customElements.define('pt-knob',
      * @param {PointerEvent} event Pointer event.
      */
     #rotate (event) {
-      this.angle -= event.movementY * 2
+      this.prevAngle = this.angle
+      this.angle -= event.movementY
       if (this.angle < 45) {
         this.angle = 45
       } else if (this.angle > 315) {
         this.angle = 315
       }
-      const delta = this.max - this.min
-      /*
-      * Calculate which percentage the angle is between 0 and 270, and calculate how much that corresponds between the min and max values, integer divide it by the amount of steps, and then multiply it by the steps to get a corresponding step amount.
-      * not actual correct angles are being used right now.
-      */
-      this.value = this.min + Math.floor((((this.angle - 45) / 270) * delta) / this.step) * this.step
-      this.setAttribute('value', this.value.toPrecision(2))
+      if (this.angle !== this.prevAngle) {
+        /*
+        * Calculate which percentage the angle is between 0 and 270, and calculate how much that corresponds between the min and max values, integer divide it by the amount of steps, and then multiply it by the steps to get a corresponding step amount.
+        * not actual correct angles are being used right now.
+        */
+        this.value = this.min + Math.floor((((this.angle - 45) / 270) * this.delta) / this.step) * this.step
+        this.setAttribute('value', this.value.toPrecision(2))
+        console.log(this.angle, this.value)
+      }
     }
   }
 )

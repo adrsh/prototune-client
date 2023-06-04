@@ -158,7 +158,7 @@ customElements.define('pt-editor',
         attributes: true,
         childList: true,
         subtree: true,
-        attributeFilter: ['instrument', 'volume', 'reverb', 'delay']
+        attributeFilter: ['instrument', 'volume', 'reverb', 'delay', 'transpose']
       }
 
       // Try to get a session, and one is recieved if there is an id associated with the client on the server.
@@ -224,7 +224,8 @@ customElements.define('pt-editor',
                   instrument: node.getAttribute('instrument'),
                   volume: parseFloat(node.getAttribute('volume')),
                   reverb: parseFloat(node.getAttribute('reverb')),
-                  delay: parseFloat(node.getAttribute('delay'))
+                  delay: parseFloat(node.getAttribute('delay')),
+                  transpose: parseInt(node.getAttribute('transpose'))
                 }
               })
             }
@@ -274,6 +275,7 @@ customElements.define('pt-editor',
       instrument.setAttribute('volume', message.props.volume)
       instrument.setAttribute('reverb', message.props.reverb)
       instrument.setAttribute('delay', message.props.delay)
+      instrument.setAttribute('transpose', message.props.transpose)
 
       roll.setAttribute('uuid', message.props.roll)
 
@@ -342,6 +344,9 @@ customElements.define('pt-editor',
     #importSession (message) {
       this.observer.disconnect()
       for (const [uuid, props] of Object.entries(message.instruments)) {
+        if (!props.transpose) {
+          props.transpose = 0
+        }
         const instrument = document.createElement('pt-instrument')
         const roll = document.createElement('pt-piano-roll')
         instrument.setAttribute('uuid', uuid)
@@ -350,8 +355,10 @@ customElements.define('pt-editor',
         instrument.setAttribute('volume', props.volume)
         instrument.setAttribute('reverb', props.reverb)
         instrument.setAttribute('delay', props.delay)
+        instrument.setAttribute('transpose', props.transpose)
 
         roll.setAttribute('uuid', props.roll)
+        roll.setAttribute('transpose', props.transpose)
         roll.toggleAttribute('hidden', true)
 
         instrument.addEventListener('instrument-select', event => {
@@ -380,6 +387,7 @@ customElements.define('pt-editor',
           note.setAttribute('y', attributes.y)
           note.setAttribute('length', attributes.length)
           note.setAttribute('slot', 'grid')
+          note.setAttribute('transpose', props.transpose)
           roll.append(note)
         }
 
@@ -414,6 +422,7 @@ customElements.define('pt-editor',
       instrument.setAttribute('volume', '-6')
       instrument.setAttribute('reverb', '0')
       instrument.setAttribute('delay', '0')
+      instrument.setAttribute('transpose', '0')
 
       instrument.setAttribute('uuid', crypto.randomUUID())
       roll.setAttribute('uuid', crypto.randomUUID())

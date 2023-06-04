@@ -144,13 +144,20 @@ template.innerHTML = `
         <option value="room">Room</option>
         <option value="bedroom">Bedroom</option>
       </optgroup>
-      <optgroup label="Synths">
+      <optgroup label="Synths (Poly)">
         <option value="synth">Synth</option>
         <option value="pulse">Pulse</option>
         <option value="square">Square</option>
         <option value="sine">Sine</option>
         <option value="triangle">Triangle</option>
         <option value="sawtooth">Sawtooth</option>
+      </optgroup>
+      <optgroup label="Synths (Mono)">
+        <option value="monopulse">Pulse</option>
+        <option value="monosquare">Square</option>
+        <option value="monosine">Sine</option>
+        <option value="monotriangle">Triangle</option>
+        <option value="monosawtooth">Sawtooth</option>
       </optgroup>
     </select>
     <div id="options">
@@ -170,6 +177,10 @@ template.innerHTML = `
       <div id="volume" title="Volume">
         <pt-knob id="volume-changer" min="-60" max="0" value="-5"></pt-knob>
         <span>VOLUME</span>
+      </div>
+      <div id="transpose" title="Transpose">
+        <pt-knob id="transpose-changer" min="-12" max="12" value="0"></pt-knob>
+        <span>TRANSPOSE</span>
       </div>
     </div>
     <div id="delete">
@@ -222,6 +233,7 @@ customElements.define('pt-instrument',
           if (this.channel.mute) {
             this.muteButton.classList.remove('muted')
             this.channel.mute = false
+            this.channel.volume.rampTo(this.volumeChanger.value, 0)
           } else {
             this.muteButton.classList.add('muted')
             this.channel.mute = true
@@ -246,6 +258,7 @@ customElements.define('pt-instrument',
       this.volumeChanger = this.shadowRoot.querySelector('#volume-changer')
       this.reverbChanger = this.shadowRoot.querySelector('#reverb-changer')
       this.delayChanger = this.shadowRoot.querySelector('#delay-changer')
+      this.transposeChanger = this.shadowRoot.querySelector('#transpose-changer')
 
       this.reverb = new Tone.Reverb(2)
       this.reverb.wet.value = 0
@@ -259,7 +272,9 @@ customElements.define('pt-instrument',
      */
     connectedCallback () {
       this.volumeChanger.addEventListener('input', async () => {
-        this.channel.volume.rampTo(this.volumeChanger.value, 0)
+        if (!this.channel.mute) {
+          this.channel.volume.rampTo(this.volumeChanger.value, 0)
+        }
       })
       this.volumeChanger.addEventListener('change', async () => {
         this.setAttribute('volume', this.volumeChanger.getAttribute('value'))
@@ -276,12 +291,19 @@ customElements.define('pt-instrument',
       this.delayChanger.addEventListener('change', async () => {
         this.setAttribute('delay', this.delayChanger.getAttribute('value'))
       })
+      this.transposeChanger.addEventListener('input', async () => {
+        this.roll.setAttribute('transpose', this.transposeChanger.getAttribute('value'))
+      })
+      this.transposeChanger.addEventListener('change', async () => {
+        this.setAttribute('transpose', this.transposeChanger.getAttribute('value'))
+      })
     }
 
     /**
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
+      this.channel.solo = false
       this.roll.remove()
       this.instrument.dispose()
     }
@@ -292,7 +314,7 @@ customElements.define('pt-instrument',
      * @returns {string[]} An array of attributes to observe.
      */
     static get observedAttributes () {
-      return ['instrument', 'uuid', 'volume', 'reverb', 'delay']
+      return ['instrument', 'uuid', 'volume', 'reverb', 'delay', 'transpose']
     }
 
     /**
@@ -319,6 +341,8 @@ customElements.define('pt-instrument',
         this.reverbChanger.setAttribute('value', newValue)
       } else if (name === 'delay') {
         this.delayChanger.setAttribute('value', newValue)
+      } else if (name === 'transpose') {
+        this.transposeChanger.setAttribute('value', newValue)
       }
     }
 
@@ -511,6 +535,7 @@ customElements.define('pt-instrument',
         this.instrument.type = 'drum'
       } else if (instrument === 'square') {
         this.instrument = new Tone.PolySynth(Tone.Synth, {
+          volume: -10,
           oscillator: {
             type: 'square'
           },
@@ -529,6 +554,7 @@ customElements.define('pt-instrument',
         })
       } else if (instrument === 'pulse') {
         this.instrument = new Tone.PolySynth(Tone.Synth, {
+          volume: -10,
           oscillator: {
             type: 'pulse',
             width: 0.25
@@ -548,12 +574,67 @@ customElements.define('pt-instrument',
         })
       } else if (instrument === 'sawtooth') {
         this.instrument = new Tone.PolySynth(Tone.Synth, {
+          volume: -10,
           oscillator: {
             type: 'sawtooth'
           },
           envelope: {
             release: 0.07
           }
+        })
+      } else if (instrument === 'monosquare') {
+        this.instrument = new Tone.Synth({
+          volume: -10,
+          oscillator: {
+            type: 'square'
+          },
+          envelope: {
+            release: 0.1
+          },
+          portamento: 0.01
+        })
+      } else if (instrument === 'monosine') {
+        this.instrument = new Tone.Synth({
+          oscillator: {
+            type: 'sine'
+          },
+          envelope: {
+            release: 0.1
+          },
+          portamento: 0.01
+        })
+      } else if (instrument === 'monopulse') {
+        this.instrument = new Tone.Synth({
+          volume: -10,
+          oscillator: {
+            type: 'pulse',
+            width: 0.25
+          },
+          envelope: {
+            release: 0.1
+          },
+          portamento: 0.01
+        })
+      } else if (instrument === 'monotriangle') {
+        this.instrument = new Tone.Synth({
+          oscillator: {
+            type: 'triangle'
+          },
+          envelope: {
+            release: 0.1
+          },
+          portamento: 0.01
+        })
+      } else if (instrument === 'monosawtooth') {
+        this.instrument = new Tone.Synth({
+          volume: -10,
+          oscillator: {
+            type: 'sawtooth'
+          },
+          envelope: {
+            release: 0.1
+          },
+          portamento: 0.01
         })
       }
       this.instrument.chain(this.reverb, this.delay, this.channel, Tone.Destination)

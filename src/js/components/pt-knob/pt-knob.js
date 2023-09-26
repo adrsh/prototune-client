@@ -34,9 +34,17 @@ template.innerHTML = `
     transform: rotate(180deg);
     transform-origin: center top;
   }
+  #value-text {
+    font-size: 0.6rem;
+    font-family: sans-serif;
+    user-select: none;
+    position: absolute;
+    top: -1rem;
+  }
   </style>
   <div id="knob">
     <div id="line"></div>
+    <div id="value-text" hidden></div>
   </div>
   
 `
@@ -57,6 +65,8 @@ customElements.define('pt-knob',
       this.line = this.shadowRoot.querySelector('#line')
       this.angle = 0
       this.step = 1
+
+      this.valueText = this.shadowRoot.querySelector('#value-text')
     }
 
     /**
@@ -92,6 +102,16 @@ customElements.define('pt-knob',
       this.onStopRotate = event => this.#stopRotate(event)
 
       this.addEventListener('pointerdown', this.onPointerDown)
+
+      this.addEventListener('pointerleave', (event) => {
+        if (!this.rotating) {
+          this.valueText.toggleAttribute('hidden', true)
+        }
+      })
+
+      this.addEventListener('pointerenter', (event) => {
+        this.valueText.toggleAttribute('hidden', false)
+      })
     }
 
     /**
@@ -133,6 +153,7 @@ customElements.define('pt-knob',
             }
             this.line.style.transform = `rotate(${this.angle}deg)`
             this.setAttribute('title', this.value.toPrecision(2))
+            this.valueText.textContent = this.value
             this.dispatchEvent(new CustomEvent('input'))
           }
         }
@@ -164,6 +185,7 @@ customElements.define('pt-knob',
       document.removeEventListener('pointerleave', this.onStopRotate)
       this.rotating = false
       this.setAttribute('value', this.value.toPrecision(2))
+      this.valueText.toggleAttribute('hidden', true)
       this.dispatchEvent(new CustomEvent('change'))
     }
 

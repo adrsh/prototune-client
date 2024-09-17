@@ -18,12 +18,13 @@
   "private": true,
   "devDependencies": {
     "@lnu/eslint-config": "^1.1.10",
-    "vite": "^4.4.9"
+    "vite": "^5.4.2"
   },
   "dependencies": {
-    "bootstrap-icons": "^1.11.1",
+    "bootstrap-icons": "^1.11.3",
     "patch-package": "^8.0.0",
     "tone": "^14.8.39",
-    "validator": "^13.11.0"
+    "uuid": "^10.0.0",
+    "validator": "^13.12.0"
   }
 }

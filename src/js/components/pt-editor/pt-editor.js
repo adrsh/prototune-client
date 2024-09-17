@@ -9,6 +9,7 @@ import '../pt-piano-roll'
 import '../pt-instrument'
 import '../pt-time-line'
 import * as Tone from 'tone'
+import { v4 as uuidv4 } from 'uuid'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -424,8 +425,8 @@ customElements.define('pt-editor',
       instrument.setAttribute('delay', '0')
       instrument.setAttribute('transpose', '0')
 
-      instrument.setAttribute('uuid', crypto.randomUUID())
-      roll.setAttribute('uuid', crypto.randomUUID())
+      instrument.setAttribute('uuid', uuidv4())
+      roll.setAttribute('uuid', uuidv4())
 
       instrument.addEventListener('instrument-select', event => {
         this.instrument = event.target.instrument

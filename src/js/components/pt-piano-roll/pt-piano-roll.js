@@ -7,6 +7,7 @@
 
 import * as Tone from 'tone'
 import '../pt-piano-roll-note'
+import { v4 as uuidv4 } from 'uuid'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -281,7 +282,7 @@ customElements.define('pt-piano-roll',
       note.setAttribute('slot', 'grid')
       note.setAttribute('transpose', this.transpose)
 
-      note.setAttribute('uuid', crypto.randomUUID())
+      note.setAttribute('uuid', uuidv4())
 
       this.append(note)
 

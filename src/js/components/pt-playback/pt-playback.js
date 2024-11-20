@@ -79,6 +79,21 @@ template.innerHTML = `
       align-items: center;
       gap: 0.5rem;
     }
+    #keyboard-settings {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    #keyboard-toggle {
+      height: 1.75rem;
+      width: 1.75rem;
+      background-image: url("../img/arrow-down-short.svg");
+      transition: transform 0.25s;
+    }
+    .flip {
+      transform: rotate(180deg);
+    }
   </style>
   <div id="tempo">
     <label for="tempo-changer">BPM</label>
@@ -95,6 +110,9 @@ template.innerHTML = `
       <label for="loop-count">LOOPS</label>
       <input id="loop-count" type="number" min="1" value="1" title="How many loops to record">
       <button id="download" title="Start recording and download">
+    </div>
+    <div id="keyboard-settings">
+      <button id="keyboard-toggle" title="Toggle keyboard">
     </div>
   </div>
 `
@@ -121,6 +139,8 @@ customElements.define('pt-playback',
 
       this.volumeSlider = this.shadowRoot.querySelector('#volume-slider')
       this.tempoChanger = this.shadowRoot.querySelector('#tempo-changer')
+
+      this.keyboardToggleButton = this.shadowRoot.querySelector('#keyboard-toggle')
 
       Tone.getDestination().volume.rampTo(parseInt(this.volumeSlider.value), 0.1)
       Tone.Transport.bpm.rampTo(parseInt(this.tempoChanger.value), 0.1)
@@ -211,6 +231,11 @@ customElements.define('pt-playback',
         if (parseInt(this.tempoChanger.value) >= 30 && parseInt(this.tempoChanger.value) <= 300) {
           Tone.Transport.bpm.rampTo(parseInt(this.tempoChanger.value), 0.1)
         }
+      })
+
+      this.keyboardToggleButton.addEventListener('click', async () => {
+        this.dispatchEvent(new CustomEvent('keyboard-toggle'))
+        this.keyboardToggleButton.classList.toggle('flip')
       })
     }
 

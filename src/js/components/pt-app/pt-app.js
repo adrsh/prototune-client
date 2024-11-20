@@ -20,16 +20,24 @@ template.innerHTML = `
     pt-keyboard {
       height: 16rem;
       overflow-x: scroll;
+      transition: height 0.5s;
     }
     pt-editor {
       height: calc(100vh - 19rem);
       border-bottom: 1px solid gray;
       box-sizing: border-box;
+      transition: height 0.5s;
     }
     pt-playback {
       height: 3rem;
       border-bottom: 1px solid gray;
       box-sizing: border-box;
+    }
+    .keyboard-hidden {
+      height: 0;
+    }
+    .editor-large {
+      height: calc(100vh - 3rem);
     }
   </style>
   <pt-editor></pt-editor>
@@ -52,6 +60,7 @@ customElements.define('pt-app',
 
       this.editor = this.shadowRoot.querySelector('pt-editor')
       this.keyboard = this.shadowRoot.querySelector('pt-keyboard')
+      this.playback = this.shadowRoot.querySelector('pt-playback')
     }
 
     /**
@@ -65,6 +74,11 @@ customElements.define('pt-app',
 
       this.editor.addEventListener('instrument-change', event => {
         this.keyboard.instrument = this.editor.instrument
+      })
+
+      this.playback.addEventListener('keyboard-toggle', event => {
+        this.editor.classList.toggle('editor-large')
+        this.keyboard.classList.toggle('keyboard-hidden')
       })
     }
 

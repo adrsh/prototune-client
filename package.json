@@ -1,7 +1,7 @@
 {
   "name": "prototune-client",
   "version": "1.0.0",
-  "description": "1DV613 - Prototune Client",
+  "description": "Prototune Client",
   "type": "module",
   "browser": "src/js/index.js",
   "scripts": {
@@ -18,13 +18,13 @@
   "private": true,
   "devDependencies": {
     "@lnu/eslint-config": "^1.1.10",
-    "vite": "^5.4.2"
+    "vite": "^5.4.11"
   },
   "dependencies": {
     "bootstrap-icons": "^1.11.3",
     "patch-package": "^8.0.0",
-    "tone": "^14.8.39",
-    "uuid": "^10.0.0",
+    "tone": "^15.0.4",
+    "uuid": "^11.0.3",
     "validator": "^13.12.0"
   }
 }

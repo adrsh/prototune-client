@@ -4,6 +4,8 @@
 *.ogg
 *.mp3
 
+public/
+
 ### Linux ###
 *~
 

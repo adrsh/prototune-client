@@ -440,13 +440,15 @@ customElements.define('pt-instrument',
             D1: '808_Snare_lo2.ogg',
             'D#1': '808_Clap.ogg',
             E1: '808_Snare_lo3.ogg',
-            F1: 'silent.ogg',
+            F1: '808_Lo_Tom.ogg',
             'F#1': '808_Hat_closed.ogg',
             G1: 'silent.ogg',
             'G#1': 'silent.ogg',
-            A1: 'silent.ogg',
+            A1: '808_Md_Tom.ogg',
             'A#1': '808_Hat_long.ogg',
-            B1: 'silent.ogg'
+            B1: 'silent.ogg',
+            C2: '808_Hi_Tom.ogg',
+            'C#2': 'silent.ogg'
           },
           baseUrl: '../samples/808/'
         })
@@ -460,13 +462,15 @@ customElements.define('pt-instrument',
             D1: '909_Snare2_2.ogg',
             'D#1': '909_Clap.ogg',
             E1: '909_Snare2_3.ogg',
-            F1: 'silent.ogg',
+            F1: '909_Tom_lo.ogg',
             'F#1': '909_Hat_closed.ogg',
             G1: 'silent.ogg',
             'G#1': 'silent.ogg',
-            A1: 'silent.ogg',
+            A1: '909_Tom_mid.ogg',
             'A#1': '909_Hat_open.ogg',
-            B1: 'silent.ogg'
+            B1: 'silent.ogg',
+            C2: '909_Tom_hi.ogg',
+            'C#2': 'silent.ogg'
           },
           baseUrl: '../samples/909/'
         })
@@ -480,13 +484,15 @@ customElements.define('pt-instrument',
             D1: 'CR78_snare.ogg',
             'D#1': 'CR78_snare_accen.ogg',
             E1: 'CR78_snare.ogg',
-            F1: 'silent.ogg',
+            F1: 'CR78_low_tom.ogg',
             'F#1': 'CR78_closed_hat.ogg',
             G1: 'silent.ogg',
             'G#1': 'silent.ogg',
             A1: 'silent.ogg',
             'A#1': 'CR78_open_hat.ogg',
-            B1: 'silent.ogg'
+            B1: 'silent.ogg',
+            C2: 'CR78_hi_tom.ogg',
+            'C#2': 'silent.ogg'
           },
           baseUrl: '../samples/cr78/'
         })
@@ -500,13 +506,15 @@ customElements.define('pt-instrument',
             D1: 'Room_Snare_1.ogg',
             'D#1': 'silent.ogg',
             E1: 'Room_Snare_2a.ogg',
-            F1: 'silent.ogg',
+            F1: 'Room_Tom_Lo.ogg',
             'F#1': 'Room_HH_short.ogg',
             G1: 'silent.ogg',
             'G#1': 'silent.ogg',
-            A1: 'silent.ogg',
+            A1: 'Room_Tom_Mid.ogg',
             'A#1': 'Room_HH_med.ogg',
-            B1: 'silent.ogg'
+            B1: 'silent.ogg',
+            C2: 'Room_Tom_Hi.ogg',
+            'C#2': 'silent.ogg'
           },
           release: 1,
           baseUrl: '../samples/room/'
@@ -521,13 +529,15 @@ customElements.define('pt-instrument',
             D1: 'BR_Snare_hard.ogg',
             'D#1': 'silent.ogg',
             E1: 'BR_Snare_hard.ogg',
-            F1: 'silent.ogg',
+            F1: 'BR_Tom_Lo.ogg',
             'F#1': 'BR_Hat_Cl_1.ogg',
             G1: 'silent.ogg',
             'G#1': 'silent.ogg',
-            A1: 'silent.ogg',
+            A1: 'BR_Tom_Mid.ogg',
             'A#1': 'BR_Hat_Open.ogg',
-            B1: 'silent.ogg'
+            B1: 'silent.ogg',
+            C2: 'BR_Tom_Hi.ogg',
+            'C#2': 'silent.ogg'
           },
           release: 1,
           baseUrl: '../samples/bedroom/'

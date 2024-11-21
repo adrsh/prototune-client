@@ -143,71 +143,71 @@ customElements.define('pt-playback',
       this.keyboardToggleButton = this.shadowRoot.querySelector('#keyboard-toggle')
 
       Tone.getDestination().volume.rampTo(parseInt(this.volumeSlider.value), 0.1)
-      Tone.Transport.bpm.rampTo(parseInt(this.tempoChanger.value), 0.1)
+      Tone.getTransport().bpm.rampTo(parseInt(this.tempoChanger.value), 0.1)
     }
 
     /**
      * Called after the element is inserted to the DOM.
      */
     connectedCallback () {
-      Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
-      Tone.Transport.loop = true
+      Tone.getTransport().setLoopPoints('0:0:0', '0:0:64')
+      Tone.getTransport().loop = true
 
       this.playButton.addEventListener('click', async () => {
         await Tone.start()
-        Tone.Transport.setLoopPoints('0:0:0', '0:0:64')
-        Tone.Transport.loop = true
-        Tone.Transport.start()
+        Tone.getTransport().setLoopPoints('0:0:0', '0:0:64')
+        Tone.getTransport().loop = true
+        Tone.getTransport().start()
         this.pauseButton.removeAttribute('hidden')
         this.playButton.replaceWith(this.pauseButton)
       })
 
       this.pauseButton.addEventListener('click', async () => {
-        Tone.Transport.pause()
+        Tone.getTransport().pause()
         this.pauseButton.replaceWith(this.playButton)
       })
 
       document.addEventListener('keydown', event => {
         if (event.code === 'Space') {
-          if (Tone.Transport.state !== 'started') {
-            Tone.Transport.start()
+          if (Tone.getTransport().state !== 'started') {
+            Tone.getTransport().start()
             this.pauseButton.removeAttribute('hidden')
             this.playButton.replaceWith(this.pauseButton)
           } else {
-            Tone.Transport.stop()
+            Tone.getTransport().stop()
             this.pauseButton.replaceWith(this.playButton)
           }
         }
       })
 
       this.stopButton.addEventListener('click', async () => {
-        Tone.Transport.stop()
+        Tone.getTransport().stop()
         this.pauseButton.replaceWith(this.playButton)
       })
 
       const recorder = new Tone.Recorder()
-      Tone.Destination.connect(recorder)
+      Tone.getDestination().connect(recorder)
       this.downloadButton.addEventListener('click', async () => {
         // Reset transport position
-        Tone.Transport.position = '0:0:0'
+        Tone.getTransport().position = '0:0:0'
         // Keep check of loops and when to stop the loop and finish recording
         let loop = 1
         if (parseInt(this.loopCount.value) === loop) {
-          Tone.Transport.loop = false
+          Tone.getTransport().loop = false
         } else {
-          Tone.Transport.loop = true
+          Tone.getTransport().loop = true
         }
-        this.looper = Tone.Transport.on('loop', () => {
+        this.looper = Tone.getTransport().on('loop', () => {
           loop++
           if (parseInt(this.loopCount.value) === loop) {
-            Tone.Transport.loop = false
+            Tone.getTransport().loop = false
           }
         })
         recorder.start()
-        Tone.Transport.start(Tone.now())
+        Tone.getTransport().start(Tone.now())
         // Stop the transport a little after the loop has ended.
-        Tone.Transport.stop(Tone.now() + Tone.TransportTime(`${(parseInt(this.loopCount.value) * 4) + 1}:0:0`))
-        Tone.Transport.once('stop', async event => {
+        Tone.getTransport().stop(Tone.now() + Tone.TransportTime(`${(parseInt(this.loopCount.value) * 4) + 1}:0:0`))
+        Tone.getTransport().once('stop', async event => {
           const recording = await recorder.stop()
           // https://tonejs.github.io/docs/14.7.77/Recorder
           const url = URL.createObjectURL(recording)
@@ -215,7 +215,7 @@ customElements.define('pt-playback',
           anchor.download = 'recording.ogg'
           anchor.href = url
           anchor.click()
-          Tone.Transport.clear(this.looper)
+          Tone.getTransport().clear(this.looper)
         })
       })
 
@@ -229,7 +229,7 @@ customElements.define('pt-playback',
 
       this.tempoChanger.addEventListener('input', async () => {
         if (parseInt(this.tempoChanger.value) >= 30 && parseInt(this.tempoChanger.value) <= 300) {
-          Tone.Transport.bpm.rampTo(parseInt(this.tempoChanger.value), 0.1)
+          Tone.getTransport().bpm.rampTo(parseInt(this.tempoChanger.value), 0.1)
         }
       })
 

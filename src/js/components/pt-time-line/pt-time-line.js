@@ -103,10 +103,10 @@ customElements.define('pt-time-line',
       this.line = this.shadowRoot.querySelector('#time-line')
       this.tick = 0
 
-      Tone.Transport.on('start', event => {
+      Tone.getTransport().on('start', event => {
         // Only create a new schedule if no exist and for undefined because it can be 0
         if (this.draw === undefined) {
-          this.draw = Tone.Transport.scheduleRepeat((time) => {
+          this.draw = Tone.getTransport().scheduleRepeat((time) => {
             Tone.Draw.schedule(() => {
               this.line.style.left = `${this.tick}rem`
             }, time)
@@ -115,17 +115,17 @@ customElements.define('pt-time-line',
         }
       })
 
-      Tone.Transport.on('stop', event => {
+      Tone.getTransport().on('stop', event => {
         // Checks if the stop was triggered by position change
-        if (Tone.Transport.state !== 'started') {
-          Tone.Transport.clear(this.draw)
+        if (Tone.getTransport().state !== 'started') {
+          Tone.getTransport().clear(this.draw)
           delete this.draw
           this.line.style.left = 0
           this.tick = 0
         }
       })
 
-      Tone.Transport.on('loopEnd', event => {
+      Tone.getTransport().on('loopEnd', event => {
         this.line.style.left = 0
         this.tick = 0
       })
@@ -134,7 +134,7 @@ customElements.define('pt-time-line',
         const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
         this.tick = Math.floor(parseInt(event.offsetX) / fontSize)
         this.line.style.left = `${this.tick}rem`
-        Tone.Transport.position = `0:0:${this.tick}`
+        Tone.getTransport().position = `0:0:${this.tick}`
       })
     }
 

@@ -244,8 +244,8 @@ customElements.define('pt-piano-roll-note',
      * Updates the transport.
      */
     #updateTransport () {
-      Tone.Transport.clear(this.transport)
-      this.transport = Tone.Transport.schedule((time) => {
+      Tone.getTransport().clear(this.transport)
+      this.transport = Tone.getTransport().schedule((time) => {
         if ((this.instrument.name === 'Sampler' && this.instrument.loaded) || this.instrument.name !== 'Sampler') {
           if (this.instrument.type === 'drum') {
             this.instrument.triggerAttack(Tone.Midi(this.note), time)
@@ -260,7 +260,7 @@ customElements.define('pt-piano-roll-note',
      * Called after the element is removed from the DOM.
      */
     disconnectedCallback () {
-      Tone.Transport.clear(this.transport)
+      Tone.getTransport().clear(this.transport)
     }
 
     /**

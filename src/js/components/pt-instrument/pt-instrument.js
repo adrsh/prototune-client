@@ -637,7 +637,7 @@ customElements.define('pt-instrument',
           portamento: 0.01
         })
       }
-      this.instrument.chain(this.reverb, this.delay, this.channel, Tone.Destination)
+      this.instrument.chain(this.reverb, this.delay, this.channel, Tone.getDestination())
     }
   }
 )
